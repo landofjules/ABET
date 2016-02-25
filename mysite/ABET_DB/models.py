@@ -9,6 +9,7 @@ class performanceIndicators(models.Model):
     weight = models.DecimalField(max_digits=5, decimal_places=3)
     description = models.CharField(max_length=512)
 
+
 class outcomeData(models.Model):
 
     SEMESTERS = (
