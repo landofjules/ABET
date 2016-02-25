@@ -1,0 +1,14 @@
+
+from ABET_DB.models import studentOutcomes, outcomeData     #import models we defined
+
+print studentOutcomes.objects.all()                                             #view list of objects created of model type studentOutcomes
+
+s = studentOutcomes(outcomeLetter='C', description='TEST')  #create new instance of model type studentOutcomes
+s.save()                                                                                                    #save new instance to the database
+
+#print info
+print s.id
+print s.outcomeLetter
+print s.description
+
+print studentOutcomes.objects.all()
