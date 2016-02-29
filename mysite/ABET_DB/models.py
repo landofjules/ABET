@@ -2,12 +2,33 @@ from __future__ import unicode_literals
 from django.db import models
 
 class performanceLevels(models.Model):
-    achievementLevel = models.IntegerField(default=0)
-    description = models.CharField(max_length=512)
+    achievementLevel = models.IntegerField(default=0, unique=True)
+    description = models.CharField(max_length=512, unique=True)
+
 
 class performanceIndicators(models.Model):
     weight = models.DecimalField(max_digits=5, decimal_places=3)
     description = models.CharField(max_length=512)
+
+
+class studentOutcomes(models.Model):
+    outcomeLetter = models.CharField(max_length=3, unique=True)
+    description = models.CharField(max_length=512, unique=True)
+
+
+class courses(models.Model):
+
+    SEMESTERS = (
+        ('summer', 'Summer'),
+        ('fall', 'Fall'),
+        ('spring', 'Spring'),
+    )
+    
+    crnNumber = models.IntegerField(default=0)
+    courseName = models.CharField(max_length=512)
+    courseDescription = models.CharField(max_length=512)
+    yr = models.IntegerField(default=0)
+    semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
 
 class outcomeData(models.Model):
 
@@ -17,25 +38,28 @@ class outcomeData(models.Model):
         ('spring', 'Spring'),
     )
 
-    outcomeLetter = models.CharField(max_length=3)
-    courseName = models.CharField(max_length=48)
-    achievementLevel = models.IntegerField(default=0)
     yr = models.IntegerField(default=0)
     numberAchieved = models.IntegerField(default=0)
     semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
 
-class studentOutcomes(models.Model):
-    outcomeLetter = models.CharField(max_length=3)
-    description = models.CharField(max_length=512)
+    studentOutcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE)
+    course = models.ForeignKey(courses, on_delete=models.CASCADE)
+    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE)
+
 
 class courseOutcomeMap(models.Model):
-    courseName = models.CharField(max_length=48)
-    outcomeLetter = models.CharField(max_length=3)
+    course = models.ForeignKey(courses, on_delete=models.CASCADE)
+    studentOutcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE)
+    performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE)
+
 
 class rubrics(models.Model):
-    achievementLevel = models.IntegerField(default=0)
     gradeRange = models.IntegerField(default=0)
     description = models.CharField(max_length=512)
+
+    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE)
+    performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE)
+
 
 class piData(models.Model):
 
@@ -48,7 +72,9 @@ class piData(models.Model):
     studentStrengths = models.CharField(max_length=512)
     studentWeaknesses = models.CharField(max_length=512)
     numberAchieved = models.IntegerField(default=0)
-    achievementLevel = models.IntegerField(default=0)
     numberAchieved = models.IntegerField(default=0)
     yr = models.IntegerField(default=0)
     semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
+
+    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE)
+    performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE)
