@@ -5,3 +5,8 @@ from django.http import HttpResponse
 
 def index(request):
     return HttpResponse("ABET_DB HOME PAGE")
+    
+# one view w 3 boxes:
+#   StudentOutcomes : outcomeLetters, descripeion
+#   PreformanceLevels : aceivementLevel, description
+#   Courses : CRNnumber, CourseName, course_description
