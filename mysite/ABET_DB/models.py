@@ -23,7 +23,7 @@ class courses(models.Model):
         ('fall', 'Fall'),
         ('spring', 'Spring'),
     )
-    
+
     crnNumber = models.IntegerField(default=0)
     courseName = models.CharField(max_length=512)
     courseDescription = models.CharField(max_length=512)
@@ -42,23 +42,23 @@ class outcomeData(models.Model):
     numberAchieved = models.IntegerField(default=0)
     semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
 
-    studentOutcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE)
-    course = models.ForeignKey(courses, on_delete=models.CASCADE)
-    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE)
+    studentOutcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE, null=True)
+    course = models.ForeignKey(courses, on_delete=models.CASCADE, null=True)
+    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
 
 
 class courseOutcomeMap(models.Model):
-    course = models.ForeignKey(courses, on_delete=models.CASCADE)
-    studentOutcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE)
-    performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE)
+    course = models.ForeignKey(courses, on_delete=models.CASCADE, null=True)
+    studentOutcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE, null=True)
+    performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE, null=True)
 
 
 class rubrics(models.Model):
     gradeRange = models.IntegerField(default=0)
     description = models.CharField(max_length=512)
 
-    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE)
-    performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE)
+    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
+    performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE, null=True)
 
 
 class piData(models.Model):
@@ -76,5 +76,5 @@ class piData(models.Model):
     yr = models.IntegerField(default=0)
     semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
 
-    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE)
-    performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE)
+    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
+    performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE, null=True)
