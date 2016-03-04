@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 from django.db import models
 
 class performanceLevels(models.Model):
-    achievementLevel = models.IntegerField(default=0, unique=True)
-    description = models.CharField(max_length=512, unique=True)
+    achievementLevel = models.IntegerField(default=0)
+    description = models.CharField(max_length=512)
 
 
 class performanceIndicators(models.Model):
@@ -12,8 +12,8 @@ class performanceIndicators(models.Model):
 
 
 class studentOutcomes(models.Model):
-    outcomeLetter = models.CharField(max_length=3, unique=True)
-    description = models.CharField(max_length=512, unique=True)
+    outcomeLetter = models.CharField(max_length=3)
+    description = models.CharField(max_length=512)
 
 
 class courses(models.Model):
