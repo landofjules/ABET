@@ -1,0 +1,43 @@
+<html>
+
+    <head>
+        <title>ABET_DB Data Display</title>
+    </head>
+
+    <h1>studentOutcome: outcomeLetter<br><br></h1>
+    {% if outcomeList %}
+        <ul>
+        {% for q in outcomeList %}
+            <li>{{q.outcomeLetter}}</li>
+        {% endfor %}
+        </ul>
+        <br><br>
+    {% else %}
+        NONE<br><br>
+    {% endif %}
+    
+    <h1>courses: courseName<br><br></h1>
+    {% if courseList %}
+        <ul>
+        {% for q in courseList %}
+            <li>{{q.courseName}}</li>
+        {% endfor %}
+        </ul>
+        <br><br>
+    {% else %}
+        NONE<br><br>
+    {% endif %}
+    
+    <h1>performanceLevel: achievementLevel<br><br></h1>
+    {% if performanceList %}
+        <ul>
+        {% for q in performanceList %}
+            <li>{{q.achievementLevel}}</li>
+        {% endfor %}
+        </ul>
+        <br><br>
+    {% else %}
+        NONE<br><br>
+    {% endif %}
+    
+</html>

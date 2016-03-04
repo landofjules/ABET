@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^abet/', views.index),
     url(r'^show_data/', views.showData),
+    url(r'^show_data_template/', views.showDataTemplate),
 ]

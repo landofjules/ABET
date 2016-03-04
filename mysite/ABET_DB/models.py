@@ -29,6 +29,7 @@ class courses(models.Model):
     courseDescription = models.CharField(max_length=512)
     yr = models.IntegerField(default=0)
     semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
+    
 
 class outcomeData(models.Model):
 
