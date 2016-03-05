@@ -1,0 +1,16 @@
+
+h1 {
+    text-align:center;
+    color:orange;
+    font-weight:bold;
+}
+
+.item {
+    
+    border-top:solid 1px navajowhite;
+}
+
+.row {
+    border:solid 2px darkorange;
+}
+

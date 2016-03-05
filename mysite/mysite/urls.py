@@ -16,10 +16,12 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from ABET_DB import views
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^abet/', views.index),
+    url(r'', views.index),
     url(r'^show_data/', views.showData),
     url(r'^show_data_template/', views.showDataTemplate),
-]
+] + static(settings.STATIC_URL,docuemnt_root=settings.STATIC_ROOT)

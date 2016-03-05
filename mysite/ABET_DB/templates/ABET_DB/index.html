@@ -1,35 +1,58 @@
 <html>
     <head>
         <title>ABET submit</title>
+        {% load staticfiles %}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <link rel="stylesheet" href="{% static "style.css" %}" />
     </head>
     <body>
         <div class="container">
-            <h1>ABET demo</h1>
+            <h1>ABET</h1>
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-4 lilForm">
                     <h3>Add Student Outcome</h3>
-                    <form>
+                    <form method="post" method="post" action="{{ request.get_full_path }}">{% csrf_token %}
                         <p>Outcome Letter: <input name="OutcomeLetter"></p>
                         <p>Description:<br /><textarea name="description"></textarea></p>
+                        <p><input type="submit" value="Add" name="add"/></p>
                     </form>
+                    {% for ol in outcomeList %}
+                    <div class="item">
+                        <p><b>{{ ol.outcomeLetter }}:</b> {{ ol.description }}</p>
+                    </div>
+                    {% endfor %}
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-4 lilForm">
                     <h3>Add Preforamnce Level</h3>
-                    <form>
-                        <p>Acheivement Level: <input name="AcheivementLevel"></p>
+                    <form method="post" action="{{ request.get_full_path }}">{% csrf_token %}
+                        <p>Acheivement Level: <input name="AchLevel"></p>
                         <p>Description:<br /><textarea name="description"></textarea></p>
+                        <p><input type="submit" value="Add" name="add"/></p>
                     </form>
+                    {% for pl in perfList %}
+                    <div class="item">
+                        <p><b>{{ pl.achievementLevel }}</b> - {{ pl.description }}</p>
+                    </div>
+                    {% endfor %}
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-4 lilForm">
                     <h3>Add Course</h3>
-                    <form>
+                    <form method="post" action="{{ request.get_full_path }}">{% csrf_token %}
                         <p>CRN Number: <input name="crn"></p>
                         <p>Course Name: <input name="CourseName"></p>
                         <p>Course Description: <br /><textarea name="description"></textarea></p>
+                        <p><input type="submit" value="Add" name="add"/></p>
                     </form>
+                    {% for c in courseList %}
+                    <div class="item">
+                        <p></p><b>CRN: </b> {{ c.crnNumber }} <br />
+                        <b>Name: </b> {{ c.courseName }}</p>
+                        <p>{{ c.description }}</p>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
+            * dont refresh the page as it will resubmit data
         </div>
     </body>
 </html>

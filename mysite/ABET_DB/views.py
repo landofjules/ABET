@@ -55,8 +55,38 @@ def showDataTemplate(request):
 
 
 def index(request):
+    # gather the information and add it to to database
+    if request.method=='POST':
+        dat = request.POST
+        print(dat.dict())
+        # studentOutcomes, courses, performanceLevels
+        if dat.__contains__("OutcomeLetter"):
+            ol = studentOutcomes()
+            ol.outcomeLetter = dat.get("OutcomeLetter")
+            ol.description = dat.get("description")
+            ol.save()
+        elif dat.__contains__("AchLevel"):
+            a = performanceLevels()
+            a.achievementLevel = dat.get("AchLevel")
+            a.description = dat.get("description")
+            a.save()
+        elif  dat.__contains__("CourseName"):
+            c = courses()
+            c.crnNumber = dat.get("crn")
+            c.courseName = dat.get("CourseName")
+            c.description = dat.get("description")
+            c.save()
+    #load the data as usual
     template = loader.get_template('ABET_DB/index.html')
-    return HttpResponse(template.render())
+    outcomeList = studentOutcomes.objects.order_by('outcomeLetter')
+    courseList = courses.objects.order_by('courseName')
+    perfList = performanceLevels.objects.order_by('achievementLevel')
+    context = {
+        'outcomeList':outcomeList,
+        'courseList':courseList,
+        'perfList':perfList,
+    }
+    return HttpResponse(template.render(context,request))
 
     
 # one view w 3 boxes:
