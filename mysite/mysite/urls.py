@@ -21,6 +21,6 @@ from django.conf import settings
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^abet/', views.index),
+    url(r'', views.index),
     url(r'^show_data/', views.showData),
 ] + static(settings.STATIC_URL,docuemnt_root=settings.STATIC_ROOT)

@@ -26,7 +26,7 @@ class courses(models.Model):
 
     crnNumber = models.IntegerField(default=0)
     courseName = models.CharField(max_length=512)
-    courseDescription = models.CharField(max_length=512)
+    description = models.CharField(max_length=512)
     yr = models.IntegerField(default=0)
     semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
 
