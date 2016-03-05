@@ -25,13 +25,13 @@
                 <div class="col-sm-4 lilForm">
                     <h3>Add Preforamnce Level</h3>
                     <form method="post" action="{{ request.get_full_path }}">{% csrf_token %}
-                        <p>Acheivement Level: <input name="PerfLevel"></p>
+                        <p>Acheivement Level: <input name="AchLevel"></p>
                         <p>Description:<br /><textarea name="description"></textarea></p>
                         <p><input type="submit" value="Add" name="add"/></p>
                     </form>
                     {% for pl in perfList %}
                     <div class="item">
-                        <p><b>{{ pl.weight }}:</b> {{ pl.description }}</p>
+                        <p><b>{{ pl.achievementLevel }}</b> - {{ pl.description }}</p>
                     </div>
                     {% endfor %}
                 </div>
@@ -52,6 +52,7 @@
                     {% endfor %}
                 </div>
             </div>
+            * dont refresh the page as it will resubmit data
         </div>
     </body>
 </html>

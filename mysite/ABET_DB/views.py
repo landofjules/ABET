@@ -47,9 +47,9 @@ def index(request):
             ol.outcomeLetter = dat.get("OutcomeLetter")
             ol.description = dat.get("description")
             ol.save()
-        elif dat.__contains__("AcheivementLevel"):
+        elif dat.__contains__("AchLevel"):
             a = performanceLevels()
-            a.weight = dat.get("PerfLevel")
+            a.achievementLevel = dat.get("AchLevel")
             a.description = dat.get("description")
             a.save()
         elif  dat.__contains__("CourseName"):
