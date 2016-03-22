@@ -1,3 +1,9 @@
+3/29/16
+
+For the aggregate page, should courses be included?
+
+
+3/22/16
 Could you bring a copy of the Abet Form?
 
 For each professor, what are the constraints for each:
@@ -22,4 +28,6 @@ This week harry will find out how to connect to the web page to the ut authentic
     
 Andrew will add professor information to the models,
     and he and I will make views pass in correct query information
-    [ we either use ajax
+    [ we either use ajax w/ django, ajax w/ angular&JSON, or reload the page ]
+
+Everyone needs to learn how views work

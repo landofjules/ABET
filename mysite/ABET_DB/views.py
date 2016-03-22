@@ -52,9 +52,24 @@ def showDataTemplate(request):
     
     return HttpResponse(template.render(context, request))
     
+def professorPage(request):
+    template = loader.get_template('ABET_DB/prof.html')
+    context = {
+        
+    }
+    return HttpResponse(template.render(context,request))
 
+def pi(request):
+    # request should have:
+    #    course
+    template = loader.get_template('ABET_DB/pi.html')
+    context = {
+        
+    }
+    return HttpResponse(template.render(context,request))
+    
 
-def index(request):
+def test1(request):
     # gather the information and add it to to database
     if request.method=='POST':
         dat = request.POST
