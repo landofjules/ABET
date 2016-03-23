@@ -1,5 +1,19 @@
 {% extends 'ABET_DB/container.html' %}
 
 {% block body %}
-<h1>I'm a professor!</h1>
+    <div id="courseNav" class="centered-pills">
+        <ul class="nav nav-pills">
+            {% for c in courses %}
+            <li><a href='#'>{{ c.courseName }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div id="outcomeNav">
+        <ul class="nav nav-pills nav-stacked">
+            {% for o in outcomes %}
+            <li><a href="#">{{ o.outcomeLetter }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div style="clear:both;"></div>
 {% endblock%}

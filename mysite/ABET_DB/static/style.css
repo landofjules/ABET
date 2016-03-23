@@ -1,5 +1,9 @@
-
-h1 {
+body {
+    background-color: #FFE8C2;
+    margin:0;
+    padding:0.5em;
+}
+h1, h2 {
     text-align:center;
     color:orange;
     font-weight:bold;
@@ -10,7 +14,23 @@ h1 {
     border-top:solid 1px navajowhite;
 }
 
+/* center the course pills */
+.centered-pills { text-align:center; }
+.centered-pills ul.nav-pills { display:inline-block; }
+.centered-pills li { display:inline; }
+.centered-pills a { float:left; }
+
 .row {
     border:solid 2px darkorange;
 }
-
+#outcomeNav {
+float:left;   
+}
+#container {
+    margin: 0 auto;
+    max-width: 1000px;
+    background-color:white;
+    padding:1em;
+    border-radius: 1em;
+    
+}

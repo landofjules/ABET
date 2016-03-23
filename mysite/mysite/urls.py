@@ -22,8 +22,6 @@ from ABET_DB import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^show_data/', views.showData),
-    url(r'^show_data_template/', views.showDataTemplate),
     url(r'^init/', views.test1),
     url(r'', views.professorPage),
 ] + static(settings.STATIC_URL,docuemnt_root=settings.STATIC_ROOT)
