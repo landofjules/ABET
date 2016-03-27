@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.template import loader
 from django.core.serializers.json import DjangoJSONEncoder
 
-from ABET_DB.models import studentOutcomes, courses, performanceLevels
+from ABET_DB.models import *
 from django.http import HttpResponse, JsonResponse
 
     
@@ -42,11 +42,22 @@ def pi(request,course,outcome,pi):
     
     
     template = loader.get_template('ABET_DB/pi.html')
+    rubricList = rubrics.objects.all() # ANDREW filter this by pi and so forth
     context = {
-        
+        'course':course,
+        'outcome':outcome,
+        'pi':pi,
+        'rubrics':rubricList,
     }
     return HttpResponse(template.render(context,request))
-    
+
+# these will come
+def submitPi(request): # submit the data and reload the page
+    pass
+def finalCount(request): # the final form we have to make
+    pass
+def submitFinal
+
 # this view returns a JSON list that is used for the right two menu bars of the app
 def listJSON(request,courseName,outcome='~'):
     profNetId = request.session['netid'] # ANDREW this is how we will remember the proffessor
@@ -54,8 +65,8 @@ def listJSON(request,courseName,outcome='~'):
     
     # if we are asking for the outcomes
     if outcome == '~':
-        outcomes = studentOutcomes.objects.all() # ANDREW make this filter by courseName and profNetId
-        for o in outcomes:
+        outcomeList = studentOutcomes.objects.all() # ANDREW make this filter by courseName and profNetId
+        for o in outcomeList:
             data.append({'letter':o.outcomeLetter, 'desc':o.description})
         obj = {'courseName':courseName,'data':data}
     else:
