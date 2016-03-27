@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.template import loader
+from django.core.serializers.json import DjangoJSONEncoder
 
-# Create your views here.
 from ABET_DB.models import studentOutcomes, courses, performanceLevels
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
     
 def showDataTemplate(request):
@@ -27,28 +27,44 @@ def professorPage(request):
     # this should be passed in upon login
     request.session['netid'] = 'jkohann' 
     
-    # retreive the information
+    # ANDREW make this filter by professor
     courseList = courses.objects.order_by('courseName')
-    outcomeList = studentOutcomes.objects.order_by('outcomeLetter')
     
     # run the template
     template = loader.get_template('ABET_DB/prof.html')
     context = {
         'netid':request.session['netid'],
         'courses':courseList,
-        'outcomes':outcomeList,
     }
     return HttpResponse(template.render(context,request))
 
-def pi(request):
-    # request should have:
-    #    course
+def pi(request,course,outcome,pi):
+    
+    
     template = loader.get_template('ABET_DB/pi.html')
     context = {
         
     }
     return HttpResponse(template.render(context,request))
     
+# this view returns a JSON list that is used for the right two menu bars of the app
+def listJSON(request,courseName,outcome='~'):
+    profNetId = request.session['netid'] # ANDREW this is how we will remember the proffessor
+    data = []
+    
+    # if we are asking for the outcomes
+    if outcome == '~':
+        outcomes = studentOutcomes.objects.all() # ANDREW make this filter by courseName and profNetId
+        for o in outcomes:
+            data.append({'letter':o.outcomeLetter, 'desc':o.description})
+        obj = {'courseName':courseName,'data':data}
+    else:
+        pis = performanceLevels.objects.all() # ANDREW make this filter by profNetId, courseName, and outcome
+        for p in pis:
+            data.append({'level':p.achievementLevel, 'desc':p.description})
+        obj = {'courseName':courseName,'outcome':outcome,'data':data}
+        
+    return JsonResponse(obj,safe=False)
 
 def test1(request):
     # gather the information and add it to to database

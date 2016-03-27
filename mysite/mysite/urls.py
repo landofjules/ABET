@@ -21,6 +21,10 @@ from django.conf import settings
 from ABET_DB import views
 
 urlpatterns = [
+    url(r'^dat/(\w+)$',views.listJSON),
+    url(r'^dat/(\w+)/(\w+)$',views.listJSON),
+    url(r'^form/(\w+)/(\w+)/(\w+)$',views.pi), # use ~ as pi for new form
+    url(r'^form/(\w+)/(\w+)/~$',views.pi),
     url(r'^admin/', admin.site.urls),
     url(r'^init/', views.test1),
     url(r'', views.professorPage),

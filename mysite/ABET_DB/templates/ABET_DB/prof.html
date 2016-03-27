@@ -9,11 +9,17 @@
         </ul>
     </div>
     <div id="outcomeNav">
-        <ul class="nav nav-pills nav-stacked">
-            {% for o in outcomes %}
-            <li><a href="#">{{ o.outcomeLetter }}</a></li>
-            {% endfor %}
-        </ul>
+        <b>Outcomes</b>
+        <div class="list-group">
+        </div>
     </div>
-    <div style="clear:both;"></div>
+    <div id="piNav">
+        <b>Performance Indicators</b>
+        <div class="list-group">
+            <a id="addPi" class="list-group-item" herf="#">+</a>
+        </div>
+    </div>
+    <div class="well pull-right" id="mainForm">
+        Select a course
+    </div>
 {% endblock%}
