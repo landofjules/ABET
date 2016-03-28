@@ -8,6 +8,7 @@ class performanceLevels(models.Model):
 
 
 class performanceIndicators(models.Model):
+    name = models.CharField(max_length=512)
     weight = models.DecimalField(max_digits=5, decimal_places=3)
     description = models.CharField(max_length=512)
 
@@ -40,16 +41,7 @@ class professors(models.Model):
     
     
 class outcomeData(models.Model):
-    '''
-    SEMESTERS = (
-        ('summer', 'Summer'),
-        ('fall', 'Fall'),
-        ('spring', 'Spring'),
-    )
-
-    yr = models.IntegerField(default=0)
-    semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
-    '''
+   
     numberAchieved = models.IntegerField(default=0)
     studentOutcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE, null=True)
     course = models.ForeignKey(courses, on_delete=models.CASCADE, null=True)
@@ -70,7 +62,6 @@ class rubrics(models.Model):
     studentStrengths = models.CharField(max_length=512)
     studentWeaknesses = models.CharField(max_length=512)
     numberAchieved = models.IntegerField(default=0)
-    numberNotAchieved = models.IntegerField(default=0)
 
     performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
     performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE, null=True)
