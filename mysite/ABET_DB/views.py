@@ -43,6 +43,7 @@ def pi(request,course,outcome,pi):
     
     template = loader.get_template('ABET_DB/pi.html')
     rubricList = rubrics.objects.all() # ANDREW filter this by pi and so forth
+    # TODO make these the actual abjects so we can access params in the view
     context = {
         'course':course,
         'outcome':outcome,
@@ -56,7 +57,8 @@ def submitPi(request): # submit the data and reload the page
     pass
 def finalCount(request): # the final form we have to make
     pass
-def submitFinal
+def submitFinal(request):
+    pass
 
 # this view returns a JSON list that is used for the right two menu bars of the app
 def listJSON(request,courseName,outcome='~'):
