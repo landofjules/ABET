@@ -58,7 +58,7 @@ class rubrics(models.Model):
     gradeTopBound = models.IntegerField(default=0)
     gradeLowerBound = models.IntegerField(default=0)
     description = models.CharField(max_length=512)
-    numberAchieved = models.IntegerField(default=0)
+    numStudents = models.IntegerField(default=0)
 
     performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
     performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE, null=True)
