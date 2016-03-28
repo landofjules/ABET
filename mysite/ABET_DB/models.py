@@ -20,7 +20,6 @@ class courses(models.Model):
         ('spring', 'Spring'),
     )
 
-    crnNumber = models.IntegerField(default=0)
     courseName = models.CharField(max_length=512, default='')
     description = models.CharField(max_length=512, default='')
     yr = models.IntegerField(default=0)

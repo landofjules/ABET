@@ -27,6 +27,18 @@ def showDataTemplate(request):
     
     return HttpResponse(template.render(context, request))
     
+    
+def populate(request):
+    return HttpResponse("Populated Database")
+    
+    
+def clearDB(request):
+    professors.objects.all().delete()
+    courses.objects.all().delete()
+    studentOutcomes.objects.all().delete()
+    return HttpResponse("Cleared Database")
+    
+    
 def professorPage(request):
     # after harry figures out security, this wont be needed
     # this should be passed in upon login

@@ -29,6 +29,8 @@ urlpatterns = [
     url(r'^form/(\w+)/(\w+)/(\w+)$',views.pi), # use ~ as pi for new form
     url(r'^form/(\w+)/(\w+)/~$',views.pi),
     url(r'form/submitPi$',views.submitPi),
+    url(r'populate/', views.populate),
+    url(r'clearDB/', views.clearDB),
     url(r'^admin/', admin.site.urls),
     url(r'^about/', AboutView.as_view()),
     url(r'^init/', views.test1),
