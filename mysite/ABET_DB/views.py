@@ -1,6 +1,11 @@
 from django.shortcuts import render
 from django.template import loader
+from django.views.generic.edit import CreateView
+from django.views.generic.edit import UpdateView
+from django.views.generic import TemplateView
+from ABET_DB import forms
 from django.core.serializers.json import DjangoJSONEncoder
+
 
 from ABET_DB.models import *
 from django.http import HttpResponse, JsonResponse
@@ -113,5 +118,17 @@ def test1(request):
     }
     return HttpResponse(template.render(context,request))
 
+
+class CreateContactView(CreateView):
+    model = performanceLevels
+    template_name = 'ABET_DB/edit_contact.html'
+    form_class = forms.performanceLevelsForm
     
+class UpdateContactView(UpdateView):
+    model = performanceLevels
+    template_name = 'edit_contact.html'
+    form_class = forms.performanceLevelsForm
+    
+class AboutView(TemplateView):
+    template_name = 'ABET_DB/about.html'
 

@@ -18,7 +18,10 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
 
+
+from ABET_DB.views import CreateContactView, AboutView
 from ABET_DB import views
+
 
 urlpatterns = [
     url(r'^dat/(\w+)$',views.listJSON),
@@ -27,6 +30,7 @@ urlpatterns = [
     url(r'^form/(\w+)/(\w+)/~$',views.pi),
     url(r'form/submitPi$',views.submitPi),
     url(r'^admin/', admin.site.urls),
+    url(r'^about/', AboutView.as_view()),
     url(r'^init/', views.test1),
     url(r'', views.professorPage),
 ] + static(settings.STATIC_URL,docuemnt_root=settings.STATIC_ROOT)
