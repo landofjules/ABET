@@ -13,8 +13,6 @@ class performanceIndicators(models.Model):
     description = models.CharField(max_length=512)
     studentStrengths = models.CharField(max_length=512)
     studentWeaknesses = models.CharField(max_length=512)
-    numberAchieved = models.IntegerField(default=0)
-    totalNumStudents = models.IntegerField(default=0)
 
 
 class studentOutcomes(models.Model):
