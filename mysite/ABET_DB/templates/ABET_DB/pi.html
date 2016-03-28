@@ -10,7 +10,8 @@
         {% for r in rubrics %}
             <td>
                 <p>{{ r.description }}</p>
-                <p>Range: <input name="{{ r.id }}" /></p>
+                <p>Range: <input size="4" /> - <input size="4" /></p>
+                <p>Weight: <input size="8" /></p>
             </td>
         {% endfor %}
     </tr></table></div></p>
