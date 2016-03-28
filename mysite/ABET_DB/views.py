@@ -4,41 +4,12 @@ from django.views.generic.edit import CreateView
 from django.views.generic.edit import UpdateView
 from django.views.generic import TemplateView
 from ABET_DB import forms
-
-# Create your views here.
-from ABET_DB.models import studentOutcomes, courses, performanceLevels
-from django.http import HttpResponse
+from django.core.serializers.json import DjangoJSONEncoder
 
 
-def showData(request):
-    
-    title1 = 'studentOutcomes: outcomeLetter<br><br>'
-    outcomeList = studentOutcomes.objects.order_by('outcomeLetter')
-    
-    if len(outcomeList) == 0:
-        str1 = '&nbsp;&nbsp;&nbsp;NONE<br><br>'
-    else:
-        str1 = '&nbsp;&nbsp;&nbsp;' + ', '.join([q.outcomeLetter for q in outcomeList]) + '<br><br>'
-    
-    title2 = 'courses: courseName<br><br>'
-    courseList = courses.objects.order_by('courseName')
-    
-    if len(courseList) == 0:
-        str2 = '&nbsp;&nbsp;&nbsp;NONE<br><br>'
-    else:
-        str2 = '&nbsp;&nbsp;&nbsp;' + ', '.join([q.courseName for q in courseList]) + '<br><br>'
-        
-    title3 = 'performanceLevels: achievementLevel<br><br>'
-    performanceList = performanceLevels.objects.order_by('achievementLevel')
-    
-    if len(performanceList) == 0:
-        str3 = '&nbsp;&nbsp;&nbsp;NONE<br><br>'
-    else:
-        str3 = '&nbsp;&nbsp;&nbsp;' + ', '.join([str(q.achievementLevel) for q in performanceList]) + '<br><br>'
-    
-    output = title1 + str1 + title2+ str2 + title3 + str3
-    return HttpResponse(output)
-    
+from ABET_DB.models import *
+from django.http import HttpResponse, JsonResponse
+
     
 def showDataTemplate(request):
     
@@ -56,9 +27,64 @@ def showDataTemplate(request):
     
     return HttpResponse(template.render(context, request))
     
+def professorPage(request):
+    # after harry figures out security, this wont be needed
+    # this should be passed in upon login
+    request.session['netid'] = 'jkohann' 
+    
+    # ANDREW make this filter by professor
+    courseList = courses.objects.order_by('courseName')
+    
+    # run the template
+    template = loader.get_template('ABET_DB/prof.html')
+    context = {
+        'netid':request.session['netid'],
+        'courses':courseList,
+    }
+    return HttpResponse(template.render(context,request))
 
+def pi(request,course,outcome,pi):
+    
+    
+    template = loader.get_template('ABET_DB/pi.html')
+    rubricList = rubrics.objects.all() # ANDREW filter this by pi and so forth
+    # TODO make these the actual abjects so we can access params in the view
+    context = {
+        'course':course,
+        'outcome':outcome,
+        'pi':pi,
+        'rubrics':rubricList,
+    }
+    return HttpResponse(template.render(context,request))
 
-def index(request):
+# these will come
+def submitPi(request): # submit the data and reload the page
+    pass
+def finalCount(request): # the final form we have to make
+    pass
+def submitFinal(request):
+    pass
+
+# this view returns a JSON list that is used for the right two menu bars of the app
+def listJSON(request,courseName,outcome='~'):
+    profNetId = request.session['netid'] # ANDREW this is how we will remember the proffessor
+    data = []
+    
+    # if we are asking for the outcomes
+    if outcome == '~':
+        outcomeList = studentOutcomes.objects.all() # ANDREW make this filter by courseName and profNetId
+        for o in outcomeList:
+            data.append({'letter':o.outcomeLetter, 'desc':o.description})
+        obj = {'courseName':courseName,'data':data}
+    else:
+        pis = performanceLevels.objects.all() # ANDREW make this filter by profNetId, courseName, and outcome
+        for p in pis:
+            data.append({'level':p.achievementLevel, 'desc':p.description})
+        obj = {'courseName':courseName,'outcome':outcome,'data':data}
+        
+    return JsonResponse(obj,safe=False)
+
+def test1(request):
     # gather the information and add it to to database
     if request.method=='POST':
         dat = request.POST
@@ -92,7 +118,7 @@ def index(request):
     }
     return HttpResponse(template.render(context,request))
 
-    
+
 class CreateContactView(CreateView):
     model = performanceLevels
     template_name = 'ABET_DB/edit_contact.html'
@@ -105,3 +131,4 @@ class UpdateContactView(UpdateView):
     
 class AboutView(TemplateView):
     template_name = 'ABET_DB/about.html'
+

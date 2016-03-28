@@ -15,17 +15,26 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from ABET_DB import views
 from django.conf.urls.static import static
 from django.conf import settings
 
+
 from ABET_DB.views import CreateContactView, AboutView
+from ABET_DB import views
+
 
 urlpatterns = [
+    url(r'^dat/(\w+)$',views.listJSON),
+    url(r'^dat/(\w+)/(\w+)$',views.listJSON),
+    url(r'^form/(\w+)/(\w+)/(\w+)$',views.pi), # use ~ as pi for new form
+    url(r'^form/(\w+)/(\w+)/~$',views.pi),
+    url(r'form/submitPi$',views.submitPi),
     url(r'^admin/', admin.site.urls),
     url(r'^show_data/', views.showData),
     url(r'^show_data_template/', views.showDataTemplate),
     url(r'^validation_test/', CreateContactView.as_view()),
     url(r'^about/', AboutView.as_view()),
     url(r'^/', views.index),
+    url(r'^init/', views.test1),
+    url(r'', views.professorPage),
 ] + static(settings.STATIC_URL,docuemnt_root=settings.STATIC_ROOT)

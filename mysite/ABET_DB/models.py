@@ -32,7 +32,7 @@ class courses(models.Model):
     
 
 class outcomeData(models.Model):
-
+    '''
     SEMESTERS = (
         ('summer', 'Summer'),
         ('fall', 'Fall'),
@@ -40,9 +40,9 @@ class outcomeData(models.Model):
     )
 
     yr = models.IntegerField(default=0)
-    numberAchieved = models.IntegerField(default=0)
     semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
-
+    '''
+    numberAchieved = models.IntegerField(default=0)
     studentOutcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE, null=True)
     course = models.ForeignKey(courses, on_delete=models.CASCADE, null=True)
     performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)

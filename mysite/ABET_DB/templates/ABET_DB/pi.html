@@ -1,0 +1,15 @@
+<form method="POST" onsubmit="form/submitPi">
+    <p>
+        Acheivement Level: <input name="level" /> 
+        Description: <textarea name="desc" id="piDesc"></textarea>
+    </p>
+    <p><table><tr>
+        {% for r in rubrics %}
+            <td>
+                <p>{{ r.description }}</p>
+                
+            </td>
+        {% endfor %}
+    </tr></table></p>
+    
+</form>

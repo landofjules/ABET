@@ -1,0 +1,25 @@
+{% extends 'ABET_DB/container.html' %}
+
+{% block body %}
+    <div id="courseNav" class="centered-pills">
+        <ul class="nav nav-pills">
+            {% for c in courses %}
+            <li><a href='#'>{{ c.courseName }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div id="outcomeNav">
+        <b>Outcomes</b>
+        <div class="list-group">
+        </div>
+    </div>
+    <div id="piNav">
+        <b>Performance Indicators</b>
+        <div class="list-group">
+            <a id="addPi" class="list-group-item" herf="#">+</a>
+        </div>
+    </div>
+    <div class="well pull-right" id="mainForm">
+        Select a course
+    </div>
+{% endblock%}

@@ -1,0 +1,33 @@
+3/29/16
+
+For the aggregate page, should courses be included?
+
+
+3/22/16
+Could you bring a copy of the Abet Form?
+
+For each professor, what are the constraints for each:
+    Course
+    Outcome per course
+    Performance indicator per outcome
+    Rubric per indicator
+
+What are all the pages we need to make? - Review
+Do you think we will need anything other than the netid, or should we use a hash key or something?
+
+ ~ GENERAL PLAN ~
+We need to make a basic layout soon so we have room to tweak. and adjust
+Ideally the project should be done by April 13, most likely April 20th.
+Then we can begin testing
+
+
+
+ ~ ROLES ~
+This week harry will find out how to connect to the web page to the ut authentication system,
+    and pass the netid or whatever neccesary keys as a session variable.
+    
+Andrew will add professor information to the models,
+    and he and I will make views pass in correct query information
+    [ we either use ajax w/ django, ajax w/ angular&JSON, or reload the page ]
+
+Everyone needs to learn how views work
