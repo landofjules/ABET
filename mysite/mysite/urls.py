@@ -19,9 +19,13 @@ from ABET_DB import views
 from django.conf.urls.static import static
 from django.conf import settings
 
+from ABET_DB.views import CreateContactView, AboutView
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'', views.index),
     url(r'^show_data/', views.showData),
     url(r'^show_data_template/', views.showDataTemplate),
+    url(r'^validation_test/', CreateContactView.as_view()),
+    url(r'^about/', AboutView.as_view()),
+    url(r'^/', views.index),
 ] + static(settings.STATIC_URL,docuemnt_root=settings.STATIC_ROOT)

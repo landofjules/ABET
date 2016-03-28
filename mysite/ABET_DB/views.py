@@ -1,5 +1,9 @@
 from django.shortcuts import render
 from django.template import loader
+from django.views.generic.edit import CreateView
+from django.views.generic.edit import UpdateView
+from django.views.generic import TemplateView
+from ABET_DB import forms
 
 # Create your views here.
 from ABET_DB.models import studentOutcomes, courses, performanceLevels
@@ -89,8 +93,15 @@ def index(request):
     return HttpResponse(template.render(context,request))
 
     
-# one view w 3 boxes:
-#   StudentOutcomes : outcomeLetters, descripeion
-#   PreformanceLevels : aceivementLevel, description
-#   Courses : CRNnumber, CourseName, course_description
-
+class CreateContactView(CreateView):
+    model = performanceLevels
+    template_name = 'ABET_DB/edit_contact.html'
+    form_class = forms.performanceLevelsForm
+    
+class UpdateContactView(UpdateView):
+    model = performanceLevels
+    template_name = 'edit_contact.html'
+    form_class = forms.performanceLevelsForm
+    
+class AboutView(TemplateView):
+    template_name = 'ABET_DB/about.html'
