@@ -30,11 +30,7 @@ urlpatterns = [
     url(r'^form/(\w+)/(\w+)/~$',views.pi),
     url(r'form/submitPi$',views.submitPi),
     url(r'^admin/', admin.site.urls),
-    url(r'^show_data/', views.showData),
-    url(r'^show_data_template/', views.showDataTemplate),
-    url(r'^validation_test/', CreateContactView.as_view()),
     url(r'^about/', AboutView.as_view()),
-    url(r'^/', views.index),
     url(r'^init/', views.test1),
     url(r'', views.professorPage),
 ] + static(settings.STATIC_URL,docuemnt_root=settings.STATIC_ROOT)
