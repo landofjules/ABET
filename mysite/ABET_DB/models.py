@@ -4,20 +4,20 @@ from django.db import models
 
 class performanceLevels(models.Model):
     achievementLevel = models.IntegerField(default=0)
-    description = models.CharField(max_length=512)
+    description = models.CharField(max_length=512, default='')
 
 
 class performanceIndicators(models.Model):
-    name = models.CharField(max_length=512)
+    name = models.CharField(max_length=512, default='')
     weight = models.DecimalField(max_digits=5, decimal_places=3)
-    description = models.CharField(max_length=512)
-    studentStrengths = models.CharField(max_length=512)
-    studentWeaknesses = models.CharField(max_length=512)
+    description = models.CharField(max_length=512, default='')
+    studentStrengths = models.CharField(max_length=512, default='')
+    studentWeaknesses = models.CharField(max_length=512, default='')
 
 
 class studentOutcomes(models.Model):
     outcomeLetter = models.CharField(max_length=3)
-    description = models.CharField(max_length=512)
+    description = models.CharField(max_length=512, default='')
 
 
 class courses(models.Model):
@@ -29,15 +29,15 @@ class courses(models.Model):
     )
 
     crnNumber = models.IntegerField(default=0)
-    courseName = models.CharField(max_length=512)
-    description = models.CharField(max_length=512)
+    courseName = models.CharField(max_length=512, default='')
+    description = models.CharField(max_length=512, default='')
     yr = models.IntegerField(default=0)
     semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
     
     
 class professors(models.Model):
-    netID = models.CharField(max_length=512)
-    isAdmin = models.BooleanField(initial=False)
+    netID = models.CharField(max_length=512, default='')
+    isAdmin = models.BooleanField()
 
     
 class outcomeData(models.Model):
@@ -57,7 +57,7 @@ class courseOutcomeMap(models.Model):
 class rubrics(models.Model):
     gradeTopBound = models.IntegerField(default=0)
     gradeLowerBound = models.IntegerField(default=0)
-    description = models.CharField(max_length=512)
+    description = models.CharField(max_length=512, default='')
     numStudents = models.IntegerField(default=0)
 
     performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
