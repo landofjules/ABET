@@ -45,12 +45,11 @@ class performanceIndicators(models.Model):
 
 class outcomeData(models.Model):
     numberAchieved = models.IntegerField(default=0)
-    studentOutcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE, null=True)
     course = models.ForeignKey(courses, on_delete=models.CASCADE, null=True)
     performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
-    outcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE, null=True)
-    
+    studentOutcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE, null=True)
 
+    
 class rubrics(models.Model):
     gradeTopBound = models.IntegerField(default=0)
     gradeLowerBound = models.IntegerField(default=0)
