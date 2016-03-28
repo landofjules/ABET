@@ -11,6 +11,10 @@ class performanceIndicators(models.Model):
     name = models.CharField(max_length=512)
     weight = models.DecimalField(max_digits=5, decimal_places=3)
     description = models.CharField(max_length=512)
+    studentStrengths = models.CharField(max_length=512)
+    studentWeaknesses = models.CharField(max_length=512)
+    numberAchieved = models.IntegerField(default=0)
+    totalNumStudents = models.IntegerField(default=0)
 
 
 class studentOutcomes(models.Model):
@@ -36,9 +40,7 @@ class courses(models.Model):
 class professors(models.Model):
     netID = models.CharField(max_length=512)
     isAdmin = models.BooleanField(initial=False)
-    
-    courses = list()
-    
+
     
 class outcomeData(models.Model):
    
@@ -58,9 +60,6 @@ class rubrics(models.Model):
     gradeTopBound = models.IntegerField(default=0)
     gradeLowerBound = models.IntegerField(default=0)
     description = models.CharField(max_length=512)
-    
-    studentStrengths = models.CharField(max_length=512)
-    studentWeaknesses = models.CharField(max_length=512)
     numberAchieved = models.IntegerField(default=0)
 
     performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
