@@ -1,15 +1,18 @@
 <form method="POST" onsubmit="form/submitPi">
+    <input type="hidden" name="course" value="{{ course }}"/>
+    <input type="hidden" name="outcome" value="{{ outcome }}"/>
+    <input type="hidden" name="pi" value="{{ pi }}"/>
     <p>
         Acheivement Level: <input name="level" /> 
         Description: <textarea name="desc" id="piDesc"></textarea>
     </p>
-    <p><table><tr>
+    <p><div class="table-responsive"><table><tr>
         {% for r in rubrics %}
             <td>
                 <p>{{ r.description }}</p>
-                
+                <p>Range: <input name="{{ r.id }}" /></p>
             </td>
         {% endfor %}
-    </tr></table></p>
+    </tr></table></div></p>
     
 </form>
