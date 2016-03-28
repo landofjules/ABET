@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 
+
 class performanceLevels(models.Model):
     achievementLevel = models.IntegerField(default=0)
     description = models.CharField(max_length=512)
@@ -29,6 +30,11 @@ class courses(models.Model):
     description = models.CharField(max_length=512)
     yr = models.IntegerField(default=0)
     semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
+    
+    
+class professors(models.Model):
+    netID = models.CharField(max_length=512)
+    course = models.ForeignKey(courses, on_delete=models.CASCADE, null=True)
     
 
 class outcomeData(models.Model):
