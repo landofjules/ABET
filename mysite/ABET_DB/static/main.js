@@ -1,9 +1,7 @@
 $("#outcomeNav, #piNav").hide();   
 
-// when a course is selected, load the outcomes
-$('#courseNav li').click(loadOutcomes);
-$('#outcomeNav a').click(loadPis);
 
+// when a course is selected, load the outcomes
 function loadOutcomes() {
     selectNav.call(this);
     var ctext = $(this).text();
@@ -18,6 +16,7 @@ function loadOutcomes() {
         $('#outcomeNav .list-group-item').click(loadPis);
     })   
 };
+$('#courseNav li').click(loadOutcomes);
 
 
 // when an outcome is selected, load the Preformance indicators
@@ -37,6 +36,13 @@ function loadPis() {
         $('#piNav .list-group-item').click(selectNav);
     })   
 };
+$('#outcomeNav a').click(loadPis);
+
+//when a preformance indicator is selected, load the main form
+function loadPiForm() {
+   
+}
+
 
 
 // link highlighting
