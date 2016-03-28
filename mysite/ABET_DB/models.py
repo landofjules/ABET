@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 
+
 class performanceLevels(models.Model):
     achievementLevel = models.IntegerField(default=0)
     description = models.CharField(max_length=512)
@@ -30,7 +31,14 @@ class courses(models.Model):
     yr = models.IntegerField(default=0)
     semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
     
-
+    
+class professors(models.Model):
+    netID = models.CharField(max_length=512)
+    isAdmin = models.BooleanField(initial=False)
+    
+    courses = list()
+    
+    
 class outcomeData(models.Model):
     '''
     SEMESTERS = (
@@ -55,27 +63,16 @@ class courseOutcomeMap(models.Model):
 
 
 class rubrics(models.Model):
-    gradeRange = models.IntegerField(default=0)
+    gradeTopBound = models.IntegerField(default=0)
+    gradeLowerBound = models.IntegerField(default=0)
     description = models.CharField(max_length=512)
-
-    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
-    performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE, null=True)
-
-
-class piData(models.Model):
-
-    SEMESTERS = (
-        ('summer', 'Summer'),
-        ('fall', 'Fall'),
-        ('spring', 'Spring'),
-    )
-
+    
     studentStrengths = models.CharField(max_length=512)
     studentWeaknesses = models.CharField(max_length=512)
     numberAchieved = models.IntegerField(default=0)
-    numberAchieved = models.IntegerField(default=0)
-    yr = models.IntegerField(default=0)
-    semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
+    numberNotAchieved = models.IntegerField(default=0)
 
     performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
     performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE, null=True)
+
+

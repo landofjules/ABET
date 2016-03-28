@@ -45,7 +45,6 @@ def professorPage(request):
 
 def pi(request,course,outcome,pi):
     
-    
     template = loader.get_template('ABET_DB/pi.html')
     rubricList = rubrics.objects.all() # ANDREW filter this by pi and so forth
     # TODO make these the actual abjects so we can access params in the view
