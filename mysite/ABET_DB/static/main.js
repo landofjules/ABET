@@ -33,7 +33,7 @@ function loadPis() {
         }
         $("addPi").detach().appendTo(here);
         $("#mainForm").text("Select an performance indicator for "+obj.outcome);
-        $('#piNav .list-group-item').click(selectNav);
+        $('#piNav .list-group-item').click(loadPiForm);
     })   
 };
 $('#outcomeNav a').click(loadPis);
