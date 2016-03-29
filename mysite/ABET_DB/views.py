@@ -75,6 +75,18 @@ def populate(request):
     three.save()
     four.save()
     five.save()
+    
+    #add rubrics
+    rubA = rubrics(gradeTopBound=100, gradeLowerBound=90, description='Rubric A', numStudents=50, performanceIndicator=one)
+    rubB = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric B', numStudents=50, performanceIndicator=one)
+    rubC = rubrics(gradeTopBound=80, gradeLowerBound=70, description='Rubric C', numStudents=50, performanceIndicator=one)
+    rubD = rubrics(gradeTopBound=100, gradeLowerBound=90, description='Rubric D', numStudents=50, performanceIndicator=two)
+    rubE = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric E', numStudents=50, performanceIndicator=two)
+    rubA.save()
+    rubB.save()
+    rubC.save()
+    rubD.save()
+    rubE.save()
     return HttpResponse("Populated Database")
     
     
@@ -137,7 +149,7 @@ def pi(request,courseName,outcome,pi):
             flag = 1
             
     if flag != 1:
-        raise ValueError('performance indicator paramiter not in list of performance indicators for outcome')
+        raise ValueError('performance indicator paramiter not in list of performance indicators for outcomesd')
         
     rubricList = rubrics.objects.filter(performanceIndicator__name=pi)
     
@@ -161,7 +173,7 @@ def submitFinal(request):
 
 # this view returns a JSON list that is used for the right two menu bars of the app
 def listJSON(request,courseName,outcome='~'):
-    professorNetID = request.session['netid'] # ANDREW this is how we will remember the proffessor
+    professorNetID = request.session['netid']
     data = []
     
     # if we are asking for the outcomes

@@ -68,5 +68,8 @@ class rubrics(models.Model):
     numStudents = models.IntegerField(default=0)
     performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
     performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE, null=True)
+    
+    def __str__(self):
+        return self.description
 
 
