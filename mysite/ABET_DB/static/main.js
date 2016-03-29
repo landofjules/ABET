@@ -14,6 +14,7 @@ function loadOutcomes() {
         }
         $("#mainForm").text("Select an outcome for "+obj.courseName);
         $('#outcomeNav .list-group-item').click(loadPis);
+        $('#piNav').hide();
     })   
 };
 $('#courseNav li').click(loadOutcomes);
@@ -27,11 +28,12 @@ function loadPis() {
     $.getJSON('dat/'+ctext+'/'+otext,function(obj) {
         $('#piNav').show()
         var here = $("#piNav div.list-group");
+        var addPi = $("#addPi").detach();
         here.empty();
         for(var i=0;i<obj.data.length;i++) {
             here.append('<a class="list-group-item" href="#">'+obj.data[i].name+'</a>');
         }
-        $("addPi").detach().appendTo(here);
+        addPi.appendTo(here);
         $("#mainForm").text("Select an performance indicator for "+obj.outcome);
         $('#piNav .list-group-item').click(loadPiForm);
     })   
@@ -46,8 +48,12 @@ function loadPiForm() {
     var ptext = $(this).text();
     
     //load the view
-    var url = 'form/'+ctext+'/'+otext+'/'+ptext;
-    $("#mainForm").load(url)
+    if($(this).is('#addPi')) {
+        alert("bring up a new form")
+    } else {
+        var url = 'form/'+ctext+'/'+otext+'/'+ptext;
+        $("#mainForm").load(url)
+    }
 }
 
 
