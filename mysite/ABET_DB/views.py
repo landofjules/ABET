@@ -111,16 +111,25 @@ def populate(request):
     ten.save()
     
     #add rubrics
-    rubA = rubrics(gradeTopBound=100, gradeLowerBound=90, description='Rubric A', numStudents=50, performanceIndicator=one)
-    rubB = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric B', numStudents=50, performanceIndicator=one)
-    rubC = rubrics(gradeTopBound=80, gradeLowerBound=70, description='Rubric C', numStudents=50, performanceIndicator=one)
-    rubD = rubrics(gradeTopBound=100, gradeLowerBound=90, description='Rubric D', numStudents=50, performanceIndicator=two)
-    rubE = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric E', numStudents=50, performanceIndicator=two)
-    rubF = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric F', numStudents=50, performanceIndicator=three)
-    rubG = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric G', numStudents=50, performanceIndicator=three)
-    rubH = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric H', numStudents=50, performanceIndicator=three)
-    rubI = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric I', numStudents=50, performanceIndicator=four)
-    rubJ = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric J', numStudents=50, performanceIndicator=four)
+    rubA = rubrics(gradeTopBound=100, gradeLowerBound=90, description='Rubric A', numStudents=50, performanceLevel=excede, performanceIndicator=one)
+    rubB = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric B', numStudents=50, performanceLevel=met, performanceIndicator=one)
+    rubC = rubrics(gradeTopBound=80, gradeLowerBound=70, description='Rubric C', numStudents=50, performanceLevel=didNotMeet, performanceIndicator=one)
+    rubD = rubrics(gradeTopBound=70, gradeLowerBound=0, description='Rubric D', numStudents=50, performanceLevel=failed, performanceIndicator=one)
+    
+    rubE = rubrics(gradeTopBound=100, gradeLowerBound=90, description='Rubric E', numStudents=50, performanceLevel=excede, performanceIndicator=two)
+    rubF = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric F', numStudents=50, performanceLevel=met, performanceIndicator=two)
+    rubG = rubrics(gradeTopBound=80, gradeLowerBound=70, description='Rubric G', numStudents=50, performanceLevel=didNotMeet, performanceIndicator=two)
+    rubH = rubrics(gradeTopBound=70, gradeLowerBound=0, description='Rubric H', numStudents=50, performanceLevel=failed, performanceIndicator=two)
+    
+    rubI = rubrics(gradeTopBound=100, gradeLowerBound=90, description='Rubric I', numStudents=50, performanceLevel=excede, performanceIndicator=three)
+    rubJ = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric J', numStudents=50, performanceLevel=met, performanceIndicator=three)
+    rubK = rubrics(gradeTopBound=80, gradeLowerBound=70, description='Rubric K', numStudents=50, performanceLevel=didNotMeet, performanceIndicator=three)
+    rubL = rubrics(gradeTopBound=70, gradeLowerBound=0, description='Rubric L', numStudents=50, performanceLevel=failed, performanceIndicator=three)
+    
+    rubM = rubrics(gradeTopBound=100, gradeLowerBound=90, description='Rubric M', numStudents=50, performanceLevel=excede, performanceIndicator=four)
+    rubN = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric N', numStudents=50, performanceLevel=met, performanceIndicator=four)
+    rubO = rubrics(gradeTopBound=80, gradeLowerBound=70, description='Rubric O', numStudents=50, performanceLevel=didNotMeet, performanceIndicator=four)
+    rubP = rubrics(gradeTopBound=70, gradeLowerBound=0, description='Rubric P', numStudents=50, performanceLevel=failed, performanceIndicator=four)
     rubA.save()
     rubB.save()
     rubC.save()
@@ -131,6 +140,12 @@ def populate(request):
     rubH.save()
     rubI.save()
     rubJ.save()
+    rubK.save()
+    rubL.save()
+    rubM.save()
+    rubN.save()
+    rubO.save()
+    rubP.save()
     return HttpResponse("Populated Database")
     
     
