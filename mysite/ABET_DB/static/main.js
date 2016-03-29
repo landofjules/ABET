@@ -21,6 +21,7 @@ $('#courseNav li').click(loadOutcomes);
 
 // when an outcome is selected, load the Preformance indicators
 function loadPis() {
+    selectNav.call(pithis);
     var ctext = $("#courseNav li.active").text();
     var otext = $(this).text();
     $.getJSON('dat/'+ctext+'/'+otext,function(obj) {
@@ -28,12 +29,11 @@ function loadPis() {
         var here = $("#piNav div.list-group");
         here.empty();
         for(var i=0;i<obj.data.length;i++) {
-            here.append('<a class="list-group-item" href="#">'+obj.data[i].level+'</a>');
+            here.append('<a class="list-group-item" href="#">'+obj.data[i].name+'</a>');
         }
         $("addPi").detach().appendTo(here);
         $("#mainForm").text("Select an performance indicator for "+obj.outcome);
         $('#piNav .list-group-item').click(selectNav);
-        selectNav.call(this);
     })   
 };
 $('#outcomeNav a').click(loadPis);

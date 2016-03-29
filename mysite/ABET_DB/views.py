@@ -206,7 +206,7 @@ def listJSON(request,courseName,outcome='~'):
         pis = performanceIndicators.objects.filter(outcome__outcomeLetter=outcome)      #find performance indicators associated with outcome
         
         for p in pis:
-            data.append({'level':p.achievementLevel, 'desc':p.description})
+            data.append({'name':p.name, 'desc':p.description})
         obj = {'courseName':courseName,'outcome':outcome,'data':data}
         
     return JsonResponse(obj,safe=False)
