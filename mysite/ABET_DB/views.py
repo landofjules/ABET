@@ -63,6 +63,18 @@ def populate(request):
     d.save()
     e.save()
     f.save()
+    
+    #add performanceIndicators
+    one = performanceIndicators(name='one', weight=0.5, description='PI One', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=a)
+    two = performanceIndicators(name='two', weight=0.5, description='PI Two', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=a)
+    three = performanceIndicators(name='three', weight=0.5, description='PI three', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=a)
+    four = performanceIndicators(name='four', weight=0.5, description='PI four', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=b)
+    five = performanceIndicators(name='five', weight=0.5, description='PI five', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=b)
+    one.save()
+    two.save()
+    three.save()
+    four.save()
+    five.save()
     return HttpResponse("Populated Database")
     
     
@@ -95,11 +107,11 @@ def pi(request,course,outcome,pi):
     
     template = loader.get_template('ABET_DB/pi.html')
     
-    courseList = courses.objects.filter(professor__netID=profesorNetID)     #find courses associated with loged-in professor
+    courseList = courses.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
         
     flag = 0
     for c in courseList:                                                    #make sure courseName paramiter is one of loged-in professor's courses
-        if c.name == courseName:
+        if c.courseName == courseName:
             flag = 1
             
     if flag == 1:    
@@ -126,7 +138,7 @@ def pi(request,course,outcome,pi):
     #if flag != 1:
         #error
         
-    rubricList =  rubrics.objects.filter(performanceIndicator__name=pi)
+    rubricList = rubrics.objects.filter(performanceIndicator__name=pi)
     
     context = {
         'course':course,
@@ -153,11 +165,11 @@ def listJSON(request,courseName,outcome='~'):
     
     # if we are asking for the outcomes
     if outcome == '~':
-        courseList = courses.objects.filter(professor__netID=profesorNetID)     #find courses associated with loged-in professor
+        courseList = courses.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
         
         flag = 0
         for c in courseList:                                                    #make sure courseName paramiter is one of loged-in professor's courses
-            if c.name == courseName:
+            if c.courseName == courseName:
                 flag = 1
             
         if flag == 1:    
@@ -170,11 +182,11 @@ def listJSON(request,courseName,outcome='~'):
             data.append({'letter':o.outcomeLetter, 'desc':o.description})
         obj = {'courseName':courseName,'data':data}
     else:
-        courseList = courses.objects.filter(professor__netID=profesorNetID)     #find courses associated with loged-in professor
+        courseList = courses.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
         
         flag = 0
         for c in courseList:                                                    #make sure courseName paramiter is one of loged-in professor's courses
-            if c.name == courseName:
+            if c.courseName == courseName:
                 flag = 1
             
         if flag == 1:    

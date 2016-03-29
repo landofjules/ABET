@@ -49,6 +49,9 @@ class performanceIndicators(models.Model):
     studentStrengths = models.CharField(max_length=512, default='')
     studentWeaknesses = models.CharField(max_length=512, default='')
     outcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE, null=True)
+    
+    def __str__(self):
+        return self.name
 
 
 class outcomeData(models.Model):
