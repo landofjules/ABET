@@ -5,6 +5,9 @@ from django.db import models
 class performanceLevels(models.Model):
     achievementLevel = models.IntegerField(default=0)
     description = models.CharField(max_length=512, default='')
+    
+    def __str__(self):
+        return self.description
 
 
 class professors(models.Model):

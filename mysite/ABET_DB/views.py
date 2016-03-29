@@ -30,6 +30,14 @@ def showDataTemplate(request):
     
 def populate(request):
     
+    #add performanceLevels
+    excede = performanceLevels(achievementLevel=0, description='Exceded Expectations')
+    met = performanceLevels(achievementLevel=1, description='Met Expectations')
+    didNotMeet = performanceLevels(achievementLevel=2, description='Did Not Meet Expectations')
+    excede.save()
+    met.save()
+    didNotMeet.save()
+    
     #add professors
     jkohann = professors(netID='jkohann', isAdmin=False)
     bvz = professors(netID='bvz', isAdmin=True)
@@ -94,6 +102,9 @@ def clearDB(request):
     professors.objects.all().delete()
     courses.objects.all().delete()
     studentOutcomes.objects.all().delete()
+    performanceLevels.objects.all().delete()
+    rubrics.objects.all().delete()
+    performanceIndicators.objects.all().delete()
     return HttpResponse("Cleared Database")
     
     
