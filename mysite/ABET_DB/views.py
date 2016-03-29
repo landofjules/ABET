@@ -120,13 +120,13 @@ def pi(request,course,outcome,pi):
         
     flag = 0
     for p in pis:
-        if p.name = pi:
+        if p.name == pi:
             flag = 1
             
     #if flag != 1:
         #error
         
-   rubricList=  rubrics.objects.filter(performanceIndicator__name=pi)
+    rubricList =  rubrics.objects.filter(performanceIndicator__name=pi)
     
     context = {
         'course':course,
