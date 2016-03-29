@@ -103,8 +103,9 @@ def professorPage(request):
     return HttpResponse(template.render(context,request))
 
 
-def pi(request,course,outcome,pi):
+def pi(request,courseName,outcome,pi):
     
+    professorNetID = request.session['netid']
     template = loader.get_template('ABET_DB/pi.html')
     
     courseList = courses.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
@@ -141,7 +142,7 @@ def pi(request,course,outcome,pi):
     rubricList = rubrics.objects.filter(performanceIndicator__name=pi)
     
     context = {
-        'course':course,
+        'course':courseName,
         'outcome':outcome,
         'pi':pi,
         'rubrics':rubricList,
