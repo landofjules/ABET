@@ -78,22 +78,56 @@ def professorPage(request):
     # this should be passed in upon login
     request.session['netid'] = 'jkohann' 
     
-    # ANDREW make this filter by professor
-    courseList = courses.objects.order_by('courseName')
+    profesorNetID = request.session['netid']
+    
+    courseList = courses.objects.filter(professor__netID=profesorNetID)
     
     # run the template
     template = loader.get_template('ABET_DB/prof.html')
     context = {
-        'netid':request.session['netid'],
+        'netid':profesorNetID,
         'courses':courseList,
     }
     return HttpResponse(template.render(context,request))
 
+
 def pi(request,course,outcome,pi):
     
     template = loader.get_template('ABET_DB/pi.html')
-    rubricList = rubrics.objects.all() # ANDREW filter this by pi and so forth
-    # TODO make these the actual abjects so we can access params in the view
+    
+    courseList = courses.objects.filter(professor__netID=profesorNetID)     #find courses associated with loged-in professor
+        
+    flag = 0
+    for c in courseList:                                                    #make sure courseName paramiter is one of loged-in professor's courses
+        if c.name == courseName:
+            flag = 1
+            
+    if flag == 1:    
+        outcomeList = studentOutcomes.objects.filter(course__courseName=courseName)         #find outcomes associated with course
+            
+    #else:
+        #error Invalid course name in function paramiter, maybe raise exception
+        
+    flag = 0
+    for o in outcomeList:                                                   #make sure outcome paramiter is in list of outcomes
+        if o.outcomeLetter == outcome:
+            flag = 1  
+                
+    #if flag != 1:
+        #error Invalid outcome in function paramiter, maybe raise exception
+        
+    pis = performanceIndicators.objects.filter(outcome__outcomeLetter=outcome)      #find performance indicators associated with outcome
+        
+    flag = 0
+    for p in pis:
+        if p.name == pi:
+            flag = 1
+            
+    #if flag != 1:
+        #error
+        
+    rubricList =  rubrics.objects.filter(performanceIndicator__name=pi)
+    
     context = {
         'course':course,
         'outcome':outcome,
@@ -101,6 +135,7 @@ def pi(request,course,outcome,pi):
         'rubrics':rubricList,
     }
     return HttpResponse(template.render(context,request))
+
 
 # these will come
 def submitPi(request): # submit the data and reload the page
@@ -110,24 +145,60 @@ def finalCount(request): # the final form we have to make
 def submitFinal(request):
     pass
 
+
 # this view returns a JSON list that is used for the right two menu bars of the app
 def listJSON(request,courseName,outcome='~'):
-    profNetId = request.session['netid'] # ANDREW this is how we will remember the proffessor
+    professorNetID = request.session['netid'] # ANDREW this is how we will remember the proffessor
     data = []
     
     # if we are asking for the outcomes
     if outcome == '~':
-        outcomeList = studentOutcomes.objects.all() # ANDREW make this filter by courseName and profNetId
+        courseList = courses.objects.filter(professor__netID=profesorNetID)     #find courses associated with loged-in professor
+        
+        flag = 0
+        for c in courseList:                                                    #make sure courseName paramiter is one of loged-in professor's courses
+            if c.name == courseName:
+                flag = 1
+            
+        if flag == 1:    
+            outcomeList = studentOutcomes.objects.filter(course__courseName=courseName)         #find outcomes associated with course
+            
+        #else:
+            #error Invalid course name, maybe raise exception
+        
         for o in outcomeList:
             data.append({'letter':o.outcomeLetter, 'desc':o.description})
         obj = {'courseName':courseName,'data':data}
     else:
-        pis = performanceLevels.objects.all() # ANDREW make this filter by profNetId, courseName, and outcome
+        courseList = courses.objects.filter(professor__netID=profesorNetID)     #find courses associated with loged-in professor
+        
+        flag = 0
+        for c in courseList:                                                    #make sure courseName paramiter is one of loged-in professor's courses
+            if c.name == courseName:
+                flag = 1
+            
+        if flag == 1:    
+            outcomeList = studentOutcomes.objects.filter(course__courseName=courseName)         #find outcomes associated with course
+            
+        #else:
+            #error Invalid course name in function paramiter, maybe raise exception
+        
+        flag = 0
+        for o in outcomeList:                                                   #make sure outcome paramiter is in list of outcomes
+            if o.outcomeLetter == outcome:
+                flag = 1  
+                
+        #if flag != 1:
+            #error Invalid outcome in function paramiter, maybe raise exception
+        
+        pis = performanceIndicators.objects.filter(outcome__outcomeLetter=outcome)      #find performance indicators associated with outcome
+        
         for p in pis:
             data.append({'level':p.achievementLevel, 'desc':p.description})
         obj = {'courseName':courseName,'outcome':outcome,'data':data}
         
     return JsonResponse(obj,safe=False)
+
 
 def test1(request):
     # gather the information and add it to to database
@@ -169,10 +240,12 @@ class CreateContactView(CreateView):
     template_name = 'ABET_DB/edit_contact.html'
     form_class = forms.performanceLevelsForm
     
+    
 class UpdateContactView(UpdateView):
     model = performanceLevels
     template_name = 'edit_contact.html'
     form_class = forms.performanceLevelsForm
+    
     
 class AboutView(TemplateView):
     template_name = 'ABET_DB/about.html'
