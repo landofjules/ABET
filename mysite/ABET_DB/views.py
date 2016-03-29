@@ -117,16 +117,16 @@ def pi(request,course,outcome,pi):
     if flag == 1:    
         outcomeList = studentOutcomes.objects.filter(course__courseName=courseName)         #find outcomes associated with course
             
-    #else:
-        #error Invalid course name in function paramiter, maybe raise exception
+    else:
+        raise ValueError('courseName paramiter is not in list of courses for professor')
         
     flag = 0
     for o in outcomeList:                                                   #make sure outcome paramiter is in list of outcomes
         if o.outcomeLetter == outcome:
             flag = 1  
                 
-    #if flag != 1:
-        #error Invalid outcome in function paramiter, maybe raise exception
+    if flag != 1:
+        raise ValueError('outcome paramiter is not in list of outcomes for course')
         
     pis = performanceIndicators.objects.filter(outcome__outcomeLetter=outcome)      #find performance indicators associated with outcome
         
@@ -135,8 +135,8 @@ def pi(request,course,outcome,pi):
         if p.name == pi:
             flag = 1
             
-    #if flag != 1:
-        #error
+    if flag != 1:
+        raise ValueError('performance indicator paramiter not in list of performance indicators for outcome')
         
     rubricList = rubrics.objects.filter(performanceIndicator__name=pi)
     
@@ -175,8 +175,8 @@ def listJSON(request,courseName,outcome='~'):
         if flag == 1:    
             outcomeList = studentOutcomes.objects.filter(course__courseName=courseName)         #find outcomes associated with course
             
-        #else:
-            #error Invalid course name, maybe raise exception
+        else:
+            raise ValueError('courseName paramiter is not in list of courses for professor')
         
         for o in outcomeList:
             data.append({'letter':o.outcomeLetter, 'desc':o.description})
@@ -192,16 +192,16 @@ def listJSON(request,courseName,outcome='~'):
         if flag == 1:    
             outcomeList = studentOutcomes.objects.filter(course__courseName=courseName)         #find outcomes associated with course
             
-        #else:
-            #error Invalid course name in function paramiter, maybe raise exception
-        
+        else:
+            raise ValueError('courseName paramiter is not in list of courses for professor')
+            
         flag = 0
         for o in outcomeList:                                                   #make sure outcome paramiter is in list of outcomes
             if o.outcomeLetter == outcome:
                 flag = 1  
                 
-        #if flag != 1:
-            #error Invalid outcome in function paramiter, maybe raise exception
+        if flag != 1:
+            raise ValueError('outcome paramiter is not in list of outcomes for course')
         
         pis = performanceIndicators.objects.filter(outcome__outcomeLetter=outcome)      #find performance indicators associated with outcome
         
