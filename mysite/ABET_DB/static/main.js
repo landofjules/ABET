@@ -46,8 +46,9 @@ function loadPiForm() {
     var ptext = $(this).text();
     
     //load the view
+    var url = 'form/'+ctext+'/'+otext+'/'+ptext;
+    $("#mainForm").load(url)
 }
-
 
 
 // link highlighting
