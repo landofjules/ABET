@@ -1,8 +1,9 @@
-<h4>Enter the data for performance indicator </h4>
 <form method="POST" onsubmit="form/submitPi">
     <input type="hidden" name="course" value="{{ course }}"/>
     <input type="hidden" name="outcome" value="{{ outcome }}"/>
     <input type="hidden" name="pi" value="{{ pi.name }}"/>
+    <button class="btn btn-success pull-right">Update</button>
+    <h4>Enter the data for performance indicator </h4>
     <p>Name: <input name="name" value="{{pi.name}}" /> Weight: <input name="weight" value="{{pi.weight}}" size="8" /></p>
     <table><tr>
     <td><p>Description:<br /><textarea name="desc" id="piDesc">{{pi.description}}</textarea></p></td>
@@ -12,12 +13,11 @@
     <p><div style="border-top:1px solid black" class="table-responsive"><table><tr>
         {% for r in rubrics %}
             <td>
-                <h6>{{ r.performancelevel.description }}: {{ r.performancelevel.description }}</h6>
+                <h6>{{ r.performanceLevel.description }}</h6>
                 <p>Range: <input size="2" value="{{ r.gradeLowerBound }}" /> - <input size="2" value="{{ r.gradeTopBound }}" /></p>
                 <p>Students in Category: <input size="3" value="{{r.numStudents}}" /></p>
-                <p><textarea>{{ r.description }}</textarea></p>
+                <p>Description:<br /><textarea>{{ r.description }}</textarea></p>
             </td>
         {% endfor %}
     </tr></table></div></p>
-    
 </form>
