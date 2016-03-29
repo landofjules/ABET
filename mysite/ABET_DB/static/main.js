@@ -21,7 +21,7 @@ $('#courseNav li').click(loadOutcomes);
 
 // when an outcome is selected, load the Preformance indicators
 function loadPis() {
-    selectNav.call(pithis);
+    selectNav.call(this);
     var ctext = $("#courseNav li.active").text();
     var otext = $(this).text();
     $.getJSON('dat/'+ctext+'/'+otext,function(obj) {
