@@ -29,6 +29,40 @@ def showDataTemplate(request):
     
     
 def populate(request):
+    
+    #add professors
+    jkohann = professors(netID='jkohann', isAdmin=False)
+    bvz = professors(netID='bvz', isAdmin=True)
+    ahnilica = professors(netID='ahnilica', isAdmin=False)
+    jkohann.save()
+    bvz.save()
+    ahnilica.save()
+    
+    #add courses
+    cs360 = courses(courseName='cs360', description='Systems Programing', yr=2016, semester='fall', professor=jkohann)
+    cs140 = courses(courseName='cs140', description='Algorithms 1', yr=2016, semester='fall', professor=jkohann)
+    cs420 = courses(courseName='cs420', description='Bio Inspired Computing', yr=2016, semester='fall', professor=jkohann)
+    cs302 = courses(courseName='cs302', description='Algorithms 2', yr=2016, semester='fall', professor=bvz)
+    cs102 = courses(courseName='cs102', description='Intro', yr=2016, semester='fall', professor=ahnilica)
+    cs360.save()
+    cs140.save()
+    cs420.save()
+    cs302.save()
+    cs102.save()
+    
+    #add outcomes
+    a = studentOutcomes(outcomeLetter='A', description='outcome A', course=cs360)
+    b = studentOutcomes(outcomeLetter='B', description='outcome B', course=cs360)
+    c = studentOutcomes(outcomeLetter='C', description='outcome C', course=cs140)
+    d = studentOutcomes(outcomeLetter='D', description='outcome D', course=cs302)
+    e = studentOutcomes(outcomeLetter='E', description='outcome E', course=cs302)
+    f = studentOutcomes(outcomeLetter='F', description='outcome F', course=cs102)
+    a.save()
+    b.save()
+    c.save()
+    d.save()
+    e.save()
+    f.save()
     return HttpResponse("Populated Database")
     
     

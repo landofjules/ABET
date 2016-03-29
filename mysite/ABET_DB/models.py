@@ -11,6 +11,9 @@ class professors(models.Model):
     netID = models.CharField(max_length=512, default='')
     isAdmin = models.BooleanField()
     
+    def __str__(self):
+        return self.netID
+    
 
 class courses(models.Model):
 
@@ -26,11 +29,17 @@ class courses(models.Model):
     semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
     professor = models.ForeignKey(professors, on_delete=models.CASCADE, null=True)
     
+    def __str__(self):
+        return self.courseName
+    
     
 class studentOutcomes(models.Model):
     outcomeLetter = models.CharField(max_length=3)
     description = models.CharField(max_length=512, default='')
     course = models.ForeignKey(courses, on_delete=models.CASCADE, null=True)
+    
+    def __str__(self):
+        return self.outcomeLetter
     
 
 class performanceIndicators(models.Model):
