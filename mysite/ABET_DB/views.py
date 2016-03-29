@@ -208,6 +208,7 @@ def pi(request,courseName,outcome,pi):
     flag = 0
     for p in pis:
         if p.name == pi:
+            piObject = p
             flag = 1
             
     if flag != 1:
@@ -218,7 +219,7 @@ def pi(request,courseName,outcome,pi):
     context = {
         'course':courseName,
         'outcome':outcome,
-        'pi':pi,
+        'pi':piObject,
         'rubrics':rubricList,
     }
     return HttpResponse(template.render(context,request))
