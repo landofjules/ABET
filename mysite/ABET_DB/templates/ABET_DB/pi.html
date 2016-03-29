@@ -12,7 +12,7 @@
     <p><div style="border-top:1px solid black" class="table-responsive"><table><tr>
         {% for r in rubrics %}
             <td>
-                <h6>{{ r.performancelevel.description }}: {{ r.performancelevel.description }}</h6>
+                <h6>{{ r.performanceLevel.description }}</h6>
                 <p>Range: <input size="2" value="{{ r.gradeLowerBound }}" /> - <input size="2" value="{{ r.gradeTopBound }}" /></p>
                 <p>Students in Category: <input size="3" value="{{r.numStudents}}" /></p>
                 <p><textarea>{{ r.description }}</textarea></p>
