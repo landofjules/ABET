@@ -2,8 +2,10 @@ body {
     background-color: #FFE8C2;
     margin:0;
     padding:0.5em;
+    text-align: center;
 }
 h1, h2 {
+    clear:both;
     text-align:center;
     color:orange;
     font-weight:bold;
@@ -24,13 +26,11 @@ h1, h2 {
     border:solid 2px darkorange;
 }
 #outcomeNav, #piNav {
-    float:left;   
+    float:left;
     margin-right:0.5em;
+    
 }
 
-td {
-    padding: 0 .5em;
-}
 #addPi{
     background-color:#4CAF50;
     text-align:center;
@@ -49,9 +49,54 @@ td {
 
 #container {
     margin: 0 auto;
-    max-width: 1000px;
     background-color:white;
     padding:1em;
     border-radius: 1em;
-    
+    overflow:auto;
+    display:inline-block;
+    text-align:center;
+}
+#wrapper {
+    margin: 0 auto;
+    text-align:center;
+}
+
+#mainForm {
+    margin-top: 1em;
+    vertical-align: top;
+    overflow:auto;
+    display:inline-block;
+}
+
+#submitBtn {
+    border:1px solid #296915;
+    font-weight: bold;
+}
+
+.rubricBlock {
+    display:inline-block;
+    background-color: #fbfbfb;
+    border: 1px solid #ddd;
+    margin: 1em .3em 0;
+    padding:0 .5em;
+}
+
+#rubricSec {
+    vertical-align:top;
+    border-top:2px solid #ddd;
+    overflow-x: visible;
+}
+
+.ib {
+    vertical-align: top;
+    margin:0 1em;
+    display:inline-block;
+}
+
+#ecm {
+    color:#337ab7;
+}
+
+.nav-pills li {
+    cursor:pointer;
 }

@@ -4,22 +4,27 @@
     <div id="courseNav" class="centered-pills">
         <ul class="nav nav-pills">
             {% for c in courses %}
-            <li><a href='#'>{{ c.courseName }}</a></li>
+            <li><a>{{ c.courseName }}</a></li>
             {% endfor %}
+            <li id=earlierCourses><a><span id="ect">Earlier Courses</span>
+            <select id="ecm" style="display:none;">
+               <option value="hh">Testing Sp2014</option> 
+               <option value="jj">Testing Sp2013</option> 
+            </select></a></li>
         </ul>
     </div>
-    <div id="outcomeNav">
-        <b>Outcomes</b>
-        <div class="list-group">
+        <div id="outcomeNav" style="display:none;">
+            <b>Outcomes</b>
+            <div class="list-group">
+            </div>
         </div>
-    </div>
-    <div id="piNav">
-        <b>Performance Indicators</b>
-        <div class="list-group">
-            <a id="addPi" class="list-group-item" herf="#">+</a>
+        <div id="piNav" style="display:none;">
+            <b>Performance Indicators</b>
+            <div class="list-group">
+                <a id="addPi" class="list-group-item" herf="#">+</a>
+            </div>
         </div>
-    </div>
-    <div class="well pull-right" id="mainForm">
+    <div class="well" id="mainForm">
         Select a course
     </div>
 {% endblock%}

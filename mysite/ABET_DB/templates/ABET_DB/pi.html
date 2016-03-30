@@ -1,23 +1,21 @@
-<form method="POST" onsubmit="form/submitPi">
+<form method="POST" onsubmit="form/submitPi">{% csrf_token %}
     <input type="hidden" name="course" value="{{ course }}"/>
     <input type="hidden" name="outcome" value="{{ outcome }}"/>
     <input type="hidden" name="pi" value="{{ pi.name }}"/>
-    <button class="btn btn-success pull-right">Update</button>
-    <h4>Enter the data for performance indicator </h4>
+    <button class="btn btn-success pull-right" id="submitBtn">Update</button>
+    <div class="ib"><h4>Enter the data for performance indicator </h4>
     <p>Name: <input name="name" value="{{pi.name}}" /> Weight: <input name="weight" value="{{pi.weight}}" size="8" /></p>
-    <table><tr>
-    <td><p>Description:<br /><textarea name="desc" id="piDesc">{{pi.description}}</textarea></p></td>
-    <td><p>Student Strengths:<br /><textarea name="strong" id="piStrong">{{pi.studentStrengths}}</textarea></p></td>
-    <td><p>Student Weaknesses:<br /><textarea name="weak" id="piWeak">{{pi.studentWeaknesses}}</textarea></p></td>
-    </tr></table>
-    <p><div style="border-top:1px solid black" class="table-responsive"><table><tr>
+    </div>
+    <div class="ib">Description:<br /><textarea name="desc" id="piDesc">{{pi.description}}</textarea></div>
+    
+    <p><div id="rubricSec">
         {% for r in rubrics %}
-            <td>
+            <div class="rubricBlock">
                 <h6>{{ r.performanceLevel.description }}</h6>
                 <p>Range: <input size="2" value="{{ r.gradeLowerBound }}" /> - <input size="2" value="{{ r.gradeTopBound }}" /></p>
                 <p>Students in Category: <input size="3" value="{{r.numStudents}}" /></p>
                 <p>Description:<br /><textarea>{{ r.description }}</textarea></p>
-            </td>
+            </div>
         {% endfor %}
-    </tr></table></div></p>
+    </div></p>
 </form>

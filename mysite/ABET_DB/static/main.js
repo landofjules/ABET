@@ -1,11 +1,9 @@
-$("#outcomeNav, #piNav").hide();   
 
 
 // when a course is selected, load the outcomes
-function loadOutcomes() {
+function loadOutcomes(courseName) {
     selectNav.call(this);
-    var ctext = $(this).text();
-    $.getJSON('dat/'+ctext,function(obj) {
+    $.getJSON('dat/'+courseName,function(obj) {
         $('#outcomeNav').show()
         var here = $("#outcomeNav div.list-group");
         here.empty();
@@ -17,7 +15,18 @@ function loadOutcomes() {
         $('#piNav').hide();
     })   
 };
-$('#courseNav li').click(loadOutcomes);
+$('#courseNav li').click(function() {
+    if($(this).is("#earlierCourses")){
+        selectNav.call(this);
+        $("#ect").hide();
+        $("#ecm").show();
+    } else {
+        selectNav.call(this);
+        loadOutcomes($(this).text());
+        $("#ecm").hide();
+        $("#ect").show();
+    }
+});
 
 
 // when an outcome is selected, load the Preformance indicators
@@ -35,25 +44,22 @@ function loadPis() {
         }
         addPi.appendTo(here);
         $("#mainForm").text("Select an performance indicator for "+obj.outcome);
-        $('#piNav .list-group-item').click(loadPiForm);
+        $('#piNav .list-group-item').click(pushPi);
     })   
 };
 $('#outcomeNav a').click(loadPis);
 
-//when a preformance indicator is selected, load the main form
-function loadPiForm() {
+function pushPi() {
     selectNav.call(this);   
     var ctext = $("#courseNav li.active").text();
     var otext = $("#outcomeNav a.active").text();
     var ptext = $(this).text();
-    
-    //load the view
-    if($(this).is('#addPi')) {
-        alert("bring up a new form")
-    } else {
-        var url = 'form/'+ctext+'/'+otext+'/'+ptext;
-        $("#mainForm").load(url)
-    }
+    loadPiForm(ctext,otext,ptext);
+}
+//when a preformance indicator is selected, load the main form
+function loadPiForm(course,outcome,pi) {
+    var url = 'form/'+course+'/'+outcome+'/'+pi;
+    $("#mainForm").load(url);
 }
 
 
@@ -64,5 +70,7 @@ function selectNav() {
     var type = $(this).get(0).tagName;
     $('#'+parentId+' '+type).removeClass('active');
     $(this).addClass('active');
+    //$("#mainForm").css("min-width",$("#container").width() - $("#outcomeNav").width() - $("#piNav").width())
 }
 
+    
