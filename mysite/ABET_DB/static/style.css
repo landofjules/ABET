@@ -28,7 +28,6 @@ h1, h2 {
 #outcomeNav, #piNav {
     float:left;
     margin-right:0.5em;
-    
 }
 
 #addPi{
@@ -42,9 +41,10 @@ h1, h2 {
 #addPi:hover {
     background-color:#3E8E55;
 }
-#addPi .active {
-    color:#CAA;
-    background-color:white;
+#addPi.active {
+    color:#5CB85C;
+    border-color:#5CB85C;
+    background-color:#DCEFDC;
 }
 
 #container {

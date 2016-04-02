@@ -4,12 +4,14 @@
     <div id="courseNav" class="centered-pills">
         <ul class="nav nav-pills">
             {% for c in courses %}
-            <li><a>{{ c.courseName }}</a></li>
+            <li str="{{c.courseName}}_{{c.semester}}_{{c.yr}}"><a>{{ c.courseName }}</a></li>
             {% endfor %}
-            <li id=earlierCourses><a><span id="ect">Earlier Courses</span>
+            <li id="earlierCourses"><a><span id="ect">Earlier Courses</span>
             <select id="ecm" style="display:none;">
-               <option value="hh">Testing Sp2014</option> 
-               <option value="jj">Testing Sp2013</option> 
+                <option value="--">----</option>
+                {% for c in earlierCourses %}
+                <option value="{{c.courseName}}_{{c.semester}}_{{c.yr}}">{{c.courseName}} {{c.semester}}{{c.yr}}</option> 
+                {% endfor %}
             </select></a></li>
         </ul>
     </div>

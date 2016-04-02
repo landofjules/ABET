@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.template import loader
 from django.views.generic.edit import CreateView
@@ -5,6 +6,8 @@ from django.views.generic.edit import UpdateView
 from django.views.generic import TemplateView
 from ABET_DB import forms
 from django.core.serializers.json import DjangoJSONEncoder
+import datetime
+from django.utils import timezone
 
 
 from ABET_DB.models import *
@@ -166,124 +169,95 @@ def professorPage(request):
     
     profesorNetID = request.session['netid']
     
+    # determine the current semester
+    date = timezone.now()
+    nowSem = 'fall'
+    
     courseList = courses.objects.filter(professor__netID=profesorNetID)
+    coursesNow = courseList.filter(yr=date.year).filter(semester=nowSem)
+    coursesEarly = courseList.exclude(yr=date.year,semester=nowSem)
     
     # run the template
     template = loader.get_template('ABET_DB/prof.html')
     context = {
         'netid':profesorNetID,
-        'courses':courseList,
+        'courses':coursesNow,
+        'earlierCourses':coursesEarly,
     }
     return HttpResponse(template.render(context,request))
 
 
-def pi(request,courseName,outcome,pi):
+def pi(request,courseStr,outcome,pi="~"):
     
     professorNetID = request.session['netid']
     template = loader.get_template('ABET_DB/pi.html')
     
+    course = courseStr.split('_')
     courseList = courses.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
+    
+    c = courses.objects.filter(courseName=course[0]).filter(yr=int(course[2])).filter(semester=course[1]).first()
+    outcomeList = studentOutcomes.objects.filter(course__id=c.id)
         
-    flag = 0
-    for c in courseList:                                                    #make sure courseName paramiter is one of loged-in professor's courses
-        if c.courseName == courseName:
-            flag = 1
-            
-    if flag == 1:    
-        outcomeList = studentOutcomes.objects.filter(course__courseName=courseName)         #find outcomes associated with course
-            
-    else:
-        raise ValueError('courseName paramiter is not in list of courses for professor')
-        
-    flag = 0
-    for o in outcomeList:                                                   #make sure outcome paramiter is in list of outcomes
-        if o.outcomeLetter == outcome:
-            flag = 1  
-                
-    if flag != 1:
+    try: o = outcomeList.get(outcomeLetter=outcome)
+    except ObjectDoesNotExist:
         raise ValueError('outcome paramiter is not in list of outcomes for course')
         
     pis = performanceIndicators.objects.filter(outcome__outcomeLetter=outcome)      #find performance indicators associated with outcome
         
-    flag = 0
-    for p in pis:
-        if p.name == pi:
-            piObject = p
-            flag = 1
+    piObject=None; rubricList=None
+    if pi != '~':
+        try:
+            piObject = pis.get(name=pi)
             
-    if flag != 1:
-        raise ValueError('performance indicator paramiter not in list of performance indicators for outcomesd')
-        
-    rubricList = rubrics.objects.filter(performanceIndicator__name=pi)
+        except ObjectDoesNotExist:
+            raise ValueError('performance indicator paramiter not in list of performance indicators for outcomesd')
+        rubricList = rubrics.objects.filter(performanceIndicator__name=pi)
+    
+    PLlist = performanceLevels.objects.all()
     
     context = {
-        'course':courseName,
+        'course':c,
         'outcome':outcome,
         'pi':piObject,
         'rubrics':rubricList,
+        'perfLevels':PLlist,
     }
     return HttpResponse(template.render(context,request))
 
 
 # these will come
 def submitPi(request): # submit the data and reload the page
-    pass
-def finalCount(request): # the final form we have to make
-    pass
-def submitFinal(request):
-    pass
+    
+    # get all the stuff
+    
+    return HttpResponse('hello')
 
 
 # this view returns a JSON list that is used for the right two menu bars of the app
-def listJSON(request,courseName,outcome='~'):
+def listJSON(request,courseStr,outcome='~'):
     professorNetID = request.session['netid']
     data = []
+    course = courseStr.split('_')
+    
+    courseList = courses.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
+    if not courseList.exists():
+        raise ValueError("No courses found for professor")
+    outcomeList = studentOutcomes.objects.filter(course__courseName=course[0]).filter(course__yr=int(course[2])).filter(course__semester=course[1])
+    
     
     # if we are asking for the outcomes
     if outcome == '~':
-        courseList = courses.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
-        
-        flag = 0
-        for c in courseList:                                                    #make sure courseName paramiter is one of loged-in professor's courses
-            if c.courseName == courseName:
-                flag = 1
-            
-        if flag == 1:    
-            outcomeList = studentOutcomes.objects.filter(course__courseName=courseName)         #find outcomes associated with course
-            
-        else:
-            raise ValueError('courseName paramiter is not in list of courses for professor')
-        
         for o in outcomeList:
             data.append({'letter':o.outcomeLetter, 'desc':o.description})
-        obj = {'courseName':courseName,'data':data}
+        obj = {'courseName':course[0],'data':data}
+        
+    # if we are asking for preformanc indicators
     else:
-        courseList = courses.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
-        
-        flag = 0
-        for c in courseList:                                                    #make sure courseName paramiter is one of loged-in professor's courses
-            if c.courseName == courseName:
-                flag = 1
-            
-        if flag == 1:    
-            outcomeList = studentOutcomes.objects.filter(course__courseName=courseName)         #find outcomes associated with course
-            
-        else:
-            raise ValueError('courseName paramiter is not in list of courses for professor')
-            
-        flag = 0
-        for o in outcomeList:                                                   #make sure outcome paramiter is in list of outcomes
-            if o.outcomeLetter == outcome:
-                flag = 1  
-                
-        if flag != 1:
-            raise ValueError('outcome paramiter is not in list of outcomes for course')
-        
         pis = performanceIndicators.objects.filter(outcome__outcomeLetter=outcome)      #find performance indicators associated with outcome
         
         for p in pis:
-            data.append({'name':p.name, 'desc':p.description})
-        obj = {'courseName':courseName,'outcome':outcome,'data':data}
+            data.append({'name':p.name, 'id':p.id, 'desc':p.description})
+        obj = {'courseName':course[0],'outcome':outcome,'data':data}
         
     return JsonResponse(obj,safe=False)
 
