@@ -28,6 +28,10 @@ def showDataTemplate(request):
     return HttpResponse(template.render(context, request))
     
     
+def handlePost(request):
+    return HttpResponse("Handled POST")
+    
+    
 def populate(request):
     
     #add performanceLevels
