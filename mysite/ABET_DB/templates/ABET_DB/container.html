@@ -7,19 +7,21 @@
         <link rel="stylesheet" href="{% static "style.css" %}" />
     </head>
     <body>
+        <div id="wrapper">
         <div id="container">
-            <div class="btn-group">
-                <a href="#" class="btn btn-default active">Edit</a>
-                <a href="#" class="btn btn-default">Collect</a>
-            </div>
             <button type="button" id="logoutButton"class="btn btn-danger pull-right">Log Out</button>
+            <div id="pageNav" style="text-align:left;"><div class="btn-group">
+                <a id="pageNavPi" class="btn btn-default active">Performance Indicators</a>
+                <a id="pageNavOut" class="btn btn-default">Outcomes</a>
+            </div></div>
             <h2>Welcome, {{ netid }}!</h2>
             {% block body %} {% endblock %}
             
             <div style="clear:both;"></div>
             <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
             <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-            {% block scripts %} <script src="{% static "main.js" %}"></script> {% endblock %}
         </div>
+        </div>
+        {% block scripts %} <script src="{% static 'main.js' %}"></script> {% endblock %}
     </body>
 </html>

@@ -1,23 +1,29 @@
-<form method="POST" onsubmit="form/submitPi">
-    <input type="hidden" name="course" value="{{ course }}"/>
+<form name="piform">{% csrf_token %}
+    <input type="hidden" name="course" value="{{course.courseName}}_{{course.semester}}_{{course.yr}}"/>
     <input type="hidden" name="outcome" value="{{ outcome }}"/>
     <input type="hidden" name="pi" value="{{ pi.name }}"/>
-    <button class="btn btn-success pull-right">Update</button>
-    <h4>Enter the data for performance indicator </h4>
+    <button type="button" class="btn btn-success pull-right" id="updateBtn">Update</button>
+    <div class="ib"><h4>Enter the data for performance indicator </h4>
     <p>Name: <input name="name" value="{{pi.name}}" /> Weight: <input name="weight" value="{{pi.weight}}" size="8" /></p>
-    <table><tr>
-    <td><p>Description:<br /><textarea name="desc" id="piDesc">{{pi.description}}</textarea></p></td>
-    <td><p>Student Strengths:<br /><textarea name="strong" id="piStrong">{{pi.studentStrengths}}</textarea></p></td>
-    <td><p>Student Weaknesses:<br /><textarea name="weak" id="piWeak">{{pi.studentWeaknesses}}</textarea></p></td>
-    </tr></table>
-    <p><div style="border-top:1px solid black" class="table-responsive"><table><tr>
-        {% for r in rubrics %}
-            <td>
-                <h6>{{ r.performanceLevel.description }}</h6>
-                <p>Range: <input size="2" value="{{ r.gradeLowerBound }}" /> - <input size="2" value="{{ r.gradeTopBound }}" /></p>
-                <p>Students in Category: <input size="3" value="{{r.numStudents}}" /></p>
-                <p>Description:<br /><textarea>{{ r.description }}</textarea></p>
-            </td>
+    </div>
+    <div class="ib">Description:<br /><textarea name="desc" id="piDesc">{{pi.description}}</textarea></div>
+    
+    <p><div id="rubricSec">
+        {% for p in perfLevels %}
+            <div class="rubricBlock">
+                <h6>{{ p.description }}</h6>
+                {% if rubrics %} 
+                    {% for r in rubrics %} {% if r.performanceLevel.id == p.id %}
+                    <p>Range: <input size="2" name="r_{{ p.achievementLevel}}_lower" value="{{ r.gradeLowerBound }}" /> - <input size="2" name="r_{{ p.achievementLevel}}_upper" value="{{ r.gradeTopBound }}" /></p>
+                    <p>Students in Category: <input size="3" name="r_{{ p.achievementLevel}}_num" value="{{r.numStudents}}" /></p>
+                    <p>Description:<br /><textarea name="r_{{ p.achievementLevel}}_desc">{{ r.description }}</textarea></p>
+                    {% endif %} {% endfor %}
+                {% else %}
+                    <p>Range: <input size="2" name="r_{{ p.achievementLevel}}_lower" /> - <input size="2" name="r_{{ p.achievementLevel}}_upper" /></p>
+                    <p>Students in Category: <input name="r_{{ p.achievementLevel}}_num" size="3"  /></p>
+                    <p>Description:<br /><textarea name="r_{{ p.achievementLevel}}_desc"></textarea></p>
+                {% endif %}
+            </div>
         {% endfor %}
-    </tr></table></div></p>
+    </div></p>
 </form>

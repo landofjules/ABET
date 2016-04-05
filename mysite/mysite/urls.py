@@ -24,15 +24,16 @@ from ABET_DB import views
 
 
 urlpatterns = [
-    url(r'^dat/(\w+)$',views.listJSON),
+    url(r'^dat/(\w+)/?$',views.listJSON),
     url(r'^dat/(\w+)/(\w+)$',views.listJSON),
-    url(r'^form/(\w+)/(\w+)/(\w+)$',views.pi), # use ~ as pi for new form
-    url(r'^form/(\w+)/(\w+)/~$',views.pi),
-    url(r'form/submitPi$',views.submitPi),
+    url(r'^form/pi/(\w+)/(\w+)/(\w+)$',views.piForm),
+    url(r'^form/pi/(\w+)/(\w+)/~$',views.piForm), # use ~ as pi for new form
+    url(r'^form/out/(\w+)/(\w+)$',views.outcomeForm),
+    url(r'^submit/pi$',views.submitPi),
+    url(r'^submit/outcome$',views.submitOut),
     url(r'populate/', views.populate),
     url(r'clearDB/', views.clearDB),
     url(r'^admin/', admin.site.urls),
-    url(r'^about/', AboutView.as_view()),
     url(r'^init/', views.test1),
-    url(r'', views.professorPage),
+    url(r'^$', views.professorPage),
 ] + static(settings.STATIC_URL,docuemnt_root=settings.STATIC_ROOT)

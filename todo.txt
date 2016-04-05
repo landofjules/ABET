@@ -1,0 +1,2 @@
+Make Page not adjust size as much
+When we click on "earlierCourses" disable the outcomes

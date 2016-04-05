@@ -1,3 +1,4 @@
 *.pyc
 mysite/db.sqlite3
 mysite/ABET_DB/migrations/*
+mysite/ABET_DB/.~*
