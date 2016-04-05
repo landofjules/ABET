@@ -187,7 +187,7 @@ def professorPage(request):
     return HttpResponse(template.render(context,request))
 
 
-def pi(request,courseStr,outcome,pi="~"):
+def piForm(request,courseStr,outcome,pi="~"):
     
     professorNetID = request.session['netid']
     template = loader.get_template('ABET_DB/pi.html')
@@ -225,14 +225,66 @@ def pi(request,courseStr,outcome,pi="~"):
     return HttpResponse(template.render(context,request))
 
 
-# these will come
 def submitPi(request): # submit the data and reload the page
     
     # get all the stuff
+    professorNetID = request.session['netid']
+    courseList = courses.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
+    
+    c3 = request.POST['course'].split('_');
+    otext = request.POST['outcome']
+    pitext = request.POST['name']
+    
+    
+    try:
+        c = courseList.filter(courseName=c3[0]).filter(yr=int(c3[2])).get(semester=c3[1])
+        o = studentOutcomes.objects.get(course=c,outcomeLetter=otext)
+        
+    except ObjectDoesNotExist:
+        raise ValueError("In submitPi, one object not found")
+    
+    (pi,created) = performanceIndicators.objects.update_or_create(name=pitext,outcome=o, \
+            defaults={'weight':float(request.POST['weight']),
+                      'description':request.POST['desc'],})
+    
+    for pl in performanceLevels.objects.all():
+        a = str(pl.achievementLevel)
+        if request.POST['r_'+a+'_upper'] and request.POST['r_'+a+'_lower']:
+            rubrics.objects.update_or_create( \
+                performanceIndicator__pk=pi.id,performanceLevel__id=pl.id, \
+                defaults = {'gradeTopBound':int(request.POST['r_'+a+'_upper']),
+                            'gradeLowerBound':int(request.POST['r_'+a+'_lower']),
+                            'numStudents':int(request.POST['r_'+a+'_num']),
+                            'description':request.POST['r_'+a+'_desc'],})
     
     return HttpResponse('hello')
 
+def outcomeForm(request,courseStr,outcome):
+    professorNetID = request.session['netid']
+    template = loader.get_template('ABET_DB/outcome.html')
+    
+    course = courseStr.split('_')
+    courseList = courses.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
+    
+    c = courses.objects.filter(courseName=course[0]).filter(yr=int(course[2])).filter(semester=course[1]).first()
+    outcomeList = studentOutcomes.objects.filter(course__id=c.id)
+        
+    try: o = outcomeList.get(outcomeLetter=outcome)
+    except ObjectDoesNotExist:
+        raise ValueError('outcome paramiter is not in list of outcomes for course')
+        
+    PLlist = performanceLevels.objects.all()
+    
+    context = {
+        'course':c,
+        'outcome':outcome,
+        'perfLevels':PLlist,
+    }
+    return HttpResponse(template.render(context,request))
 
+def submitOut(request):
+    return HttpResponse("pass")
+    
 # this view returns a JSON list that is used for the right two menu bars of the app
 def listJSON(request,courseStr,outcome='~'):
     professorNetID = request.session['netid']

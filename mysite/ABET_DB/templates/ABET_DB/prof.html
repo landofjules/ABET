@@ -6,13 +6,15 @@
             {% for c in courses %}
             <li str="{{c.courseName}}_{{c.semester}}_{{c.yr}}"><a>{{ c.courseName }}</a></li>
             {% endfor %}
-            <li id="earlierCourses"><a><span id="ect">Earlier Courses</span>
-            <select id="ecm" style="display:none;">
-                <option value="--">----</option>
-                {% for c in earlierCourses %}
-                <option value="{{c.courseName}}_{{c.semester}}_{{c.yr}}">{{c.courseName}} {{c.semester}}{{c.yr}}</option> 
-                {% endfor %}
-            </select></a></li>
+            <li id="earlierCourses"><a>
+                <span id="ect">Earlier Courses</span>
+                <select id="ecm" style="display:none;">u
+                    <option value="--">----</option>
+                    {% for c in earlierCourses %}
+                    <option value="{{c.courseName}}_{{c.semester}}_{{c.yr}}">{{c.courseName}} {{c.semester}}{{c.yr}}</option> 
+                    {% endfor %}
+                </select>
+            </a></li>
         </ul>
     </div>
         <div id="outcomeNav" style="display:none;">

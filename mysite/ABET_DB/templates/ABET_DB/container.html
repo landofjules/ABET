@@ -10,9 +10,9 @@
         <div id="wrapper">
         <div id="container">
             <button type="button" id="logoutButton"class="btn btn-danger pull-right">Log Out</button>
-            <div style="text-align:left;"><div class="btn-group">
-                <a href="#" class="btn btn-default active">Performance Indicators</a>
-                <a href="#" class="btn btn-default">Outcomes</a>
+            <div id="pageNav" style="text-align:left;"><div class="btn-group">
+                <a id="pageNavPi" class="btn btn-default active">Performance Indicators</a>
+                <a id="pageNavOut" class="btn btn-default">Outcomes</a>
             </div></div>
             <h2>Welcome, {{ netid }}!</h2>
             {% block body %} {% endblock %}
