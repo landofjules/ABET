@@ -214,7 +214,7 @@ def piForm(request,courseStr,outcome,pi="~"):
             piObject = pis.get(name=pi)
             
         except ObjectDoesNotExist:
-            raise ValueError('performance indicator paramiter not in list of performance indicators for outcomesd')
+            raise ValueError('performance indicator paramiter not in list of performance indicators for outcomes')
         rubricList = rubrics.objects.filter(performanceIndicator__name=pi)
     
     PLlist = performanceLevels.objects.all()
