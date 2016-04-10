@@ -2,7 +2,9 @@
     <input type="hidden" name="course" value="{{course.courseName}}_{{course.semester}}_{{course.yr}}"/>
     <input type="hidden" name="outcome" value="{{ outcome }}"/>
     <input type="hidden" name="pi" value="{{ pi.name }}"/>
-    <button type="button" class="btn btn-success pull-right" id="updateBtn">Update</button>
+    
+    <div class="pull-right" ><button type="button" class="btn btn-success" id="updateBtn">Update</button></div>
+    
     <div class="ib"><h4>Enter the data for performance indicator </h4>
     <p>Name: <input name="name" value="{{pi.name}}" /> Weight: <input name="weight" value="{{pi.weight}}" size="8" /></p>
     </div>
@@ -14,7 +16,7 @@
                 <h6>{{ p.description }}</h6>
                 {% if rubrics %} 
                     {% for r in rubrics %} {% if r.performanceLevel.id == p.id %}
-                    <p>Range: <input size="2" name="r_{{ p.achievementLevel}}_lower" value="{{ r.gradeLowerBound }}" /> - <input size="2" name="r_{{ p.achievementLevel}}_upper" value="{{ r.gradeTopBound }}" /></p>
+                    <p>Range: <input size="2" name="r_{{ p.achievementLevel}}_lower" value="{{ r.gradeLowerBound }}" /> - <input size="3" name="r_{{ p.achievementLevel}}_upper" value="{{ r.gradeTopBound }}" /></p>
                     <p>Students in Category: <input size="3" name="r_{{ p.achievementLevel}}_num" value="{{r.numStudents}}" /></p>
                     <p>Description:<br /><textarea name="r_{{ p.achievementLevel}}_desc">{{ r.description }}</textarea></p>
                     {% endif %} {% endfor %}
@@ -26,4 +28,5 @@
             </div>
         {% endfor %}
     </div></p>
+    <a id="deleteLink">Delete</a>
 </form>

@@ -1,9 +1,20 @@
 body {
-    background-color: #FFE8C2;
+    /*background-color: #FFE8C2;*/
     margin:0;
-    padding:0.5em;
     text-align: center;
 }
+body {
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f7b531+0,fc6620+50,ff7d21+100 */
+background: #f7c531; /* Old browsers */
+background: -moz-linear-gradient(center, ellipse cover, #f7b531 0%, #fc6620 50%, #ff7d21 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(center, ellipse cover, #f7b531 0%,#fc6620 50%,#ff7d21 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient( #f7b531 0%,#fc6620 50%,#ff7d21 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7b531', endColorstr='#ff7d21',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+html, body {
+    height:100%;
+}
+/* body gradient */
 h1, h2 {
     clear:both;
     text-align:center;
@@ -57,20 +68,26 @@ h1, h2 {
     text-align:center;
 }
 #wrapper {
-    margin: 0 auto;
-    text-align:center;
+    /*text-align:center;*/
+    background-image:url("/static/images/BGpattern.png");
+   height:100%;
+   width:100%;
+    padding:0.5em;
 }
 
 #mainForm {
     margin-top: 1em;
     vertical-align: top;
-    overflow:auto;
+    /*overflow:auto;*/
     display:inline-block;
 }
 
 #submitBtn {
     border:1px solid #296915;
     font-weight: bold;
+}
+#deleteLink {
+    color:red;
 }
 
 .rubricBlock {
@@ -84,7 +101,7 @@ h1, h2 {
 #rubricSec {
     vertical-align:top;
     border-top:2px solid #ddd;
-    overflow-x: visible;
+    /*overflow-x: visible;*/
 }
 
 .ib {
@@ -97,6 +114,12 @@ h1, h2 {
     color:#337ab7;
 }
 
-.nav-pills li {
+.nav-pills li, a {
     cursor:pointer;
+}
+
+#narrSum {
+    display:block;
+    resize:vertical;
+    max-width:20em; 
 }

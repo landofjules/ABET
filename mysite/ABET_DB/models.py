@@ -47,10 +47,9 @@ class studentOutcomes(models.Model):
 
 class performanceIndicators(models.Model):
     name = models.CharField(max_length=512, default='')
+    # section number to section
     weight = models.DecimalField(max_digits=5, decimal_places=3)
     description = models.CharField(max_length=512, default='')
-    studentStrengths = models.CharField(max_length=512, default='')
-    studentWeaknesses = models.CharField(max_length=512, default='')
     outcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
@@ -59,6 +58,7 @@ class performanceIndicators(models.Model):
 
 class outcomeData(models.Model):
     numberAchieved = models.IntegerField(default=0)
+    # point only to courseOutcome by section number and letter
     course = models.ForeignKey(courses, on_delete=models.CASCADE, null=True)
     performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
     studentOutcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE, null=True)
