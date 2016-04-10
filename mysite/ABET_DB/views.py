@@ -4,193 +4,95 @@ from django.template import loader
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import UpdateView
 from django.views.generic import TemplateView
-from ABET_DB import forms
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.context_processors import csrf
+from django.views.decorators.csrf import ensure_csrf_cookie
 import datetime
 from django.utils import timezone
-
+from sets import Set
 
 from ABET_DB.models import *
 from django.http import HttpResponse, JsonResponse
 
-    
-def showDataTemplate(request):
-    
-    outcomeList = studentOutcomes.objects.order_by('outcomeLetter')
-    courseList = courses.objects.order_by('courseName')
-    performanceList = performanceLevels.objects.order_by('achievementLevel')
-    
-    template = loader.get_template('ABET_DB/showDataTemplate.html')
-    
-    context = {
-      'outcomeList': outcomeList,
-      'courseList': courseList,
-      'performanceList': performanceList,
-    }
-    
-    return HttpResponse(template.render(context, request))
-    
-    
-def handlePost(request):
-    return HttpResponse("Handled POST")
-    
-    
-def populate(request):
-    
-    #add performanceLevels
-    excede = performanceLevels(achievementLevel=0, description='Exceded Expectations')
-    met = performanceLevels(achievementLevel=1, description='Met Expectations')
-    didNotMeet = performanceLevels(achievementLevel=2, description='Did Not Meet Expectations')
-    failed = performanceLevels(achievementLevel=3, description='Performed Poorly')
-    excede.save()
-    met.save()
-    didNotMeet.save()
-    failed.save()
-    
-    #add professors
-    jkohann = professors(netID='jkohann', isAdmin=False)
-    bvz = professors(netID='bvz', isAdmin=True)
-    ahnilica = professors(netID='ahnilica', isAdmin=False)
-    stonecoldhughes = professors(netID='stonecoldhughes', isAdmin=False)
-    jkohann.save()
-    bvz.save()
-    ahnilica.save()
-    stonecoldhughes.save()
-    
-    #add courses
-    cs360 = courses(courseName='cs360', description='Systems Programing', yr=2016, semester='fall', professor=jkohann)
-    cs140 = courses(courseName='cs140', description='Algorithms 1', yr=2016, semester='fall', professor=jkohann)
-    cs420 = courses(courseName='cs420', description='Bio Inspired Computing', yr=2016, semester='fall', professor=jkohann)
-    cs401 = courses(courseName='cs401', description='Sr Design Theory', yr=2016, semester='fall', professor=jkohann)
-    cs402 = courses(courseName='cs402', description='Sr Design Practicum', yr=2016, semester='fall', professor=jkohann)
-    cs302 = courses(courseName='cs302', description='Algorithms 2', yr=2016, semester='fall', professor=bvz)
-    cs102 = courses(courseName='cs102', description='Intro', yr=2016, semester='fall', professor=ahnilica)
-    cs360.save()
-    cs140.save()
-    cs420.save()
-    cs401.save()
-    cs402.save()
-    cs302.save()
-    cs102.save()
-    
-    #add outcomes
-    a = studentOutcomes(outcomeLetter='A', description='outcome A', course=cs360)
-    b = studentOutcomes(outcomeLetter='B', description='outcome B', course=cs360)
-    c = studentOutcomes(outcomeLetter='C', description='outcome C', course=cs140)
-    d = studentOutcomes(outcomeLetter='D', description='outcome D', course=cs302)
-    e = studentOutcomes(outcomeLetter='E', description='outcome E', course=cs302)
-    f = studentOutcomes(outcomeLetter='F', description='outcome F', course=cs102)
-    g = studentOutcomes(outcomeLetter='G', description='outcome G', course=cs140)
-    h = studentOutcomes(outcomeLetter='H', description='outcome H', course=cs420)
-    i = studentOutcomes(outcomeLetter='I', description='outcome I', course=cs140)
-    j = studentOutcomes(outcomeLetter='J', description='outcome J', course=cs402)
-    a.save()
-    b.save()
-    c.save()
-    d.save()
-    e.save()
-    f.save()
-    g.save()
-    h.save()
-    i.save()
-    j.save()
-    
-    #add performanceIndicators
-    one = performanceIndicators(name='one', weight=0.5, description='PI One', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=a)
-    two = performanceIndicators(name='two', weight=0.5, description='PI Two', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=a)
-    three = performanceIndicators(name='three', weight=0.5, description='PI three', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=a)
-    four = performanceIndicators(name='four', weight=0.5, description='PI four', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=b)
-    five = performanceIndicators(name='five', weight=0.5, description='PI five', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=b)
-    six = performanceIndicators(name='six', weight=0.5, description='PI six', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=c)
-    seven = performanceIndicators(name='seven', weight=0.5, description='PI seven', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=c)
-    eight = performanceIndicators(name='eight', weight=0.5, description='PI eight', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=a)
-    nine = performanceIndicators(name='nine', weight=0.5, description='PI nine', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=b)
-    ten = performanceIndicators(name='ten', weight=0.5, description='PI ten', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=b)
-    one.save()
-    two.save()
-    three.save()
-    four.save()
-    five.save()
-    six.save()
-    seven.save()
-    eight.save()
-    nine.save()
-    ten.save()
-    
-    #add rubrics
-    rubA = rubrics(gradeTopBound=100, gradeLowerBound=90, description='Rubric A', numStudents=50, performanceLevel=excede, performanceIndicator=one)
-    rubB = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric B', numStudents=50, performanceLevel=met, performanceIndicator=one)
-    rubC = rubrics(gradeTopBound=80, gradeLowerBound=70, description='Rubric C', numStudents=50, performanceLevel=didNotMeet, performanceIndicator=one)
-    rubD = rubrics(gradeTopBound=70, gradeLowerBound=0, description='Rubric D', numStudents=50, performanceLevel=failed, performanceIndicator=one)
-    
-    rubE = rubrics(gradeTopBound=100, gradeLowerBound=90, description='Rubric E', numStudents=50, performanceLevel=excede, performanceIndicator=two)
-    rubF = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric F', numStudents=50, performanceLevel=met, performanceIndicator=two)
-    rubG = rubrics(gradeTopBound=80, gradeLowerBound=70, description='Rubric G', numStudents=50, performanceLevel=didNotMeet, performanceIndicator=two)
-    rubH = rubrics(gradeTopBound=70, gradeLowerBound=0, description='Rubric H', numStudents=50, performanceLevel=failed, performanceIndicator=two)
-    
-    rubI = rubrics(gradeTopBound=100, gradeLowerBound=90, description='Rubric I', numStudents=50, performanceLevel=excede, performanceIndicator=three)
-    rubJ = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric J', numStudents=50, performanceLevel=met, performanceIndicator=three)
-    rubK = rubrics(gradeTopBound=80, gradeLowerBound=70, description='Rubric K', numStudents=50, performanceLevel=didNotMeet, performanceIndicator=three)
-    rubL = rubrics(gradeTopBound=70, gradeLowerBound=0, description='Rubric L', numStudents=50, performanceLevel=failed, performanceIndicator=three)
-    
-    rubM = rubrics(gradeTopBound=100, gradeLowerBound=90, description='Rubric M', numStudents=50, performanceLevel=excede, performanceIndicator=four)
-    rubN = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric N', numStudents=50, performanceLevel=met, performanceIndicator=four)
-    rubO = rubrics(gradeTopBound=80, gradeLowerBound=70, description='Rubric O', numStudents=50, performanceLevel=didNotMeet, performanceIndicator=four)
-    rubP = rubrics(gradeTopBound=70, gradeLowerBound=0, description='Rubric P', numStudents=50, performanceLevel=failed, performanceIndicator=four)
-    rubA.save()
-    rubB.save()
-    rubC.save()
-    rubD.save()
-    rubE.save()
-    rubF.save()
-    rubG.save()
-    rubH.save()
-    rubI.save()
-    rubJ.save()
-    rubK.save()
-    rubL.save()
-    rubM.save()
-    rubN.save()
-    rubO.save()
-    rubP.save()
-    return HttpResponse("Populated Database")
-    
-    
-def clearDB(request):
-    professors.objects.all().delete()
-    courses.objects.all().delete()
-    studentOutcomes.objects.all().delete()
-    performanceLevels.objects.all().delete()
-    rubrics.objects.all().delete()
-    performanceIndicators.objects.all().delete()
-    return HttpResponse("Cleared Database")
-    
-    
+def current():
+    now = timezone.now()
+    semNow = str()
+    if now.month <= 5 and now.day < 14:
+        semNow = "spring"
+    elif now.month >= 7 and now.day > 10:
+        semNow = "fall"
+    else:
+        semNow = "summer"
+   
+    return (semNow, now.year)
+
+@ensure_csrf_cookie 
 def professorPage(request):
-    # after harry figures out security, this wont be needed
+    # after HARRY figures out security, this wont be needed
     # this should be passed in upon login
     request.session['netid'] = 'jkohann' 
+    professorNetID = request.session['netid']
     
-    profesorNetID = request.session['netid']
+    sectionList = section.objects.filter(professor__netID=professorNetID)
     
-    # determine the current semester
-    date = timezone.now()
-    nowSem = 'fall'
-    
-    courseList = courses.objects.filter(professor__netID=profesorNetID)
-    coursesNow = courseList.filter(yr=date.year).filter(semester=nowSem)
-    coursesEarly = courseList.exclude(yr=date.year,semester=nowSem)
-    
+    # make a list of all semesters
+    semesterSet = Set()
+    for s in sectionList:
+        syStr = s.semester +' '+ str(s.year)
+        semesterSet.add(syStr)
+
     # run the template
     template = loader.get_template('ABET_DB/prof.html')
     context = {
-        'netid':profesorNetID,
-        'courses':coursesNow,
-        'earlierCourses':coursesEarly,
+        'netid':professorNetID,
+        'semesters':list(semesterSet),
+        'currentSem':nowSem +' '+ str(nowYear),
+        'courses':sectionsNow,
     }
     return HttpResponse(template.render(context,request))
 
+# this view returns a JSON list that is used for the right two menu bars of the app
+def listJSON(request):
+    
+    what = request.POST['what']
+    professorNetID = request.session['netid']
+    obj = dict()
+    
+    courseList = section.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
+    
+    semSem, semYear = tuple(request.POST['semStr'].split(' '))
+    coursesThisSem = courseList.filter(year=semYear).filter(semester=semSem)
+    obj['semester'] = semSem
+    obj['year'] = semYear
+    obj['semStr'] = request.POST['semStr']
+    
+    if what == 'courses':
+        obj['courses'] = list()
+        for s in coursesThisSem:
+            obj['courses'].append(s.main.name)
+    
+    
+    
+    
+    '''
+    # if we are asking for the outcomes
+    if outcome == '~':
+        for o in outcomeList:
+            data.append({'letter':o.outcomeLetter, 'desc':o.description})
+        obj = {'courseName':course[0],'data':data}
+        
+    # if we are asking for preformanc indicators
+    else:
+        pis = performanceIndicators.objects.filter(outcome__outcomeLetter=outcome)      #find performance indicators associated with outcome
+        
+        for p in pis:
+            data.append({'name':p.name, 'id':p.id, 'desc':p.description})
+        obj = {'courseName':course[0],'outcome':outcome,'data':data}
+        
+    '''
+    return JsonResponse(obj,safe=False)
 
+'''
 def piForm(request,courseStr,outcome,pi="~"):
     
     professorNetID = request.session['netid']
@@ -352,19 +254,136 @@ def test1(request):
     }
     return HttpResponse(template.render(context,request))
 
-
-class CreateContactView(CreateView):
-    model = performanceLevels
-    template_name = 'ABET_DB/edit_contact.html'
-    form_class = forms.performanceLevelsForm
+    
+def populate(request):
+    pass    
+    #add performanceLevels
+    excede = performanceLevels(achievementLevel=0, description='Exceded Expectations')
+    met = performanceLevels(achievementLevel=1, description='Met Expectations')
+    didNotMeet = performanceLevels(achievementLevel=2, description='Did Not Meet Expectations')
+    failed = performanceLevels(achievementLevel=3, description='Performed Poorly')
+    excede.save()
+    met.save()
+    didNotMeet.save()
+    failed.save()
+    
+    #add professors
+    jkohann = professors(netID='jkohann', isAdmin=False)
+    bvz = professors(netID='bvz', isAdmin=True)
+    ahnilica = professors(netID='ahnilica', isAdmin=False)
+    stonecoldhughes = professors(netID='stonecoldhughes', isAdmin=False)
+    jkohann.save()
+    bvz.save()
+    ahnilica.save()
+    stonecoldhughes.save()
+    
+    #add courses
+    cs360 = courses(courseName='cs360', description='Systems Programing', yr=2016, semester='fall', professor=jkohann)
+    cs140 = courses(courseName='cs140', description='Algorithms 1', yr=2016, semester='fall', professor=jkohann)
+    cs420 = courses(courseName='cs420', description='Bio Inspired Computing', yr=2016, semester='fall', professor=jkohann)
+    cs401 = courses(courseName='cs401', description='Sr Design Theory', yr=2016, semester='fall', professor=jkohann)
+    cs402 = courses(courseName='cs402', description='Sr Design Practicum', yr=2016, semester='fall', professor=jkohann)
+    cs302 = courses(courseName='cs302', description='Algorithms 2', yr=2016, semester='fall', professor=bvz)
+    cs102 = courses(courseName='cs102', description='Intro', yr=2016, semester='fall', professor=ahnilica)
+    cs360.save()
+    cs140.save()
+    cs420.save()
+    cs401.save()
+    cs402.save()
+    cs302.save()
+    cs102.save()
+    
+    #add outcomes
+    a = studentOutcomes(outcomeLetter='A', description='outcome A', course=cs360)
+    b = studentOutcomes(outcomeLetter='B', description='outcome B', course=cs360)
+    c = studentOutcomes(outcomeLetter='C', description='outcome C', course=cs140)
+    d = studentOutcomes(outcomeLetter='D', description='outcome D', course=cs302)
+    e = studentOutcomes(outcomeLetter='E', description='outcome E', course=cs302)
+    f = studentOutcomes(outcomeLetter='F', description='outcome F', course=cs102)
+    g = studentOutcomes(outcomeLetter='G', description='outcome G', course=cs140)
+    h = studentOutcomes(outcomeLetter='H', description='outcome H', course=cs420)
+    i = studentOutcomes(outcomeLetter='I', description='outcome I', course=cs140)
+    j = studentOutcomes(outcomeLetter='J', description='outcome J', course=cs402)
+    a.save()
+    b.save()
+    c.save()
+    d.save()
+    e.save()
+    f.save()
+    g.save()
+    h.save()
+    i.save()
+    j.save()
+    
+    #add performanceIndicators
+    one = performanceIndicators(name='one', weight=0.5, description='PI One', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=a)
+    two = performanceIndicators(name='two', weight=0.5, description='PI Two', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=a)
+    three = performanceIndicators(name='three', weight=0.5, description='PI three', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=a)
+    four = performanceIndicators(name='four', weight=0.5, description='PI four', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=b)
+    five = performanceIndicators(name='five', weight=0.5, description='PI five', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=b)
+    six = performanceIndicators(name='six', weight=0.5, description='PI six', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=c)
+    seven = performanceIndicators(name='seven', weight=0.5, description='PI seven', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=c)
+    eight = performanceIndicators(name='eight', weight=0.5, description='PI eight', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=a)
+    nine = performanceIndicators(name='nine', weight=0.5, description='PI nine', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=b)
+    ten = performanceIndicators(name='ten', weight=0.5, description='PI ten', studentStrengths='Strength', studentWeaknesses='Weakness', outcome=b)
+    one.save()
+    two.save()
+    three.save()
+    four.save()
+    five.save()
+    six.save()
+    seven.save()
+    eight.save()
+    nine.save()
+    ten.save()
+    
+    #add rubrics
+    rubA = rubrics(gradeTopBound=100, gradeLowerBound=90, description='Rubric A', numStudents=50, performanceLevel=excede, performanceIndicator=one)
+    rubB = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric B', numStudents=50, performanceLevel=met, performanceIndicator=one)
+    rubC = rubrics(gradeTopBound=80, gradeLowerBound=70, description='Rubric C', numStudents=50, performanceLevel=didNotMeet, performanceIndicator=one)
+    rubD = rubrics(gradeTopBound=70, gradeLowerBound=0, description='Rubric D', numStudents=50, performanceLevel=failed, performanceIndicator=one)
+    
+    rubE = rubrics(gradeTopBound=100, gradeLowerBound=90, description='Rubric E', numStudents=50, performanceLevel=excede, performanceIndicator=two)
+    rubF = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric F', numStudents=50, performanceLevel=met, performanceIndicator=two)
+    rubG = rubrics(gradeTopBound=80, gradeLowerBound=70, description='Rubric G', numStudents=50, performanceLevel=didNotMeet, performanceIndicator=two)
+    rubH = rubrics(gradeTopBound=70, gradeLowerBound=0, description='Rubric H', numStudents=50, performanceLevel=failed, performanceIndicator=two)
+    
+    rubI = rubrics(gradeTopBound=100, gradeLowerBound=90, description='Rubric I', numStudents=50, performanceLevel=excede, performanceIndicator=three)
+    rubJ = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric J', numStudents=50, performanceLevel=met, performanceIndicator=three)
+    rubK = rubrics(gradeTopBound=80, gradeLowerBound=70, description='Rubric K', numStudents=50, performanceLevel=didNotMeet, performanceIndicator=three)
+    rubL = rubrics(gradeTopBound=70, gradeLowerBound=0, description='Rubric L', numStudents=50, performanceLevel=failed, performanceIndicator=three)
+    
+    rubm = rubrics(gradetopbound=100, gradelowerbound=90, description='rubric m', numstudents=50, performancelevel=excede, performanceindicator=four)
+    rubN = rubrics(gradeTopBound=90, gradeLowerBound=80, description='Rubric N', numStudents=50, performanceLevel=met, performanceIndicator=four)
+    rubO = rubrics(gradeTopBound=80, gradeLowerBound=70, description='Rubric O', numStudents=50, performanceLevel=didNotMeet, performanceIndicator=four)
+    rubP = rubrics(gradeTopBound=70, gradeLowerBound=0, description='Rubric P', numStudents=50, performanceLevel=failed, performanceIndicator=four)
+    rubA.save()
+    rubB.save()
+    rubC.save()
+    rubD.save()
+    rubE.save()
+    rubF.save()
+    rubG.save()
+    rubH.save()
+    rubI.save()
+    rubJ.save()
+    rubK.save()
+    rubL.save()
+    rubM.save()
+    rubN.save()
+    rubO.save()
+    rubP.save()
+    return HttpResponse("Populated Database")
     
     
-class UpdateContactView(UpdateView):
-    model = performanceLevels
-    template_name = 'edit_contact.html'
-    form_class = forms.performanceLevelsForm
+def clearDB(request):
+    professors.objects.all().delete()
+    courses.objects.all().delete()
+    studentOutcomes.objects.all().delete()
+    performanceLevels.objects.all().delete()
+    rubrics.objects.all().delete()
+    performanceIndicators.objects.all().delete()
+    return HttpResponse("Cleared Database")
     
+'''
     
-class AboutView(TemplateView):
-    template_name = 'ABET_DB/about.html'
-

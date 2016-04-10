@@ -110,8 +110,8 @@ h1, h2 {
     display:inline-block;
 }
 
-#ecm {
-    color:#337ab7;
+#semSelect {
+    padding: 10px 15px;
 }
 
 .nav-pills li, a {
