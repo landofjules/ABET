@@ -12,11 +12,44 @@ $("#pageNav a").click(function() {
         loadOutcomes(thisCourse());
     }
 })
-
 function thisPage() { 
     if( $("#pageNav a.active").is("#pageNavPi") ) return 'pi';
     else if( $("#pageNav a.active").is("#pageNavOut") ) return 'out';
 }
+
+
+$('#courseNav li').click(function() {
+    // if this is not the course menu
+    if( !$(this).is("#semSelect") ) {
+        selectNav.call(this,"#courseNav");
+        // TODO hide outcomes, pis, and the current form
+    }
+});
+
+$('#semSelect select').change(function(e) {
+    // TODO make the main page have a loading icon
+    $.post("dat/",{
+        "semStr":$(this).val(),
+        "what":"courses",
+        "csrftoken":getCookie("csrftoken"),
+    },
+    function(data) {
+        var sel = $("#semSelect").detach();
+        var here = $("#courseNav ul");
+        here.empty()
+        for(var i=0;i<data.courses.length;i++) {
+            here.append("<li><a>"+ data.courses[i] +"</a></li>")
+        }
+        here.append(sel);
+    },"json")
+});
+
+
+
+
+
+
+/*
 function thisCourse() { return $("#courseNav li.active").attr("str");}
 function thisOutcome() { 
     return $("#outcomeNav a.active").text();
@@ -127,3 +160,31 @@ function submitPiForm() {
     });
 }
     
+*/
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
