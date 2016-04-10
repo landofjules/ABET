@@ -77,7 +77,7 @@ function loadPis(callback) {
         var addPi = $("#addPi").detach();
         here.empty();
         for(var i=0;i<obj.data.length;i++) {
-            here.append('<a class="list-group-item" href="#">'+obj.data[i].name+'</a>');
+            here.append('<a class="list-group-item">'+obj.data[i].name+'</a>');
         }
         addPi.removeClass("active");
         addPi.appendTo(here);
