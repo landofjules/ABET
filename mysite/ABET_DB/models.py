@@ -45,7 +45,7 @@ class section(models.Model):
     year = models.IntegerField(default=0)
     semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
     
-    main = models.ForeignKey(course,on_delete=models.CASCADE, null=True)
+    course = models.ForeignKey(course,on_delete=models.CASCADE, null=True)
     professor = models.ForeignKey(professor, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
@@ -54,7 +54,7 @@ class section(models.Model):
 class courseOutcome(models.Model):
     narrativeSummary = models.CharField(max_length=512, default='')
     
-    main = models.ForeignKey(studentOutcome, on_delete=models.CASCADE, null=True)
+    studentOutcome = models.ForeignKey(studentOutcome, on_delete=models.CASCADE, null=True)
     section = models.ForeignKey(section, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
