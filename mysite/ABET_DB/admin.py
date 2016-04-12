@@ -1,35 +1,37 @@
 from django.contrib import admin
-
-# Register your models here.
 from ABET_DB.models import *
 
 class professorAdmin(admin.ModelAdmin):
-    search_fields = ('ln', 'fn')
+    search_fields = ('ln', 'fn', 'netID')
     ordering = ('ln', 'fn')
+    
     
 class studentOutcomeAdmin(admin.ModelAdmin):
     search_fields = ('outcomeLetter',)
     ordering = ('outcomeLetter',)
+  
 
 class courseAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     ordering = ('name',)
+   
     
 class sectionAdmin(admin.ModelAdmin):
-    search_fields = ('course', 'year', 'semester')
-    ordering = ('-year', 'semester', 'course')
+    search_fields = ('course__name', 'professor__ln', 'professor__fn', 'year', 'semester')
+    ordering = ('-year', 'semester', 'course', 'professor')
+    list_display = ('year', 'semester', 'course', 'professor')
     
-class outcomeDataAdmin(admin.ModelAdmin):
-    search_fields = ('outcome',)
-    ordering = ('outcome',)
 
 class performanceLevelAdmin(admin.ModelAdmin):
-    search_fields = ('description',)
-    ordering = ('description',)
+    ordering = ('achievementLevel', 'description')
+    list_display = ('achievementLevel', 'description')
+   
 
 class courseOutcomeAdmin(admin.ModelAdmin):
-    search_fields = ('studentOutcome', 'section')
-    ordering = ('studentOutcome', 'section')
+    search_fields = ('studentOutcome__outcomeLetter', 'section__year', 'section__semester')
+    ordering = ('studentOutcome__outcomeLetter', 'section')
+    list_display = ('studentOutcome', 'section')
+    
 
 admin.site.register(sections, sectionAdmin)
 admin.site.register(courseOutcomes, courseOutcomeAdmin)
