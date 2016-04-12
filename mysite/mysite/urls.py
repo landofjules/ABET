@@ -23,8 +23,8 @@ from ABET_DB import views
 
 
 urlpatterns = [
-    url(r'^dat/?$',views.listJSON),
-    #url(r'^form/pi/(\w+)/(\w+)/(\w+)$',views.piForm),
+    url(r'^dat/(\w+)',views.listJSON),
+    url(r'^form/(\w+)',views.form),
     #url(r'^form/pi/(\w+)/(\w+)/~$',views.piForm), # use ~ as pi for new form
     #url(r'^form/out/(\w+)/(\w+)$',views.outcomeForm),
     #url(r'^submit/pi$',views.submitPi),

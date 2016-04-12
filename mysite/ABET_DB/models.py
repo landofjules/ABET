@@ -3,14 +3,14 @@ from django.db import models
 
 # ---------- TOP LEVEL [no forign keys] ---------- #
 
-class professor(models.Model):
+class professors(models.Model):
     netID = models.CharField(max_length=512, default='')
     isAdmin = models.BooleanField()
     
     def __str__(self):
         return self.netID
 
-class course(models.Model):
+class courses(models.Model):
     name = models.CharField(max_length=512, default='')
     description = models.CharField(max_length=512, default='')
     
@@ -18,14 +18,14 @@ class course(models.Model):
         return self.name
      
 
-class studentOutcome(models.Model):
+class studentOutcomes(models.Model):
     outcomeLetter = models.CharField(max_length=3)
     description = models.CharField(max_length=512, default='')
     
     def __str__(self):
         return self.outcomeLetter
 
-class performanceLevel(models.Model):
+class performanceLevels(models.Model):
     achievementLevel = models.IntegerField(default=0)
     description = models.CharField(max_length=512, default='')
     
@@ -35,7 +35,7 @@ class performanceLevel(models.Model):
 
 # --------- SPLIT VERSIONS OF COURSE AND OUTCOME ---------- #
     
-class section(models.Model):
+class sections(models.Model):
     
     SEMESTERS = (
         ('summer', 'Summer'),
@@ -43,30 +43,29 @@ class section(models.Model):
         ('spring', 'Spring'),
     )
     year = models.IntegerField(default=0)
-    semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall')
-    
-    course = models.ForeignKey(course,on_delete=models.CASCADE, null=True)
-    professor = models.ForeignKey(professor, on_delete=models.CASCADE, null=True)
+    semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall') 
+    course = models.ForeignKey(courses,on_delete=models.CASCADE, null=True)
+    professor = models.ForeignKey(professors, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
-        return "%s - %s - %s%d" % (self.professor.netID , self.course.name , self.semester , self.year)
+        return "%s - %s - %s%d" % (self.professor.netID , self.course.name, self.semester , self.year)
     
-class courseOutcome(models.Model):
+class courseOutcomes(models.Model):
     narrativeSummary = models.CharField(max_length=512, default='')
     
-    studentOutcome = models.ForeignKey(studentOutcome, on_delete=models.CASCADE, null=True)
-    section = models.ForeignKey(section, on_delete=models.CASCADE, null=True)
+    studentOutcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE, null=True)
+    section = models.ForeignKey(sections, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return self.main.outcomeLetter + ": " + str(self.section)
+        return self.studentOutcome.outcomeLetter + ": " + str(self.section)
     
-class performanceIndicator(models.Model):
+class performanceIndicators(models.Model):
     name = models.CharField(max_length=512, default='')
     # section number to section
     weight = models.DecimalField(max_digits=5, decimal_places=3)
     description = models.CharField(max_length=512, default='')
     
-    outcome = models.ForeignKey(courseOutcome, on_delete=models.CASCADE, null=True)
+    outcome = models.ForeignKey(courseOutcomes, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
         return self.name
@@ -77,19 +76,19 @@ class performanceIndicator(models.Model):
 class outcomeData(models.Model):
     numberAchieved = models.IntegerField(default=0)
     
-    course = models.ForeignKey(course, on_delete=models.CASCADE, null=True)
-    performanceLevel = models.ForeignKey(performanceLevel, on_delete=models.CASCADE, null=True)
-    outcome = models.ForeignKey(courseOutcome, on_delete=models.CASCADE, null=True)
+    course = models.ForeignKey(courses, on_delete=models.CASCADE, null=True)
+    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
+    outcome = models.ForeignKey(courseOutcomes, on_delete=models.CASCADE, null=True)
 
     
-class rubric(models.Model):
+class rubrics(models.Model):
     gradeTopBound = models.IntegerField(default=0)
     gradeLowerBound = models.IntegerField(default=0)
     description = models.CharField(max_length=512, default='')
     numStudents = models.IntegerField(default=0)
     
-    performanceLevel = models.ForeignKey(performanceLevel, on_delete=models.CASCADE, null=True)
-    performanceIndicator = models.ForeignKey(performanceIndicator, on_delete=models.CASCADE, null=True)
+    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
+    performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
         return self.description
