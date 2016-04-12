@@ -47,6 +47,7 @@ class sections(models.Model):
     )
     year = models.IntegerField(default=0)
     semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall') 
+    
     course = models.ForeignKey(courses,on_delete=models.CASCADE, null=True)
     professor = models.ForeignKey(professors, on_delete=models.CASCADE, null=True)
     
@@ -80,7 +81,7 @@ class performanceIndicators(models.Model):
 
 class outcomeData(models.Model):
     numberAchieved = models.IntegerField(default=0, verbose_name='Number Achieved')
-    course = models.ForeignKey(courses, on_delete=models.CASCADE, null=True)
+    
     performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True, verbose_name='Performance Level')
     outcome = models.ForeignKey(courseOutcomes, on_delete=models.CASCADE, null=True, verbose_name='Outcome')
 
