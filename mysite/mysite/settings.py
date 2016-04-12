@@ -96,9 +96,6 @@ ADMIN_REORDER = (
     # Keep original label and models
     'sites',
 
-    #my work area
-    
-    # Rename app
     {'app': 'ABET_DB', 'label': 'ABET: Per-Semester Information', 'models': ('ABET_DB.sections', 'ABET_DB.courseOutcomes')},
     
     {'app': 'ABET_DB', 'label': 'ABET: Infrequently Changed Information', 'models': ('ABET_DB.performanceLevels', 'ABET_DB.studentOutcomes', 'ABET_DB.professors', 'ABET_DB.courses')},
