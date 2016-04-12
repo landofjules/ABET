@@ -4,14 +4,16 @@ from django.db import models
 # ---------- TOP LEVEL [no forign keys] ---------- #
 
 class professors(models.Model):
-    netID = models.CharField(max_length=512, default='')
-    isAdmin = models.BooleanField()
+    netID = models.CharField(max_length=512, default='', verbose_name='Net ID')
+    fn = models.CharField(max_length=512, default='', verbose_name='First Name')
+    ln = models.CharField(max_length=512, default='', verbose_name='Last Name')
     
     def __str__(self):
-        return self.netID
+        return self.ln + ', ' + self.fn
+
 
 class courses(models.Model):
-    name = models.CharField(max_length=512, default='')
+    name = models.CharField(max_length=512, default='', verbose_name='Course Name')
     description = models.CharField(max_length=512, default='')
     
     def __str__(self):
@@ -19,14 +21,15 @@ class courses(models.Model):
      
 
 class studentOutcomes(models.Model):
-    outcomeLetter = models.CharField(max_length=3)
+    outcomeLetter = models.CharField(max_length=3, verbose_name='Outcome Letter')
     description = models.CharField(max_length=512, default='')
     
     def __str__(self):
         return self.outcomeLetter
 
+
 class performanceLevels(models.Model):
-    achievementLevel = models.IntegerField(default=0)
+    achievementLevel = models.IntegerField(default=0, verbose_name='Achievement Level')
     description = models.CharField(max_length=512, default='')
     
     def __str__(self):
@@ -50,14 +53,16 @@ class sections(models.Model):
     def __str__(self):
         return "%s - %s - %s%d" % (self.professor.netID , self.course.name, self.semester , self.year)
     
+    
 class courseOutcomes(models.Model):
     narrativeSummary = models.CharField(max_length=512, default='')
     
-    studentOutcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE, null=True)
+    studentOutcome = models.ForeignKey(studentOutcomes, on_delete=models.CASCADE, null=True, verbose_name='Outcome')
     section = models.ForeignKey(sections, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.studentOutcome.outcomeLetter + ": " + str(self.section)
+    
     
 class performanceIndicators(models.Model):
     name = models.CharField(max_length=512, default='')
@@ -74,21 +79,20 @@ class performanceIndicators(models.Model):
 # ---------- SPLIT BY PERFORMACE LEVEL ---------- # 
 
 class outcomeData(models.Model):
-    numberAchieved = models.IntegerField(default=0)
-    
+    numberAchieved = models.IntegerField(default=0, verbose_name='Number Achieved')
     course = models.ForeignKey(courses, on_delete=models.CASCADE, null=True)
-    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
-    outcome = models.ForeignKey(courseOutcomes, on_delete=models.CASCADE, null=True)
+    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True, verbose_name='Performance Level')
+    outcome = models.ForeignKey(courseOutcomes, on_delete=models.CASCADE, null=True, verbose_name='Outcome')
 
     
 class rubrics(models.Model):
-    gradeTopBound = models.IntegerField(default=0)
-    gradeLowerBound = models.IntegerField(default=0)
+    gradeTopBound = models.IntegerField(default=0, verbose_name='Upper Grade Bound')
+    gradeLowerBound = models.IntegerField(default=0, verbose_name='Lower Grade Bound')
     description = models.CharField(max_length=512, default='')
-    numStudents = models.IntegerField(default=0)
+    numStudents = models.IntegerField(default=0, verbose_name='Number of Students')
     
-    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True)
-    performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE, null=True)
+    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True, verbose_name='Performance Level')
+    performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE, null=True, verbose_name='Performance Indicator')
     
     def __str__(self):
         return self.description
