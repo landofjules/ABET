@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'admin_reorder',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'admin_reorder.middleware.ModelAdminReorder',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -88,6 +90,19 @@ DATABASES = {
         #'HOST': 'dbs.eecs.utk.edu'
     }
 }
+
+#manages the ordering of models on the admin page
+ADMIN_REORDER = (
+    # Keep original label and models
+    'sites',
+
+    #my work area
+    
+    # Rename app
+    {'app': 'ABET_DB', 'label': 'ABET: Per-Semester Information', 'models': ('ABET_DB.sections', 'ABET_DB.courseOutcomes')},
+    
+    {'app': 'ABET_DB', 'label': 'ABET: Infrequently Changed Information', 'models': ('ABET_DB.performanceLevels', 'ABET_DB.studentOutcomes', 'ABET_DB.professors', 'ABET_DB.courses')},
+)
 
 
 # Password validation
