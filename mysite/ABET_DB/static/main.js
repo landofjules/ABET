@@ -80,10 +80,12 @@ function pushOutcome() {
 }
 
 function loadPis(callback) {
+    var ptext = $("#piNav .active").text();
     $.getJSON('dat/pis',{
         "semStr":thisSem(),
         "course":thisCourse(),
-        "outcome":thisOutcome()
+        "outcome":thisOutcome(),
+        "pi":ptext
     },
     function(data) {
         $('#piNav').show()

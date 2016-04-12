@@ -97,7 +97,7 @@ def listJSON(request,what):
             for p in piList:
                 obj['pis'].append(p.name)
             
-    return JsonResponse(obj,safe=False)
+    return JsonResponse(obj)
     
 def form(request,what):
     
@@ -112,8 +112,7 @@ def form(request,what):
                                 ,outcome__studentOutcome__outcomeLetter=request.GET['outcome'])
                                 
                                 
-    if what=='pi':
-        pass
+        
 
 '''
 def piForm(request,courseStr,outcome,pi="~"):
