@@ -31,15 +31,12 @@ class courseOutcomeAdmin(admin.ModelAdmin):
     search_fields = ('studentOutcome', 'section')
     ordering = ('studentOutcome', 'section')
 
-admin.site.register(section, sectionAdmin)
-admin.site.register(courseOutcome, courseOutcomeAdmin)
+admin.site.register(sections, sectionAdmin)
+admin.site.register(courseOutcomes, courseOutcomeAdmin)
 
-admin.site.register(performanceLevel, performanceLevelAdmin)
-admin.site.register(studentOutcome, studentOutcomeAdmin)
-admin.site.register(professor, professorAdmin)
-admin.site.register(course, courseAdmin)
-
-
-
+admin.site.register(performanceLevels, performanceLevelAdmin)
+admin.site.register(studentOutcomes, studentOutcomeAdmin)
+admin.site.register(professors, professorAdmin)
+admin.site.register(courses, courseAdmin)
 
 

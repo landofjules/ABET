@@ -12,78 +12,55 @@ $("#pageNav a").click(function() {
         loadOutcomes(thisCourse());
     }
 })
-function thisPage() { 
-    if( $("#pageNav a.active").is("#pageNavPi") ) return 'pi';
-    else if( $("#pageNav a.active").is("#pageNavOut") ) return 'out';
-}
 
-
-$('#courseNav li').click(function() {
-    // if this is not the course menu
-    if( !$(this).is("#semSelect") ) {
-        selectNav.call(this,"#courseNav");
-        // TODO hide outcomes, pis, and the current form
-    }
-});
 
 $('#semSelect select').change(function(e) {
     // TODO make the main page have a loading icon
-    $.post("dat/",{
-        "semStr":$(this).val(),
-        "what":"courses",
-        "csrftoken":getCookie("csrftoken"),
+    var semStr = thisSem();
+    console.log(semStr);
+    $.getJSON("dat/courses", {
+        "semStr":semStr
     },
     function(data) {
+        
         var sel = $("#semSelect").detach();
         var here = $("#courseNav ul");
         here.empty()
         for(var i=0;i<data.courses.length;i++) {
             here.append("<li><a>"+ data.courses[i] +"</a></li>")
         }
+        $("#courseNav a").click(pushCourse);
         here.append(sel);
-    },"json")
+    })
 });
 
 
-
-
-
-
-/*
-function thisCourse() { return $("#courseNav li.active").attr("str");}
-function thisOutcome() { 
-    return $("#outcomeNav a.active").text();
+function thisSem() { return $("#semSelect select").val().replace(' ','_'); }
+function thisCourse() { return $("#courseNav li.active").text(); }
+function thisOutcome() { return $("#outcomeNav a.active").text(); }
+function thisPage() { 
+    if( $("#pageNav a.active").is("#pageNavPi") ) return 'pi';
+    else if( $("#pageNav a.active").is("#pageNavOut") ) return 'out';
 }
 
 // *************  COURSE NAVIGATION  *************** //
 
-$('#courseNav li').click(function() {
-    selectNav.call(this,"#courseNav");
-    if($(this).is("#earlierCourses")){
-        $("#ect").hide();
-        $("#ecm").show();
-        $('#ecm').on("change",function() {
-            var li = $(this).parent().parent();
-            li.attr("str",$(this).val());
-            if(li.attr('str')!='--') loadOutcomes(li.attr("str"));
-        })
-    } else {
-        var str = $(this).attr("str");
-        loadOutcomes($(this).attr("str"));
-        $("#ecm").hide();
-        $("#ecm").attr("value","--")
-        $("#ect").show();
-    }
-});
-function loadOutcomes(courseName) {
-    $.getJSON('dat/'+courseName,function(obj) {
+$("#courseNav a").click(pushCourse);
+function pushCourse() {
+    selectNav.call(this.parentNode,"#courseNav");
+    
+    $.getJSON('dat/outcomes',{
+        "semStr":thisSem(),
+        "course":thisCourse()
+    },
+    function(data) {
         $('#outcomeNav').show();
         var here = $("#outcomeNav div.list-group");
         here.empty();
-        for(var i=0;i<obj.data.length;i++) {
-            here.append('<a class="list-group-item">'+obj.data[i].letter+'</a>');
+        for(var i=0;i<data.outcomes.length;i++) {
+            here.append('<a class="list-group-item">'+data.outcomes[i]+'</a>');
         }
-        $("#mainForm").text("Select an outcome for "+obj.courseName);
+        $("#mainForm").text("Select an outcome for "+data.courseName);
         $('#outcomeNav .list-group-item').click(pushOutcome);
         $('#piNav').hide();
     })   
@@ -98,35 +75,43 @@ function pushOutcome() {
         loadPis();
     } else if(thisPage()==='out') {
         console.log("should load outcome form");
-        loadOutcomeForm(thisCourse(),thisOutcome());
+        loadOutcomeForm();
     }
 }
 
 function loadPis(callback) {
-    var url = 'dat/'+thisCourse()+'/'+thisOutcome();
-    $.getJSON(url,function(obj) {
+    $.getJSON('dat/pis',{
+        "semStr":thisSem(),
+        "course":thisCourse(),
+        "outcome":thisOutcome()
+    },
+    function(data) {
         $('#piNav').show()
         var here = $("#piNav div.list-group");
         var addPi = $("#addPi").detach();
         here.empty();
-        for(var i=0;i<obj.data.length;i++) {
-            here.append('<a class="list-group-item">'+obj.data[i].name+'</a>');
+        for(var i=0;i<data.pis.length;i++) {
+            here.append('<a class="list-group-item">'+data.pis[i]+'</a>');
         }
         addPi.removeClass("active");
-        addPi.appendTo(here);
-        $("#mainForm").text("Select an performance indicator for "+obj.outcome);
-        $('#piNav .list-group-item').click(pushPi);
+        here.append(addPi);
+        $("#mainForm").text("Select an performance indicator for "+data.outcome);
+        //$('#piNav .list-group-item').click(pushPi);
         if(typeof callback === 'function') callback();
     })   
 };
 
-function loadOutcomeForm(course,outcome,callback) {
-    var url = 'form/out/'+course+'/'+outcome;
-    $("#mainForm").load(url,function(obj) {
+
+function loadOutcomeForm() {
+    $("#mainForm").load('form/pi',{
+        
+    },
+    function(obj) {
         console.log("outcome callback")
     });
 }
 
+/*
 
 // **************  Performance Indicator Navigation  ************* //
 function pushPi() {
@@ -144,7 +129,6 @@ function loadPiForm(course,outcome,pi,callback) {
         if(typeof callback === 'function') callback();
     });
 }
-
 
 // ************** Form Submitting ************** //
 

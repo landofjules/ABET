@@ -26,14 +26,13 @@ def current():
    
     return (semNow, now.year)
 
-@ensure_csrf_cookie 
 def professorPage(request):
     # after HARRY figures out security, this wont be needed
     # this should be passed in upon login
     request.session['netid'] = 'jkohann' 
     professorNetID = request.session['netid']
     
-    sectionList = section.objects.filter(professor__netID=professorNetID)
+    sectionList = sections.objects.filter(professor__netID=professorNetID)
     
     # make a list of all semesters
     semesterSet = Set()
@@ -55,45 +54,64 @@ def professorPage(request):
     return HttpResponse(template.render(context,request))
 
 # this view returns a JSON list that is used for the right two menu bars of the app
-def listJSON(request):
+def listJSON(request,what):
+    print(what)
     
-    what = request.POST['what']
     professorNetID = request.session['netid']
     obj = dict()
     
-    courseList = section.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
+    courseList = sections.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
     
-    semSem, semYear = tuple(request.POST['semStr'].split(' '))
-    coursesThisSem = courseList.filter(year=semYear).filter(semester=semSem)
+    semSem, semYear = tuple(request.GET['semStr'].split('_'))
+    sectionsThisSem = courseList.filter(year=semYear).filter(semester=semSem)
     obj['semester'] = semSem
     obj['year'] = semYear
-    obj['semStr'] = request.POST['semStr']
+    obj['semStr'] = request.GET['semStr']
     
     if what == 'courses':
         obj['courses'] = list()
-        for s in coursesThisSem:
-            obj['courses'].append(s.main.name)
-    
-    
-    
-    
-    '''
-    # if we are asking for the outcomes
-    if outcome == '~':
-        for o in outcomeList:
-            data.append({'letter':o.outcomeLetter, 'desc':o.description})
-        obj = {'courseName':course[0],'data':data}
+        for s in sectionsThisSem:
+            obj['courses'].append(s.course.name)
+    elif what == 'outcomes' or what == 'pis':
+        courseName = request.GET['course'];
+        obj['courseName'] = courseName
         
-    # if we are asking for preformanc indicators
-    else:
-        pis = performanceIndicators.objects.filter(outcome__outcomeLetter=outcome)      #find performance indicators associated with outcome
+        section = sectionsThisSem.get(course__name=courseName)
+        outcomeList = courseOutcomes.objects.filter(section=section)
         
-        for p in pis:
-            data.append({'name':p.name, 'id':p.id, 'desc':p.description})
-        obj = {'courseName':course[0],'outcome':outcome,'data':data}
+        if what == 'outcomes':
+            obj['outcomes'] = list()
+            for o in outcomeList:
+                obj['outcomes'].append(o.studentOutcome.outcomeLetter)
+            print("outcome time!!")
         
-    '''
+        elif what == 'pis':
+            print("pi time!!")
+            outcomeLetter = request.GET['outcome']
+            outcome = outcomeList.get(studentOutcome__outcomeLetter=outcomeLetter)
+            obj['outcome'] = outcomeLetter
+            piList = performanceIndicators.objects.filter(outcome__pk=outcome.id)
+            obj['pis'] = list()
+            for p in piList:
+                obj['pis'].append(p.name)
+            
     return JsonResponse(obj,safe=False)
+    
+def form(request,what):
+    
+    professorNetID = request.session['netid']
+    obj = dict()
+    
+    courseList = sections.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
+    semSem, semYear = tuple(request.GET['semStr'].split('_'))
+    sectionsThisSem = courseList.filter(year=semYear).filter(semester=semSem)
+    secton = sectionsThisSem.get(course__name=request.GET['course'])
+    outcome = courseOutcomes.get(section__pk=section.id \
+                                ,outcome__studentOutcome__outcomeLetter=request.GET['outcome'])
+                                
+                                
+    if what=='pi':
+        pass
 
 '''
 def piForm(request,courseStr,outcome,pi="~"):
