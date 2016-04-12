@@ -4,14 +4,15 @@ from django.db import models
 # ---------- TOP LEVEL [no forign keys] ---------- #
 
 class professor(models.Model):
-    netID = models.CharField(max_length=512, default='')
-    isAdmin = models.BooleanField()
+    netID = models.CharField(max_length=512, default='', verbose_name='Net ID')
+    fn = models.CharField(max_length=512, default='', verbose_name='First Name')
+    ln = models.CharField(max_length=512, default='', verbose_name='Last Name')
     
     def __str__(self):
-        return self.netID
+        return self.ln + ', ' + self.fn
 
 class course(models.Model):
-    name = models.CharField(max_length=512, default='')
+    name = models.CharField(max_length=512, default='', verbose_name='Course Name')
     description = models.CharField(max_length=512, default='')
     
     def __str__(self):
@@ -19,14 +20,15 @@ class course(models.Model):
      
 
 class studentOutcome(models.Model):
-    outcomeLetter = models.CharField(max_length=3)
+    outcomeLetter = models.CharField(max_length=3, verbose_name='Outcome Letter')
     description = models.CharField(max_length=512, default='')
     
     def __str__(self):
         return self.outcomeLetter
 
+
 class performanceLevel(models.Model):
-    achievementLevel = models.IntegerField(default=0)
+    achievementLevel = models.IntegerField(default=0, verbose_name='Achievement Level')
     description = models.CharField(max_length=512, default='')
     
     def __str__(self):
@@ -51,14 +53,15 @@ class section(models.Model):
     def __str__(self):
         return "%s - %s - %s%d" % (self.professor.netID , self.course.name , self.semester , self.year)
     
+    
 class courseOutcome(models.Model):
     narrativeSummary = models.CharField(max_length=512, default='')
     
-    studentOutcome = models.ForeignKey(studentOutcome, on_delete=models.CASCADE, null=True)
+    studentOutcome = models.ForeignKey(studentOutcome, on_delete=models.CASCADE, null=True, verbose_name='Outcome')
     section = models.ForeignKey(section, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return self.main.outcomeLetter + ": " + str(self.section)
+        return self.studentOutcome.outcomeLetter + ": " + str(self.section)
     
 class performanceIndicator(models.Model):
     name = models.CharField(max_length=512, default='')
@@ -75,21 +78,21 @@ class performanceIndicator(models.Model):
 # ---------- SPLIT BY PERFORMACE LEVEL ---------- # 
 
 class outcomeData(models.Model):
-    numberAchieved = models.IntegerField(default=0)
+    numberAchieved = models.IntegerField(default=0, verbose_name='Number Achieved')
     
     course = models.ForeignKey(course, on_delete=models.CASCADE, null=True)
-    performanceLevel = models.ForeignKey(performanceLevel, on_delete=models.CASCADE, null=True)
-    outcome = models.ForeignKey(courseOutcome, on_delete=models.CASCADE, null=True)
+    performanceLevel = models.ForeignKey(performanceLevel, on_delete=models.CASCADE, null=True, verbose_name='Performance Level')
+    outcome = models.ForeignKey(courseOutcome, on_delete=models.CASCADE, null=True, verbose_name='Outcome')
 
     
 class rubric(models.Model):
-    gradeTopBound = models.IntegerField(default=0)
-    gradeLowerBound = models.IntegerField(default=0)
+    gradeTopBound = models.IntegerField(default=0, verbose_name='Upper Grade Bound')
+    gradeLowerBound = models.IntegerField(default=0, verbose_name='Lower Grade Bound')
     description = models.CharField(max_length=512, default='')
-    numStudents = models.IntegerField(default=0)
+    numStudents = models.IntegerField(default=0, verbose_name='Number of Students')
     
-    performanceLevel = models.ForeignKey(performanceLevel, on_delete=models.CASCADE, null=True)
-    performanceIndicator = models.ForeignKey(performanceIndicator, on_delete=models.CASCADE, null=True)
+    performanceLevel = models.ForeignKey(performanceLevel, on_delete=models.CASCADE, null=True, verbose_name='Performance Level')
+    performanceIndicator = models.ForeignKey(performanceIndicator, on_delete=models.CASCADE, null=True, verbose_name='Performance Indicator')
     
     def __str__(self):
         return self.description

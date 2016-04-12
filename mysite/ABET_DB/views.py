@@ -41,6 +41,9 @@ def professorPage(request):
         syStr = s.semester +' '+ str(s.year)
         semesterSet.add(syStr)
 
+    nowSem, nowYear = current()
+    sectionsNow = sectionList.filter(semester=nowSem, year=nowYear)
+
     # run the template
     template = loader.get_template('ABET_DB/prof.html')
     context = {
