@@ -146,44 +146,18 @@ def form(request,what):
     
     return HttpResponse(template.render(context,request))
 
-
+def submit(request,what):
+    
+    if what == 'pi':
+        print 'submitting pi'
+    elif what == 'outcome':
+        print 'submitting outcome'
+    else:
+        raise ValueError("")
+    
+    
 '''
-def piForm(request,courseStr,outcome,pi="~"):
-    
-    professorNetID = request.session['netid']
-    template = loader.get_template('ABET_DB/pi.html')
-    
-    course = courseStr.split('_')
-    courseList = courses.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
-    
-    c = courses.objects.filter(courseName=course[0]).filter(yr=int(course[2])).filter(semester=course[1]).first()
-    outcomeList = studentOutcomes.objects.filter(course__id=c.id)
-        
-    try: o = outcomeList.get(outcomeLetter=outcome)
-    except ObjectDoesNotExist:
-        raise ValueError('outcome paramiter is not in list of outcomes for course')
-        
-    pis = performanceIndicators.objects.filter(outcome__outcomeLetter=outcome)      #find performance indicators associated with outcome
-        
-    piObject=None; rubricList=None
-    if pi != '~':
-        try:
-            piObject = pis.get(name=pi)
-            
-        except ObjectDoesNotExist:
-            raise ValueError('performance indicator paramiter not in list of performance indicators for outcomesd')
-        rubricList = rubrics.objects.filter(performanceIndicator__name=pi)
-    
-    PLlist = performanceLevels.objects.all()
-    
-    context = {
-        'course':c,
-        'outcome':outcome,
-        'pi':piObject,
-        'rubrics':rubricList,
-        'perfLevels':PLlist,
-    }
-    return HttpResponse(template.render(context,request))
+
 
 
 def submitPi(request): # submit the data and reload the page
@@ -220,59 +194,6 @@ def submitPi(request): # submit the data and reload the page
     
     return HttpResponse('hello')
 
-def outcomeForm(request,courseStr,outcome):
-    professorNetID = request.session['netid']
-    template = loader.get_template('ABET_DB/outcome.html')
-    
-    course = courseStr.split('_')
-    courseList = courses.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
-    
-    c = courses.objects.filter(courseName=course[0]).filter(yr=int(course[2])).filter(semester=course[1]).first()
-    outcomeList = studentOutcomes.objects.filter(course__id=c.id)
-        
-    try: o = outcomeList.get(outcomeLetter=outcome)
-    except ObjectDoesNotExist:
-        raise ValueError('outcome paramiter is not in list of outcomes for course')
-        
-    PLlist = performanceLevels.objects.all()
-    
-    context = {
-        'course':c,
-        'outcome':outcome,
-        'perfLevels':PLlist,
-    }
-    return HttpResponse(template.render(context,request))
-
-def submitOut(request):
-    return HttpResponse("pass")
-    
-# this view returns a JSON list that is used for the right two menu bars of the app
-def listJSON(request,courseStr,outcome='~'):
-    professorNetID = request.session['netid']
-    data = []
-    course = courseStr.split('_')
-    
-    courseList = courses.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
-    if not courseList.exists():
-        raise ValueError("No courses found for professor")
-    outcomeList = studentOutcomes.objects.filter(course__courseName=course[0]).filter(course__yr=int(course[2])).filter(course__semester=course[1])
-    
-    
-    # if we are asking for the outcomes
-    if outcome == '~':
-        for o in outcomeList:
-            data.append({'letter':o.outcomeLetter, 'desc':o.description})
-        obj = {'courseName':course[0],'data':data}
-        
-    # if we are asking for preformanc indicators
-    else:
-        pis = performanceIndicators.objects.filter(outcome__outcomeLetter=outcome)      #find performance indicators associated with outcome
-        
-        for p in pis:
-            data.append({'name':p.name, 'id':p.id, 'desc':p.description})
-        obj = {'courseName':course[0],'outcome':outcome,'data':data}
-        
-    return JsonResponse(obj,safe=False)
 
 
 def test1(request):

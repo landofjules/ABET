@@ -120,27 +120,21 @@ function loadForm(callback) {
         "pi":ptext
     }),
     function() {
-        //$("#updateBtn").click(submitForm);
+        $("#updateBtn").click(submitForm);
         if(typeof callback === 'function') callback();
     });
 }
 
-/*
 // ************** Form Submitting ************** //
 
-function submitPiForm() {
+function submitForm() {
     var form = $('#mainForm form');
-    var name = $("#piNameField").val();
     console.log("should submit");
-    $.post('submit/pi',form.serialize(),function(data) {
-        loadPis(function(){
-            console.log("entered callback");
-        });
-        console.log("and does");
+    $.post('submit/'+thisPage(),form.serialize(),function(data) {
+        console.log("sucessfully submitted")
     });
 }
     
-*/
 function serialize(obj) {
   var str = [];
   for(var p in obj)
