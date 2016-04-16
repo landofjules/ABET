@@ -112,6 +112,12 @@ def form(request,what):
                                 
     if what=='pi':
         pass
+    
+    
+def submit(request):
+    print 'called submit'
+    
+    
 
 '''
 def piForm(request,courseStr,outcome,pi="~"):
@@ -186,31 +192,10 @@ def submitPi(request): # submit the data and reload the page
     
     return HttpResponse('hello')
 
-def outcomeForm(request,courseStr,outcome):
-    professorNetID = request.session['netid']
-    template = loader.get_template('ABET_DB/outcome.html')
-    
-    course = courseStr.split('_')
-    courseList = courses.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
-    
-    c = courses.objects.filter(courseName=course[0]).filter(yr=int(course[2])).filter(semester=course[1]).first()
-    outcomeList = studentOutcomes.objects.filter(course__id=c.id)
-        
-    try: o = outcomeList.get(outcomeLetter=outcome)
-    except ObjectDoesNotExist:
-        raise ValueError('outcome paramiter is not in list of outcomes for course')
-        
-    PLlist = performanceLevels.objects.all()
-    
-    context = {
-        'course':c,
-        'outcome':outcome,
-        'perfLevels':PLlist,
-    }
-    return HttpResponse(template.render(context,request))
 
 def submitOut(request):
     return HttpResponse("pass")
+    
     
 # this view returns a JSON list that is used for the right two menu bars of the app
 def listJSON(request,courseStr,outcome='~'):
