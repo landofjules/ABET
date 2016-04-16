@@ -156,7 +156,7 @@ def submit(request,what):
     elif what == 'outcome':
         print 'submitting outcome'
     else:
-        raise ValueError("")
+        raise ValueError("Bad Url in SubmitForm")
     
     return JsonResponse({
         
