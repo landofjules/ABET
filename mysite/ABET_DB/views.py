@@ -158,7 +158,9 @@ def submit(request,what):
     else:
         raise ValueError("")
     
-    return HttpResponse()
+    return JsonResponse({
+        
+    })
     
     
 '''
