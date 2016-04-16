@@ -163,7 +163,7 @@ def submit(request,what):
     elif what == 'outcome':
         print 'submitting outcome'      #submitting aggragate outcomeData form
     else:
-        raise ValueError("")
+        raise ValueError("Bad Url in SubmitForm")
     
     print request.POST
     
