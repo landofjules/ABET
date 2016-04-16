@@ -164,7 +164,8 @@ def submit(request,what):
         print 'submitting outcome'      #submitting aggragate outcomeData form
     else:
         raise ValueError("")
-    
+
+
     return HttpResponse()
     
     
