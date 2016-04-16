@@ -13,7 +13,7 @@ class professors(models.Model):
         verbose_name_plural = 'Professors'
     
     def __str__(self):
-        return self.ln + ', ' + self.fn
+        return self.netID
 
 
 class courses(models.Model):

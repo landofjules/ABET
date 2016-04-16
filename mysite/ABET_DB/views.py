@@ -9,6 +9,7 @@ from django.core.context_processors import csrf
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils import timezone
 from sets import Set
+import pdb
 
 from ABET_DB.models import *
 from django.http import HttpResponse, JsonResponse
@@ -16,9 +17,9 @@ from django.http import HttpResponse, JsonResponse
 def current():
     now = timezone.now()
     semNow = str()
-    if now.month <= 5 and now.day < 14:
+    if now.month <= 5:
         semNow = "spring"
-    elif now.month >= 7 and now.day > 10:
+    elif now.month >= 7:
         semNow = "fall"
     else:
         semNow = "summer"
@@ -41,6 +42,8 @@ def professorPage(request):
 
     nowSem, nowYear = current()
     sectionsNow = sectionList.filter(semester=nowSem, year=nowYear)
+    print(nowSem,nowYear)
+    print(sectionsNow)
 
     # run the template
     template = loader.get_template('ABET_DB/prof.html')
@@ -154,6 +157,8 @@ def submit(request,what):
         print 'submitting outcome'
     else:
         raise ValueError("")
+    
+    return HttpResponse()
     
     
 '''
