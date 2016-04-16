@@ -110,7 +110,7 @@ function pushPi() {
 function loadForm(callback) {
     var ptext='~'
     if(thisPage()=='pi') {
-        ptext = $("#piNav .active").text();
+        ptext = $("#piNav .active").text()
         if(ptext=="+") ptext='~';
     }
     $("#mainForm").load('form/'+thisPage() +'?'+ serialize({

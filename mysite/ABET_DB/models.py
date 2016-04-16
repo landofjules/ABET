@@ -106,10 +106,6 @@ class performanceIndicators(models.Model):
 
 class outcomeData(models.Model):
     numberAchieved = models.IntegerField(default=0, verbose_name='Number Achieved')
-<<<<<<< HEAD
-    
-=======
->>>>>>> 8f3b583f0aaad422fe2402bc084b15ac47b58eec
     performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True, verbose_name='Performance Level')
     outcome = models.ForeignKey(courseOutcomes, on_delete=models.CASCADE, null=True, verbose_name='Outcome')
 
