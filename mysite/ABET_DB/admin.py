@@ -4,6 +4,7 @@ from ABET_DB.models import *
 class professorAdmin(admin.ModelAdmin):
     search_fields = ('ln', 'fn', 'netID')
     ordering = ('ln', 'fn')
+    list_display = ('ln', 'fn', 'netID')
     
     
 class studentOutcomeAdmin(admin.ModelAdmin):
@@ -18,7 +19,7 @@ class courseAdmin(admin.ModelAdmin):
     
 class sectionAdmin(admin.ModelAdmin):
     search_fields = ('course__name', 'professor__ln', 'professor__fn', 'year', 'semester')
-    ordering = ('-year', 'semester', 'course', 'professor')
+    ordering = ('-year', '-semester', 'course', 'professor')
     list_display = ('year', 'semester', 'course', 'professor')
     
 
@@ -29,7 +30,7 @@ class performanceLevelAdmin(admin.ModelAdmin):
 
 class courseOutcomeAdmin(admin.ModelAdmin):
     search_fields = ('studentOutcome__outcomeLetter', 'section__year', 'section__semester')
-    ordering = ('studentOutcome__outcomeLetter', 'section')
+    ordering = ('-section__year', '-section__semester', 'studentOutcome__outcomeLetter')
     list_display = ('studentOutcome', 'section')
     
 
