@@ -164,9 +164,23 @@ def submit(request,what):
         print 'submitting outcome'      #submitting aggragate outcomeData form
     else:
         raise ValueError("")
+    
+    print request.POST
+    
+    professorNetID = request.session['netid']
+    sectionList = sections.objects.filter(professor__netID=professorNetID)
+    
+    if len(sectionList) == 0:
+        raise ValueError('Section List Empty for Professor')
+        
+    sectionID = request.POST['sectionID']
+    section = sectionList.get(pk=sectionID)
+    print 'section'
+    
+    return JsonResponse({
+        
+    })
 
-
-    return HttpResponse()
     
     
         
