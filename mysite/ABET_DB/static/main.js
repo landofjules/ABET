@@ -40,7 +40,7 @@ function thisCourse() { return $("#courseNav li.active").text(); }
 function thisOutcome() { return $("#outcomeNav a.active").text(); }
 function thisPage() { 
     if( $("#pageNav a.active").is("#pageNavPi") ) return 'pi';
-    else if( $("#pageNav a.active").is("#pageNavOut") ) return 'out';
+    else if( $("#pageNav a.active").is("#pageNavOut") ) return 'outcome';
 }
 
 // *************  COURSE NAVIGATION  *************** //
@@ -73,9 +73,9 @@ function pushOutcome() {
     if(thisPage()==='pi') {
         console.log("should load pi list");
         loadPis();
-    } else if(thisPage()==='out') {
+    } else if(thisPage()==='outcome') {
         console.log("should load outcome form");
-        loadOutcomeForm();
+        loadForm();
     }
 }
 
@@ -83,7 +83,7 @@ function loadPis(callback) {
     $.getJSON('dat/pis',{
         "semStr":thisSem(),
         "course":thisCourse(),
-        "outcome":thisOutcome()
+        "outcome":thisOutcome(),
     },
     function(data) {
         $('#piNav').show()
@@ -96,40 +96,36 @@ function loadPis(callback) {
         addPi.removeClass("active");
         here.append(addPi);
         $("#mainForm").text("Select an performance indicator for "+data.outcome);
-        //$('#piNav .list-group-item').click(pushPi);
+        $('#piNav .list-group-item').click(pushPi);
         if(typeof callback === 'function') callback();
     })   
 };
 
-
-function loadOutcomeForm() {
-    $("#mainForm").load('form/pi',{
-        
-    },
-    function(obj) {
-        console.log("outcome callback")
-    });
-}
-
-/*
-
 // **************  Performance Indicator Navigation  ************* //
 function pushPi() {
     selectNav.call(this,"#piNav");
-    var ptext = $(this).text();
-    loadPiForm(thisCourse(),thisOutcome(),ptext);
+    loadForm();
 }
 
-function loadPiForm(course,outcome,pi,callback) {
-    var url;
-    if(pi=='+') url = 'form/pi/'+course+'/'+outcome+'/~'
-    else url = 'form/pi/'+course+'/'+outcome+'/'+pi;
-    $("#mainForm").load(url,function() {
-        $("#updateBtn").click(submitPiForm);
+function loadForm(callback) {
+    var ptext='~'
+    if(thisPage()=='pi') {
+        ptext = $("#piNav .active").text()
+        if(ptext=="+") ptext='~';
+    }
+    $("#mainForm").load('form/'+thisPage() +'?'+ serialize({
+        "semStr":thisSem(),
+        "course":thisCourse(),
+        "outcome":thisOutcome(),
+        "pi":ptext
+    }),
+    function() {
+        //$("#updateBtn").click(submitForm);
         if(typeof callback === 'function') callback();
     });
 }
 
+/*
 // ************** Form Submitting ************** //
 
 function submitPiForm() {
@@ -145,30 +141,11 @@ function submitPiForm() {
 }
     
 */
-
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
+function serialize(obj) {
+  var str = [];
+  for(var p in obj)
+    if (obj.hasOwnProperty(p)) {
+      str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
     }
-    return cookieValue;
+  return str.join("&");
 }
-function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-$.ajaxSetup({
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
-    }
-});

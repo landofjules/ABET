@@ -7,12 +7,15 @@ from django.views.generic import TemplateView
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import ensure_csrf_cookie
-import datetime
 from django.utils import timezone
 from sets import Set
 
 from ABET_DB.models import *
 from django.http import HttpResponse, JsonResponse
+
+def submit(request):
+    print 'called submit'
+    
 
 def current():
     now = timezone.now()
@@ -25,6 +28,7 @@ def current():
         semNow = "summer"
    
     return (semNow, now.year)
+
 
 def professorPage(request):
     # after HARRY figures out security, this wont be needed
@@ -95,29 +99,63 @@ def listJSON(request,what):
             for p in piList:
                 obj['pis'].append(p.name)
             
-    return JsonResponse(obj,safe=False)
+    return JsonResponse(obj)
+    
     
 def form(request,what):
     
     professorNetID = request.session['netid']
     obj = dict()
     
-    courseList = sections.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
+    
+    # retreive the section
+    sectionList = sections.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
     semSem, semYear = tuple(request.GET['semStr'].split('_'))
-    sectionsThisSem = courseList.filter(year=semYear).filter(semester=semSem)
-    secton = sectionsThisSem.get(course__name=request.GET['course'])
-    outcome = courseOutcomes.get(section__pk=section.id \
-                                ,outcome__studentOutcome__outcomeLetter=request.GET['outcome'])
+    sectionsThisSem = sectionList.filter(year=semYear).filter(semester=semSem)
+    section = sectionsThisSem.get(course__name=request.GET['course'])
+    
+    # retreive the outcome
+    outcome = courseOutcomes.objects.get(section__pk=section.id, \
+                    studentOutcome__outcomeLetter=request.GET['outcome'])
                                 
-                                
+
     if what=='pi':
         pass
     
+    # retreive all performance levels
+    perfLevList = performanceLevels.objects.all()
     
-def submit(request):
-    print 'called submit'
+    # begin context ( more to be added along the way )
+    context = {
+        'semStr':request.GET['semStr'],
+        'section':section,
+        'outcome':outcome,
+        'perfLevels':perfLevList,
+    }
     
+    if what == 'pi':
+        template = loader.get_template('ABET_DB/pi.html')
+        
+        # if the pi is infact given
+        if request.GET['pi'] != '~':
+            
+            # retreive the performance indicator
+            pi = performanceIndicators.objects.get(outcome__pk=outcome.id, \
+                                                    name=request.GET['pi'])
+            context['pi'] = pi
+            
+            # retreive the rubrics
+            rubricList = rubrics.objects.filter(performanceIndicator__pk=pi.id)
+            context['rubrics'] = rubricList
     
+    elif what == 'outcome':
+        template = loader.get_template('ABET_DB/outcome.html')
+    
+    else:
+        raise ValueError("form url not 'pi' or 'outcome'")
+    
+    return HttpResponse(template.render(context,request))
+
 
 '''
 def piForm(request,courseStr,outcome,pi="~"):

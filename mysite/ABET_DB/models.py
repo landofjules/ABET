@@ -63,6 +63,7 @@ class sections(models.Model):
     )
     year = models.IntegerField(default=0)
     semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall') 
+    
     course = models.ForeignKey(courses,on_delete=models.CASCADE, null=True)
     professor = models.ForeignKey(professors, on_delete=models.CASCADE, null=True)
     

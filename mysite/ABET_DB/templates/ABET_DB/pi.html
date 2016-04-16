@@ -1,6 +1,7 @@
 <form name="piform">{% csrf_token %}
-    <input type="hidden" name="course" value="{{course.courseName}}_{{course.semester}}_{{course.yr}}"/>
-    <input type="hidden" name="outcome" value="{{ outcome }}"/>
+    <input type="hidden" name="semStr" value="{{ semStr }}"/>
+    <input type="hidden" name="courseName" value="{{ section.course.name }}"/>
+    <input type="hidden" name="outcome" value="{{ outcome.name }}"/>
     <input type="hidden" name="pi" value="{{ pi.name }}"/>
     
     <div class="pull-right" ><button type="button" class="btn btn-success" id="updateBtn">Update</button></div>
