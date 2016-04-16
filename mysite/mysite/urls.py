@@ -25,10 +25,7 @@ from ABET_DB import views
 urlpatterns = [
     url(r'^dat/(\w+)',views.listJSON),
     url(r'^form/(\w+)',views.form),
-    #url(r'^form/pi/(\w+)/(\w+)/~$',views.piForm), # use ~ as pi for new form
-    #url(r'^form/out/(\w+)/(\w+)$',views.outcomeForm),
-    #url(r'^submit/pi$',views.submitPi),
-    #url(r'^submit/outcome$',views.submitOut),
+    url(r'^submit/(\w+)',views.submit),
     #url(r'populate/', views.populate),
     #url(r'clearDB/', views.clearDB),
     url(r'^admin/', admin.site.urls),

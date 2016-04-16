@@ -13,9 +13,6 @@ from sets import Set
 from ABET_DB.models import *
 from django.http import HttpResponse, JsonResponse
 
-def submit(request):
-    print 'called submit'
-    
 
 def current():
     now = timezone.now()
@@ -156,44 +153,22 @@ def form(request,what):
     
     return HttpResponse(template.render(context,request))
 
-
+def submit(request,what):
+    
+    if what == 'pi':
+        print 'submitting pi'           #submiting PI form
+    elif what == 'outcome':
+        print 'submitting outcome'      #submitting aggragate outcomeData form
+    else:
+        raise ValueError("")
+    
+    
+        
+    
+    
+    
 '''
-def piForm(request,courseStr,outcome,pi="~"):
-    
-    professorNetID = request.session['netid']
-    template = loader.get_template('ABET_DB/pi.html')
-    
-    course = courseStr.split('_')
-    courseList = courses.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
-    
-    c = courses.objects.filter(courseName=course[0]).filter(yr=int(course[2])).filter(semester=course[1]).first()
-    outcomeList = studentOutcomes.objects.filter(course__id=c.id)
-        
-    try: o = outcomeList.get(outcomeLetter=outcome)
-    except ObjectDoesNotExist:
-        raise ValueError('outcome paramiter is not in list of outcomes for course')
-        
-    pis = performanceIndicators.objects.filter(outcome__outcomeLetter=outcome)      #find performance indicators associated with outcome
-        
-    piObject=None; rubricList=None
-    if pi != '~':
-        try:
-            piObject = pis.get(name=pi)
-            
-        except ObjectDoesNotExist:
-            raise ValueError('performance indicator paramiter not in list of performance indicators for outcomesd')
-        rubricList = rubrics.objects.filter(performanceIndicator__name=pi)
-    
-    PLlist = performanceLevels.objects.all()
-    
-    context = {
-        'course':c,
-        'outcome':outcome,
-        'pi':piObject,
-        'rubrics':rubricList,
-        'perfLevels':PLlist,
-    }
-    return HttpResponse(template.render(context,request))
+
 
 
 def submitPi(request): # submit the data and reload the page
@@ -230,7 +205,6 @@ def submitPi(request): # submit the data and reload the page
     
     return HttpResponse('hello')
 
-
 def submitOut(request):
     return HttpResponse("pass")
     
@@ -262,6 +236,7 @@ def listJSON(request,courseStr,outcome='~'):
         obj = {'courseName':course[0],'outcome':outcome,'data':data}
         
     return JsonResponse(obj,safe=False)
+
 
 
 def test1(request):
