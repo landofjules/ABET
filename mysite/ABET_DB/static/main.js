@@ -9,7 +9,7 @@ function selectNav(selector) {
 $("#pageNav a").click(function() {
     if(!$(this).hasClass("active")) {
         selectNav.call(this,"#pageNav");
-        loadOutcomes(thisCourse());
+        pushCourse.call($("#courseNav .active a").get(0))
     }
 })
 
@@ -46,6 +46,7 @@ function thisPage() {
 // *************  COURSE NAVIGATION  *************** //
 
 $("#courseNav a").click(pushCourse);
+
 function pushCourse() {
     selectNav.call(this.parentNode,"#courseNav");
     
