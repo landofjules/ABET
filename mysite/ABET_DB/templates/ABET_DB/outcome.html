@@ -1,7 +1,8 @@
 <form name="outform">{% csrf_token %}
     <input type="hidden" name="semStr" value="{{ semStr }}"/>
     <input type="hidden" name="courseName" value="{{ section.course.name }}"/>
-    <input type="hidden" name="outcome" value="{{ outcome.name }}"/>
+    <input type="hidden" name="outcome" value="{{ outcome.studentOutcome.outcomeLetter }}"/>
+    <input type="hidden" name="sectionID" value="{{ section.id }}"/>
     <button type="button" class="btn btn-success pull-right" id="updateBtn">Update</button>
     <h4>Enter the aggregate outcome data</h4>
     <p style="clear:both;">

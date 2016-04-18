@@ -132,7 +132,9 @@ function submitForm() {
     var form = $('#mainForm form');
     console.log("should submit");
     $.post('submit/'+thisPage(),form.serialize(),function(data) {
-        console.log("sucessfully submitted")
+        console.log(data)
+        //$("#piNav div.list-group").append('<a class="list-group-item">'+data['newName']+'</a>');
+        
     });
 }
     

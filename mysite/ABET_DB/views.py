@@ -156,6 +156,7 @@ def form(request,what):
     
     return HttpResponse(template.render(context,request))
 
+
 def submit(request,what):
     
     print request.POST
@@ -175,21 +176,26 @@ def submit(request,what):
 
     perfLevels = performanceLevels.objects.all()
     
+    data = dict()
+    
     if what == 'pi':
         print 'submitting pi'           #submiting PI form
         
         PIList = performanceIndicators.objects.filter(outcome=courseOutcome)
         
         if request.POST['pi'] == '': # create a new pi and rubrics
-            if PIList.filter(name=request.POST['name']).count() == 0:
+            if PIList.filter(name=request.POST['newName']).count() != 0:
+                return JsonResponse({
+                    
+                })
                 raise ValueError("PI with this name already exists")
-            p = performanceIndicators(name=request.POST['name'])
+            p = performanceIndicators(name=request.POST['newName'])
             p.outcome = courseOutcome
         else:
             p = PIList.get(name=request.POST['pi'])
-            if request.POST['name'] != request.POST['pi']:
+            if request.POST['newName'] != request.POST['pi']:
                 # make sure name is not already taken
-                p.name = request.POST['name']
+                p.name = request.POST['newName']
                 
         p.weight = float(request.POST['weight'])
         p.description = request.POST['description']
@@ -216,31 +222,28 @@ def submit(request,what):
             
             r.save()
             
-            
     elif what == 'outcome':
         print 'submitting outcome'      #submitting aggragate outcomeData form
+        
+        outcomeDataList = outcomeData.objects.filter(outcome__outcomeLetter=outcomeLetter)
+        perSectionOutcomeData = outcomeDataList.get(outcome=courseOutcome)
+        print perSectionOutcomeData
+        
+        
+        
     elif what == 'delete':
         pass
     else:
         raise ValueError("Bad Url in SubmitForm")
     
-    
-    
-    
-    return JsonResponse({
-        
-    })
+
+    return JsonResponse(data)
 
     
     
-        
-    
-    
+     
     
 '''
-
-
-
 def submitPi(request): # submit the data and reload the page
     
     # get all the stuff
