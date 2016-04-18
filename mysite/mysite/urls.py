@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^form/(\w+)',views.form),
     url(r'^submit/(\w+)',views.submit),
     #url(r'populate/', views.populate),
-    #url(r'clearDB/', views.clearDB),
+    url(r'clearDB/', views.clearDB),
     url(r'^admin/', admin.site.urls),
     #url(r'^init/', views.test1),
     url(r'^$', views.professorPage),

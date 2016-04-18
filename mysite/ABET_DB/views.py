@@ -464,7 +464,8 @@ def populate(request):
     rubP.save()
     return HttpResponse("Populated Database")
     
-    
+''' 
+  
 def clearDB(request):
     professors.objects.all().delete()
     courses.objects.all().delete()
@@ -472,7 +473,9 @@ def clearDB(request):
     performanceLevels.objects.all().delete()
     rubrics.objects.all().delete()
     performanceIndicators.objects.all().delete()
+    sections.objects.all().delete()
+    courseOutcomes.objects.all().delete()
+    outcomeData.objects.all().delete()
     return HttpResponse("Cleared Database")
     
-'''
     
