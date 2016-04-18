@@ -92,6 +92,7 @@ class performanceIndicators(models.Model):
     name = models.CharField(max_length=512, default='')
     weight = models.DecimalField(max_digits=5, decimal_places=3)
     description = models.CharField(max_length=512, default='')
+    
     outcome = models.ForeignKey(courseOutcomes, on_delete=models.CASCADE, null=True)
     
     class Meta:
@@ -115,12 +116,13 @@ class outcomeData(models.Model):
     
     
 class rubrics(models.Model):
-    gradeTopBound = models.IntegerField(default=0, verbose_name='Upper Grade Bound')
-    gradeLowerBound = models.IntegerField(default=0, verbose_name='Lower Grade Bound')
-    description = models.CharField(max_length=512, default='')
-    numStudents = models.IntegerField(default=0, verbose_name='Number of Students')
-    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, null=True, verbose_name='Performance Level')
-    performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE, null=True, verbose_name='Performance Indicator')
+    gradeTopBound = models.IntegerField(verbose_name='Upper Grade Bound',null=True)
+    gradeLowerBound = models.IntegerField( verbose_name='Lower Grade Bound',null=True)
+    numStudents = models.IntegerField(verbose_name='Number of Students',null=True)
+    description = models.CharField(max_length=512,null=True)
+    
+    performanceLevel = models.ForeignKey(performanceLevels, on_delete=models.CASCADE, verbose_name='Performance Level')
+    performanceIndicator = models.ForeignKey(performanceIndicators, on_delete=models.CASCADE)
     
     class Meta:
         verbose_name = 'Rubrics'

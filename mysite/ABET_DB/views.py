@@ -158,13 +158,6 @@ def form(request,what):
 
 def submit(request,what):
     
-    if what == 'pi':
-        print 'submitting pi'           #submiting PI form
-    elif what == 'outcome':
-        print 'submitting outcome'      #submitting aggragate outcomeData form
-    else:
-        raise ValueError("Bad Url in SubmitForm")
-    
     print request.POST
     
     professorNetID = request.session['netid']
@@ -175,7 +168,64 @@ def submit(request,what):
         
     sectionID = request.POST['sectionID']
     section = sectionList.get(pk=sectionID)
-    print 'section'
+    
+    courseOutcomeList = courseOutcomes.objects.filter(section=section)
+    outcomeLetter = request.POST['outcome']
+    courseOutcome = courseOutcomeList.get(studentOutcome__outcomeLetter=outcomeLetter)
+
+    perfLevels = performanceLevels.objects.all()
+    
+    if what == 'pi':
+        print 'submitting pi'           #submiting PI form
+        
+        PIList = performanceIndicators.objects.filter(outcome=courseOutcome)
+        
+        if request.POST['pi'] == '': # create a new pi and rubrics
+            if PIList.filter(name=request.POST['name']).count() == 0:
+                raise ValueError("PI with this name already exists")
+            p = performanceIndicators(name=request.POST['name'])
+            p.outcome = courseOutcome
+        else:
+            p = PIList.get(name=request.POST['pi'])
+            if request.POST['name'] != request.POST['pi']:
+                # make sure name is not already taken
+                p.name = request.POST['name']
+                
+        p.weight = float(request.POST['weight'])
+        p.description = request.POST['description']
+        p.save()
+            
+        #update PI info
+        
+        # populate rubric list if empty
+        rubricList = rubrics.objects.filter(performanceIndicator=p)
+        if len(rubricList) == 0:
+            for pl in perfLevels:
+                r = rubrics(performanceLevel=pl,performanceIndicator=p)
+                r.save()
+            rubricList = rubrics.objects.filter(performanceIndicator=p)
+            
+        for pl in perfLevels:
+            a = str(pl.achievementLevel)
+            r = rubricList.get(performanceLevel__achievementLevel=pl.achievementLevel)
+            
+            if request.POST['r_'+a+'_upper']: r.gradeTopBound = int(request.POST['r_'+a+'_upper'])
+            if request.POST['r_'+a+'_lower']: r.gradeLowerBound = int(request.POST['r_'+a+'_lower'])
+            if request.POST['r_'+a+'_num']:   r.numStudents = int(request.POST['r_'+a+'_num'])
+            r.description = request.POST['r_'+a+'_desc']
+            
+            r.save()
+            
+            
+    elif what == 'outcome':
+        print 'submitting outcome'      #submitting aggragate outcomeData form
+    elif what == 'delete':
+        pass
+    else:
+        raise ValueError("Bad Url in SubmitForm")
+    
+    
+    
     
     return JsonResponse({
         

@@ -1,7 +1,7 @@
 <form name="piform">{% csrf_token %}
     <input type="hidden" name="semStr" value="{{ semStr }}"/>
     <input type="hidden" name="courseName" value="{{ section.course.name }}"/>
-    <input type="hidden" name="outcome" value="{{ outcome.studentOutcome.name }}"/>
+    <input type="hidden" name="outcome" value="{{ outcome.studentOutcome.outcomeLetter }}"/>
     <input type="hidden" name="pi" value="{{ pi.name }}"/>
     <input type="hidden" name="sectionID" value="{{ section.id }}"/>
     
@@ -10,7 +10,7 @@
     <div class="ib"><h4>Enter the data for performance indicator </h4>
     <p>Name: <input name="name" value="{{pi.name}}" /> Weight: <input name="weight" value="{{pi.weight}}" size="8" /></p>
     </div>
-    <div class="ib">Description:<br /><textarea name="desc" id="piDesc">{{pi.description}}</textarea></div>
+    <div class="ib">Description:<br /><textarea name="description" id="piDesc">{{pi.description}}</textarea></div>
     
     <p><div id="rubricSec">
         {% for p in perfLevels %}
