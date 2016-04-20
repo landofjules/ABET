@@ -42,4 +42,9 @@ admin.site.register(studentOutcomes, studentOutcomeAdmin)
 admin.site.register(professors, professorAdmin)
 admin.site.register(courses, courseAdmin)
 
+admin.site.register(outcomeData)
+admin.site.register(performanceIndicators)
+admin.site.register(rubrics)
+
+
 

@@ -1,2 +1,8 @@
 Make Page not adjust size as much
 When we click on "earlierCourses" disable the outcomes
+
+STYLE
+Make textbox take up entire width of page
+Make size stay constant
+Apply loading indicator to all 
+Organize Semester List

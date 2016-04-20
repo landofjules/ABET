@@ -1,5 +1,18 @@
 from __future__ import unicode_literals
 from django.db import models
+from django.utils import timezone
+
+def current():
+    now = timezone.now()
+    semNow = str()
+    if now.month <= 5:
+        semNow = "spring"
+    elif now.month >= 7:
+        semNow = "fall"
+    else:
+        semNow = "summer"
+   
+    return (semNow, now.year)
 
 # ---------- TOP LEVEL [no forign keys] ---------- #
 
@@ -61,8 +74,11 @@ class sections(models.Model):
         ('fall', 'Fall'),
         ('spring', 'Spring'),
     )
-    year = models.IntegerField(default=0)
-    semester = models.CharField(max_length=6, choices=SEMESTERS, default='fall') 
+    
+    sem, yr = current()
+    
+    year = models.IntegerField(default=yr)
+    semester = models.CharField(max_length=6, choices=SEMESTERS, default=sem) 
     
     course = models.ForeignKey(courses,on_delete=models.CASCADE, null=True)
     professor = models.ForeignKey(professors, on_delete=models.CASCADE, null=True)

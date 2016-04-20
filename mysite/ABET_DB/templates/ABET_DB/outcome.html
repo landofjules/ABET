@@ -9,11 +9,18 @@
         {% for p in perfLevels %}
             <div class="rubricBlock">
                 <h6>{{ p.description }}</h6>
-                    <p>Students in Category: <input name="od_{{ p.achievementLevel}}_num" size="3"  /></p>
+                {% if outcomeData %}
+                    {% for od in outcomeData %} 
+                    {% if od.performanceLevel.id == p.id %}
+                    <p>Students in Category: <input name="od_{{ p.achievementLevel}}_num" size="3" value="{{ od.numberAchieved }}"/></p>
+                    {% endif %} {% endfor %}
+                {% else %}
+                    <p>Students in Category: <input name="od_{{ p.achievementLevel}}_num" size="3" /></p>
+                {% endif %}
             </div>
         {% endfor %}
     </p>
     <p>
-        <div class="ib">Narrative Summary:<br /><textarea name="desc" id="narrSum">{{outcome.narrativeSummary}}</textarea></div>
+        <div class="ib">Narrative Summary:<br /><textarea name="narrSum" id="narrSum">{{outcome.narrativeSummary}}</textarea></div>
     </p>
 </form>

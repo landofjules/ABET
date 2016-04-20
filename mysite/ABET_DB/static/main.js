@@ -9,7 +9,20 @@ function selectNav(selector) {
 $("#pageNav a").click(function() {
     if(!$(this).hasClass("active")) {
         selectNav.call(this,"#pageNav");
-        pushCourse.call($("#courseNav .active a").get(0))
+        var outName = thisOutcome()
+        
+        if( thisCourse() != "" ) {
+            pushCourse.call($("#courseNav .active a").get(0), function() {
+                
+                if( outName != "" ) {
+                    $("#outcomeNav .list-group-item").each(function() {
+                        if( $(this).text() == outName ) $(this).click();
+                    })
+                }
+                
+            })
+            
+        }
     }
 })
 
@@ -29,6 +42,7 @@ $('#semSelect select').change(function(e) {
         for(var i=0;i<data.courses.length;i++) {
             here.append("<li><a>"+ data.courses[i] +"</a></li>")
         }
+        $('#outcomeNav .list-group').invisible();
         $("#courseNav a").click(pushCourse);
         here.append(sel);
     })
@@ -47,29 +61,33 @@ function thisPage() {
 
 $("#courseNav a").click(pushCourse);
 
-function pushCourse() {
+function pushCourse(callback) {
     selectNav.call(this.parentNode,"#courseNav");
+    $('#mainForm').empty();
+    $('#mainForm').addClass('loading');
     
     $.getJSON('dat/outcomes',{
         "semStr":thisSem(),
         "course":thisCourse()
     },
     function(data) {
-        $('#outcomeNav').show();
+        $('#outcomeNav .list-group').visible();
         var here = $("#outcomeNav div.list-group");
         here.empty();
         for(var i=0;i<data.outcomes.length;i++) {
             here.append('<a class="list-group-item">'+data.outcomes[i]+'</a>');
         }
         $("#mainForm").text("Select an outcome for "+data.courseName);
+        $('#mainForm').removeClass('loading');
         $('#outcomeNav .list-group-item').click(pushOutcome);
         $('#piNav').hide();
+        if(typeof callback === 'function') callback();
     })   
 };
 
 // ****************  OUTCOME NAVIGATION ***************** //
 
-function pushOutcome() {
+function pushOutcome(callback) {
     selectNav.call(this,"#outcomeNav");
     if(thisPage()==='pi') {
         console.log("should load pi list");
@@ -78,9 +96,12 @@ function pushOutcome() {
         console.log("should load outcome form");
         loadForm();
     }
+    if(typeof callback === 'function') callback();
 }
 
 function loadPis(callback) {
+    var txt = $('#mainForm').text();
+    $('#mainForm').addClass('loading')
     $.getJSON('dat/pis',{
         "semStr":thisSem(),
         "course":thisCourse(),
@@ -97,15 +118,17 @@ function loadPis(callback) {
         addPi.removeClass("active");
         here.append(addPi);
         $("#mainForm").text("Select an performance indicator for "+data.outcome);
+        $("#mainForm").removeClass('loading')
+        $('#piNav .list-group').visible()
         $('#piNav .list-group-item').click(pushPi);
         if(typeof callback === 'function') callback();
     })   
 };
 
 // **************  Performance Indicator Navigation  ************* //
-function pushPi() {
+function pushPi(callback) {
     selectNav.call(this,"#piNav");
-    loadForm();
+    loadForm(callback);
 }
 
 function loadForm(callback) {
@@ -114,6 +137,9 @@ function loadForm(callback) {
         ptext = $("#piNav .active").text()
         if(ptext=="+") ptext='~';
     }
+    
+    $("#mainForm").addClass("loading");
+    $("#mainForm").children().invisible();
     $("#mainForm").load('form/'+thisPage() +'?'+ serialize({
         "semStr":thisSem(),
         "course":thisCourse(),
@@ -121,21 +147,55 @@ function loadForm(callback) {
         "pi":ptext
     }),
     function() {
+        $("#mainForm form").visible();
+        $("#mainForm").removeClass("loading");
         $("#updateBtn").click(submitForm);
+        $("#updateBtn").addClass('disabled');
+        $("#deleteBtn").click(deletePI)
+        $("#mainForm input, #mainForm textarea").change(changeInput);
         if(typeof callback === 'function') callback();
     });
 }
 
 // ************** Form Submitting ************** //
 
-function submitForm() {
+function submitForm(callback) {
+    if( !$('#updateBtn').hasClass('disabled') ) {
+        var form = $('#mainForm form');
+        console.log("should submit");
+        form.invisible();
+        $('#mainForm').addClass('loading')
+        $.post('submit/'+thisPage(),form.serialize(),function(data) {
+            console.log(data);
+            if( thisPage() == 'pi' ) {
+                loadPis(function() {
+                    $("#piNav .list-group-item").each(function() {
+                        if( $(this).text() == data['pi'] ) $(this).click();
+                    })
+                    
+                })
+                
+            } else {
+                $("#outcomeNav .list-group-item").each(function() {
+                    if( $(this).text() == data['outcome'] ) $(this).click();
+                })
+                
+            }
+        })
+    }
+    
+}
+
+function deletePI() {
     var form = $('#mainForm form');
-    console.log("should submit");
-    $.post('submit/'+thisPage(),form.serialize(),function(data) {
-        console.log(data)
-        //$("#piNav div.list-group").append('<a class="list-group-item">'+data['newName']+'</a>');
-        
-    });
+    $.post('submit/deletePI',form.serialize(),function(data) {
+        console.log(data);
+        loadPis();
+    })
+}
+
+function changeInput() {
+    $("#updateBtn").removeClass("disabled");
 }
     
 function serialize(obj) {
@@ -146,3 +206,11 @@ function serialize(obj) {
     }
   return str.join("&");
 }
+
+jQuery.fn.visible = function() {
+    return this.css('visibility', 'visible');
+};
+
+jQuery.fn.invisible = function() {
+    return this.css('visibility', 'hidden');
+};
