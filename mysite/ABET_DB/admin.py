@@ -34,6 +34,21 @@ class courseOutcomeAdmin(admin.ModelAdmin):
     list_display = ('studentOutcome', 'section')
     
 
+class outcomeDataAdmin(admin.ModelAdmin):
+    ordering = ('outcome', 'performanceLevel')
+    list_display = ('outcome', 'performanceLevel')
+    
+    
+class performanceIndicatorAdmin(admin.ModelAdmin):
+    ordering = ('outcome', 'name')
+    list_display = ('outcome', 'name')
+    
+    
+class rubricAdmin(admin.ModelAdmin):
+    ordering = ('performanceIndicator', 'performanceLevel')
+    list_display = ('performanceIndicator', 'performanceLevel')
+
+
 admin.site.register(sections, sectionAdmin)
 admin.site.register(courseOutcomes, courseOutcomeAdmin)
 
@@ -42,9 +57,9 @@ admin.site.register(studentOutcomes, studentOutcomeAdmin)
 admin.site.register(professors, professorAdmin)
 admin.site.register(courses, courseAdmin)
 
-admin.site.register(outcomeData)
-admin.site.register(performanceIndicators)
-admin.site.register(rubrics)
+admin.site.register(outcomeData, outcomeDataAdmin)
+admin.site.register(performanceIndicators, performanceIndicatorAdmin)
+admin.site.register(rubrics, rubricAdmin)
 
 
 

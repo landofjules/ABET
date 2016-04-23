@@ -140,6 +140,7 @@ function loadForm(callback) {
     
     $("#mainForm").addClass("loading");
     $("#mainForm").children().invisible();
+    
     $("#mainForm").load('form/'+thisPage() +'?'+ serialize({
         "semStr":thisSem(),
         "course":thisCourse(),
@@ -149,7 +150,8 @@ function loadForm(callback) {
     function() {
         $("#mainForm form").visible();
         $("#mainForm").removeClass("loading");
-        $("#updateBtn").click(submitForm);
+        $("#mainForm form").submit(submitForm);
+        //$("#mainForm form").validate();
         $("#updateBtn").addClass('disabled');
         $("#deleteBtn").click(deletePI)
         $("#mainForm input, #mainForm textarea").change(changeInput);
@@ -195,7 +197,11 @@ function deletePI() {
 }
 
 function changeInput() {
-    $("#updateBtn").removeClass("disabled");
+    if( $("#mainForm form").valid() ) {
+        $("#updateBtn").removeClass("disabled");
+    } else {
+        $("#updateBtn").addClass("disabled");
+    }
 }
     
 function serialize(obj) {

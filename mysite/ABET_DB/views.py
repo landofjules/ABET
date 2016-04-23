@@ -117,8 +117,7 @@ def form(request,what):
     outcome = courseOutcomes.objects.get(section__pk=section.id, \
                     studentOutcome__outcomeLetter=request.GET['outcome'])
                                 
-
-    
+                                
     # retreive all performance levels
     perfLevList = performanceLevels.objects.all()
     
@@ -149,12 +148,10 @@ def form(request,what):
         template = loader.get_template('ABET_DB/outcome.html')
         
         odList = outcomeData.objects.filter(outcome__pk=outcome.id)
-        print 'OD List:::'
-        print(odList)
         context['outcomeData'] = odList
     
     else:
-        raise ValueError("form url not 'pi' or 'outcome'")
+        raise ABET_Error("form url not 'pi' or 'outcome'")
     
     return HttpResponse(template.render(context,request))
 
@@ -164,25 +161,28 @@ def submit(request,what):
     try:
         professorNetID = request.session['netid']
     except KeyError:
-        raise KeyError("Professor's netid not in session data.")
+        raise ABET_Error("Professor's netid not in session data.")
     
     
     sectionList = sections.objects.filter(professor__netID=professorNetID)
-    
+
     if len(sectionList) == 0:
         raise ABET_Error('Section List Empty for Professor')
         
     try:
         sectionID = request.POST['sectionID']
     except KeyError:
-        raise ValueError('sectionID not in POST data')
+        raise ABET_Error('sectionID not in POST data')
         
+   
     section = sectionList.get(pk=sectionID)
     courseOutcomeList = courseOutcomes.objects.filter(section=section)
-    outcomeLetter = request.POST['outcome']
-    courseOutcome = courseOutcomeList.get(studentOutcome__outcomeLetter=outcomeLetter)
-
+    courseOutcome = courseOutcomeList.get(studentOutcome__outcomeLetter=request.POST['outcome'])
+    
     perfLevels = performanceLevels.objects.all()
+    
+    if len(perfLevels) == 0:
+        raise ABET_Error('no performanceLevels defined in the database')
     
     data = {
        "professorNetID":professorNetID,
@@ -216,14 +216,21 @@ def submit(request,what):
                     })
                 p.name = request.POST['newName']
                 
-        p.weight = float(request.POST['weight'])
+        try:
+            p.weight = float(request.POST['weight'])
+        except ValueError:
+            raise ABET_Error('p.weight not a float')
+        
+        if p.weight > 1.0 or p.weight <= 0.0:
+            raise ABET_Error('p.weight greater than 1 or less than or equal to 0')
+        
         p.description = request.POST['description']
         p.save()
         
         data['pi'] = p.name
             
         #update PI info
-        
+        '''
         # populate rubric list if empty
         rubricList = rubrics.objects.filter(performanceIndicator=p)
         if len(rubricList) == 0:
@@ -231,21 +238,27 @@ def submit(request,what):
                 r = rubrics(performanceLevel=pl,performanceIndicator=p)
                 r.save()
             rubricList = rubrics.objects.filter(performanceIndicator=p)
+        '''
             
         for pl in perfLevels:
             a = str(pl.achievementLevel)
-            r = rubricList.get(performanceLevel__achievementLevel=pl.achievementLevel)
+            r,cond = rubrics.objects.get_or_create(performanceLevel=pl,performanceIndicator=p)
             
-            if request.POST['r_'+a+'_upper']: r.gradeTopBound = int(request.POST['r_'+a+'_upper'])
-            if request.POST['r_'+a+'_lower']: r.gradeLowerBound = int(request.POST['r_'+a+'_lower'])
-            if request.POST['r_'+a+'_num']:   r.numStudents = int(request.POST['r_'+a+'_num'])
+            try:
+                if request.POST['r_'+a+'_upper']: r.gradeTopBound = int(request.POST['r_'+a+'_upper'])
+                if request.POST['r_'+a+'_lower']: r.gradeLowerBound = int(request.POST['r_'+a+'_lower'])
+                if request.POST['r_'+a+'_num']:   r.numStudents = int(request.POST['r_'+a+'_num'])
+            except ValueError:
+                raise ABET_Error('value could not be converted to int')
+            
             r.description = request.POST['r_'+a+'_desc']
-            
             r.save()
+      
             
     # SUBMIT OUTCOME DATA
     elif what == 'outcome':         #submitting aggragate outcomeData form
         
+        '''
         perSectionOutcomeData = outcomeData.objects.filter(outcome=courseOutcome)
         
         if len(perSectionOutcomeData) == 0:         #object doesnt exist, must create object
@@ -254,38 +267,46 @@ def submit(request,what):
                 o = outcomeData(outcome=courseOutcome, performanceLevel=pl)
                 if request.POST['od_'+a+'_num']: o.numberAchieved = request.POST['od_'+a+'_num']
                 o.save()
+        
+        '''
+        
+        for pl in perfLevels:
+            a = str(pl.achievementLevel)
+            o, cond = outcomeData.objects.get_or_create(performanceLevel=pl,outcome=courseOutcome)
+        
+            if request.POST['od_'+a+'_num']:
                 
-        else:                                       #object already exists
-            assert len(perSectionOutcomeData) == len(perfLevels), "Corrupted outcomeData"
-            
-            for pl in perfLevels:
-                a = str(pl.achievementLevel)
-                o = perSectionOutcomeData.get(performanceLevel__achievementLevel=a)
-                if request.POST['od_'+a+'_num']: o.numberAchieved = request.POST['od_'+a+'_num']
-                o.save()
+                try:
+                    o.numberAchieved = int(request.POST['od_'+a+'_num'])
+                except ValueError:
+                    raise ABET_Error('could not convert value to int')
+                
+            o.save()
                 
         courseOutcome.narrativeSummary = request.POST['narrSum']
         courseOutcome.save()
-        
+       
+       
     # DELETE A PERFORMANCE INDICATOR
     elif what == 'deletePI':        #delete button pushed
         
         PIList = performanceIndicators.objects.filter(outcome=courseOutcome)
         
         if len(PIList) == 0:
-            raise ValueError("Atempting to delete non-existant PI")
+            raise ABET_Error("Atempting to delete non-existant PI")
         
         p = PIList.get(name=request.POST['pi'])
         rubricList = rubrics.objects.filter(performanceIndicator=p)
         
         if len(rubricList) == 0:
-            raise ValueError("Atempting to delete non-existant rubrics")
+            raise ABET_Error("Atempting to delete non-existant rubrics")
             
         rubricList.delete()
         p.delete()
+      
         
     else:
-        raise ValueError("Bad Url in SubmitForm")
+        raise ABET_Error("Bad Url in SubmitForm")
     
     return JsonResponse(data)
 
