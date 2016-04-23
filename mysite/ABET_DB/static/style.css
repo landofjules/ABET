@@ -15,16 +15,28 @@ html, body {
     height:100%;
 }
 /* body gradient */
-h1, h2 {
+h1, h2, h5 {
     clear:both;
     text-align:center;
-    color:orange;
     font-weight:bold;
 }
-
+h1,h2 {
+    color:orange;
+}
+h5 {
+    color:#ffb366;
+}
 .item {
     
     border-top:solid 1px navajowhite;
+}
+
+.loading {
+    background-image:url("/static/images/loading.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height: 80px;
+    min-width: 80px;
 }
 
 /* center the course pills */
@@ -69,7 +81,7 @@ h1, h2 {
 }
 #wrapper {
     /*text-align:center;*/
-    background-image:url("/static/images/BGpattern.png");
+    cbackground-image:url("/static/images/BGpattern.png");
    height:100%;
    width:100%;
     padding:0.5em;
@@ -86,7 +98,7 @@ h1, h2 {
     border:1px solid #296915;
     font-weight: bold;
 }
-#deleteLink {
+#deleteBtn {
     color:red;
 }
 
@@ -110,8 +122,8 @@ h1, h2 {
     display:inline-block;
 }
 
-#ecm {
-    color:#337ab7;
+#semSelect {
+    padding: 10px 15px;
 }
 
 .nav-pills li, a {
@@ -120,6 +132,11 @@ h1, h2 {
 
 #narrSum {
     display:block;
-    resize:vertical;
     max-width:20em; 
+}
+
+label.error {
+    
+}
+
 }

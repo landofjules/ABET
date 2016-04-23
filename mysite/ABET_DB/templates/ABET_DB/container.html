@@ -4,6 +4,7 @@
         <title>ABET UTK</title>
         {% load staticfiles %}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        
         <link rel="stylesheet" href="{% static "style.css" %}" />
     </head>
     <body>
@@ -14,14 +15,17 @@
                 <a id="pageNavPi" class="btn btn-default active">Performance Indicators</a>
                 <a id="pageNavOut" class="btn btn-default">Outcomes</a>
             </div></div>
+            <h5>University of Tennessee - ABET Data Submission</h5>
             <h2>Welcome, {{ netid }}!</h2>
             {% block body %} {% endblock %}
             
             <div style="clear:both;"></div>
-            <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
-            <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
         </div>
         </div>
+        <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        <script src="{% static 'lib/jquery.validate.min.js' %}"></script>
+        <script src="{% static 'lib/additional-methods.min.js' %}"></script>
         {% block scripts %} <script src="{% static 'main.js' %}"></script> {% endblock %}
     </body>
 </html>

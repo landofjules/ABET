@@ -1,17 +1,26 @@
 <form name="outform">{% csrf_token %}
-    <input type="hidden" name="course" value="{{course.courseName}}_{{course.semester}}_{{course.yr}}"/>
-    <input type="hidden" name="outcome" value="{{ outcome }}"/>
+    <input type="hidden" name="semStr" value="{{ semStr }}"/>
+    <input type="hidden" name="courseName" value="{{ section.course.name }}"/>
+    <input type="hidden" name="outcome" value="{{ outcome.studentOutcome.outcomeLetter }}"/>
+    <input type="hidden" name="sectionID" value="{{ section.id }}"/>
     <button type="button" class="btn btn-success pull-right" id="updateBtn">Update</button>
     <h4>Enter the aggregate outcome data</h4>
-    <p style="clear:bot;">
+    <p style="clear:both;">
         {% for p in perfLevels %}
             <div class="rubricBlock">
                 <h6>{{ p.description }}</h6>
-                    <p>Students in Category: <input name="od_{{ p.achievementLevel}}_num" size="3"  /></p>
+                {% if outcomeData %}
+                    {% for od in outcomeData %} 
+                    {% if od.performanceLevel.id == p.id %}
+                    <p>Students in Category: <input name="od_{{ p.achievementLevel}}_num" size="3" value="{{ od.numberAchieved }}"/></p>
+                    {% endif %} {% endfor %}
+                {% else %}
+                    <p>Students in Category: <input name="od_{{ p.achievementLevel}}_num" size="3" /></p>
+                {% endif %}
             </div>
         {% endfor %}
     </p>
     <p>
-        <div class="ib">Narrative Summary:<br /><textarea name="desc" id="narrSum">{{pi.description}}</textarea></div>
+        <div class="ib">Narrative Summary:<br /><textarea name="narrSum" id="narrSum">{{outcome.narrativeSummary}}</textarea></div>
     </p>
 </form>

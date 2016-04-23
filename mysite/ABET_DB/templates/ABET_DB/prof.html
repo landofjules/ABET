@@ -4,31 +4,29 @@
     <div id="courseNav" class="centered-pills">
         <ul class="nav nav-pills">
             {% for c in courses %}
-            <li str="{{c.courseName}}_{{c.semester}}_{{c.yr}}"><a>{{ c.courseName }}</a></li>
+            <li><a>{{ c.course.name }}</a></li>
             {% endfor %}
-            <li id="earlierCourses"><a>
-                <span id="ect">Earlier Courses</span>
-                <select id="ecm" style="display:none;">u
-                    <option value="--">----</option>
-                    {% for c in earlierCourses %}
-                    <option value="{{c.courseName}}_{{c.semester}}_{{c.yr}}">{{c.courseName}} {{c.semester}}{{c.yr}}</option> 
-                    {% endfor %}
-                </select>
-            </a></li>
+            <li id="semSelect">
+            <select value="{{ currentSem }}">
+                {% for s in semesters %}
+                <option value="{{ s }}">{{ s|capfirst }}</option>
+                {% endfor %}
+            </select>
+            </li>
         </ul>
     </div>
-        <div id="outcomeNav" style="display:none;">
+        <div id="outcomeNav">
             <b>Outcomes</b>
-            <div class="list-group">
+            <div class="list-group" style="visibility:hidden;">
             </div>
         </div>
-        <div id="piNav" style="display:none;">
+        <div id="piNav" >
             <b>Performance Indicators</b>
-            <div class="list-group">
+            <div class="list-group" style="visibility:hidden;">
                 <a id="addPi" class="list-group-item">+</a>
             </div>
         </div>
     <div class="well" id="mainForm">
-        Select a course
+        <span id="miniMsg">Select a Course</span>
     </div>
 {% endblock%}

@@ -9,121 +9,214 @@ function selectNav(selector) {
 $("#pageNav a").click(function() {
     if(!$(this).hasClass("active")) {
         selectNav.call(this,"#pageNav");
-        loadOutcomes(thisCourse());
+        var outName = thisOutcome()
+        
+        if( thisCourse() != "" ) {
+            pushCourse.call($("#courseNav .active a").get(0), function() {
+                
+                if( outName != "" ) {
+                    $("#outcomeNav .list-group-item").each(function() {
+                        if( $(this).text() == outName ) $(this).click();
+                    })
+                }
+                
+            })
+            
+        }
     }
 })
 
+
+$('#semSelect select').change(function(e) {
+    // TODO make the main page have a loading icon
+    var semStr = thisSem();
+    console.log(semStr);
+    $.getJSON("dat/courses", {
+        "semStr":semStr
+    },
+    function(data) {
+        
+        var sel = $("#semSelect").detach();
+        var here = $("#courseNav ul");
+        here.empty()
+        for(var i=0;i<data.courses.length;i++) {
+            here.append("<li><a>"+ data.courses[i] +"</a></li>")
+        }
+        $('#outcomeNav .list-group').invisible();
+        $("#courseNav a").click(pushCourse);
+        here.append(sel);
+    })
+});
+
+
+function thisSem() { return $("#semSelect select").val().replace(' ','_'); }
+function thisCourse() { return $("#courseNav li.active").text(); }
+function thisOutcome() { return $("#outcomeNav a.active").text(); }
 function thisPage() { 
     if( $("#pageNav a.active").is("#pageNavPi") ) return 'pi';
-    else if( $("#pageNav a.active").is("#pageNavOut") ) return 'out';
-}
-function thisCourse() { return $("#courseNav li.active").attr("str");}
-function thisOutcome() { 
-    return $("#outcomeNav a.active").text();
+    else if( $("#pageNav a.active").is("#pageNavOut") ) return 'outcome';
 }
 
 // *************  COURSE NAVIGATION  *************** //
 
-$('#courseNav li').click(function() {
-    selectNav.call(this,"#courseNav");
-    if($(this).is("#earlierCourses")){
-        $("#ect").hide();
-        $("#ecm").show();
-        $('#ecm').on("change",function() {
-            var li = $(this).parent().parent();
-            li.attr("str",$(this).val());
-            if(li.attr('str')!='--') loadOutcomes(li.attr("str"));
-        })
-    } else {
-        var str = $(this).attr("str");
-        loadOutcomes($(this).attr("str"));
-        $("#ecm").hide();
-        $("#ecm").attr("value","--")
-        $("#ect").show();
-    }
-});
-function loadOutcomes(courseName) {
-    $.getJSON('dat/'+courseName,function(obj) {
-        $('#outcomeNav').show();
+$("#courseNav a").click(pushCourse);
+
+function pushCourse(callback) {
+    selectNav.call(this.parentNode,"#courseNav");
+    $('#mainForm').empty();
+    $('#mainForm').addClass('loading');
+    
+    $.getJSON('dat/outcomes',{
+        "semStr":thisSem(),
+        "course":thisCourse()
+    },
+    function(data) {
+        $('#outcomeNav .list-group').visible();
         var here = $("#outcomeNav div.list-group");
         here.empty();
-        for(var i=0;i<obj.data.length;i++) {
-            here.append('<a class="list-group-item">'+obj.data[i].letter+'</a>');
+        for(var i=0;i<data.outcomes.length;i++) {
+            here.append('<a class="list-group-item">'+data.outcomes[i]+'</a>');
         }
-        $("#mainForm").text("Select an outcome for "+obj.courseName);
+        $("#mainForm").text("Select an outcome for "+data.courseName);
+        $('#mainForm').removeClass('loading');
         $('#outcomeNav .list-group-item').click(pushOutcome);
         $('#piNav').hide();
+        if(typeof callback === 'function') callback();
     })   
 };
 
 // ****************  OUTCOME NAVIGATION ***************** //
 
-function pushOutcome() {
+function pushOutcome(callback) {
     selectNav.call(this,"#outcomeNav");
     if(thisPage()==='pi') {
         console.log("should load pi list");
         loadPis();
-    } else if(thisPage()==='out') {
+    } else if(thisPage()==='outcome') {
         console.log("should load outcome form");
-        loadOutcomeForm(thisCourse(),thisOutcome());
+        loadForm();
     }
+    if(typeof callback === 'function') callback();
 }
 
 function loadPis(callback) {
-    var url = 'dat/'+thisCourse()+'/'+thisOutcome();
-    $.getJSON(url,function(obj) {
+    var txt = $('#mainForm').text();
+    $('#mainForm').addClass('loading')
+    $.getJSON('dat/pis',{
+        "semStr":thisSem(),
+        "course":thisCourse(),
+        "outcome":thisOutcome(),
+    },
+    function(data) {
         $('#piNav').show()
         var here = $("#piNav div.list-group");
         var addPi = $("#addPi").detach();
         here.empty();
-        for(var i=0;i<obj.data.length;i++) {
-            here.append('<a class="list-group-item">'+obj.data[i].name+'</a>');
+        for(var i=0;i<data.pis.length;i++) {
+            here.append('<a class="list-group-item">'+data.pis[i]+'</a>');
         }
         addPi.removeClass("active");
-        addPi.appendTo(here);
-        $("#mainForm").text("Select an performance indicator for "+obj.outcome);
+        here.append(addPi);
+        $("#mainForm").text("Select an performance indicator for "+data.outcome);
+        $("#mainForm").removeClass('loading')
+        $('#piNav .list-group').visible()
         $('#piNav .list-group-item').click(pushPi);
         if(typeof callback === 'function') callback();
     })   
 };
 
-function loadOutcomeForm(course,outcome,callback) {
-    var url = 'form/out/'+course+'/'+outcome;
-    $("#mainForm").load(url,function(obj) {
-        console.log("outcome callback")
-    });
-}
-
-
 // **************  Performance Indicator Navigation  ************* //
-function pushPi() {
+function pushPi(callback) {
     selectNav.call(this,"#piNav");
-    var ptext = $(this).text();
-    loadPiForm(thisCourse(),thisOutcome(),ptext);
+    loadForm(callback);
 }
 
-function loadPiForm(course,outcome,pi,callback) {
-    var url;
-    if(pi=='+') url = 'form/pi/'+course+'/'+outcome+'/~'
-    else url = 'form/pi/'+course+'/'+outcome+'/'+pi;
-    $("#mainForm").load(url,function() {
-        $("#updateBtn").click(submitPiForm);
+function loadForm(callback) {
+    var ptext='~'
+    if(thisPage()=='pi') {
+        ptext = $("#piNav .active").text()
+        if(ptext=="+") ptext='~';
+    }
+    
+    $("#mainForm").addClass("loading");
+    $("#mainForm").children().invisible();
+    
+    $("#mainForm").load('form/'+thisPage() +'?'+ serialize({
+        "semStr":thisSem(),
+        "course":thisCourse(),
+        "outcome":thisOutcome(),
+        "pi":ptext
+    }),
+    function() {
+        $("#mainForm form").visible();
+        $("#mainForm").removeClass("loading");
+        $("#mainForm form").submit(submitForm);
+        //$("#mainForm form").validate();
+        $("#updateBtn").addClass('disabled');
+        $("#deleteBtn").click(deletePI)
+        $("#mainForm input, #mainForm textarea").change(changeInput);
         if(typeof callback === 'function') callback();
     });
 }
 
-
 // ************** Form Submitting ************** //
 
-function submitPiForm() {
+function submitForm(callback) {
+    if( !$('#updateBtn').hasClass('disabled') ) {
+        var form = $('#mainForm form');
+        console.log("should submit");
+        form.invisible();
+        $('#mainForm').addClass('loading')
+        $.post('submit/'+thisPage(),form.serialize(),function(data) {
+            console.log(data);
+            if( thisPage() == 'pi' ) {
+                loadPis(function() {
+                    $("#piNav .list-group-item").each(function() {
+                        if( $(this).text() == data['pi'] ) $(this).click();
+                    })
+                    
+                })
+                
+            } else {
+                $("#outcomeNav .list-group-item").each(function() {
+                    if( $(this).text() == data['outcome'] ) $(this).click();
+                })
+                
+            }
+        })
+    }
+    
+}
+
+function deletePI() {
     var form = $('#mainForm form');
-    var name = $("#piNameField").val();
-    console.log("should submit");
-    $.post('submit/pi',form.serialize(),function(data) {
-        loadPis(function(){
-            console.log("entered callback");
-        });
-        console.log("and does");
-    });
+    $.post('submit/deletePI',form.serialize(),function(data) {
+        console.log(data);
+        loadPis();
+    })
+}
+
+function changeInput() {
+    if( $("#mainForm form").valid() ) {
+        $("#updateBtn").removeClass("disabled");
+    } else {
+        $("#updateBtn").addClass("disabled");
+    }
 }
     
+function serialize(obj) {
+  var str = [];
+  for(var p in obj)
+    if (obj.hasOwnProperty(p)) {
+      str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+    }
+  return str.join("&");
+}
+
+jQuery.fn.visible = function() {
+    return this.css('visibility', 'visible');
+};
+
+jQuery.fn.invisible = function() {
+    return this.css('visibility', 'hidden');
+};
