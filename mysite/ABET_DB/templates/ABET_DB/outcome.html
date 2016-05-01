@@ -1,4 +1,5 @@
 <form name="outform">{% csrf_token %}
+    <p class="outD">Outcome {{ outcome.studentOutcome.outcomeLetter}}: {{ outcome.studentOutcome.description}}</p>
     <input type="hidden" name="semStr" value="{{ semStr }}"/>
     <input type="hidden" name="courseName" value="{{ section.course.name }}"/>
     <input type="hidden" name="outcome" value="{{ outcome.studentOutcome.outcomeLetter }}"/>
@@ -12,10 +13,12 @@
                 {% if outcomeData %}
                     {% for od in outcomeData %} 
                     {% if od.performanceLevel.id == p.id %}
-                    <p>Students in Category: <input name="od_{{ p.achievementLevel}}_num" size="3" value="{{ od.numberAchieved }}"/></p>
+                    <p>Students in Category: <input name="od_{{ p.achievementLevel}}_num" size="3" value="{{ od.numberAchieved }}"/>
+                        <span id="numNotNumError_{{ p.achievementLevel}}" style="display:none;" class="error"><br/>Please enter integer value</span></p>
                     {% endif %} {% endfor %}
                 {% else %}
-                    <p>Students in Category: <input name="od_{{ p.achievementLevel}}_num" size="3" /></p>
+                    <p>Students in Category: <input name="od_{{ p.achievementLevel}}_num" size="3" />
+                        <span id="numNotNumError_{{ p.achievementLevel}}" style="display:none;" class="error"><br/>Please enter integer value</span></p>
                 {% endif %}
             </div>
         {% endfor %}

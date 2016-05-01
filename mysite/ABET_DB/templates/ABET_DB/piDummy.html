@@ -1,0 +1,34 @@
+<form name="piform" action="" class="dummy" onsubmit="return false;" style="visibility:hidden;">{% csrf_token %}
+    <p class="outD">Outcome: None</p>
+    
+    <div class="pull-right" ><button action="" class="btn btn-success" id="updateBtn">Update</button></div>
+    
+    <div class="ib"><h4>Enter the data for performance indicator </h4>
+    <p>
+        <span class="ib">
+            Name: <input name="newName"  type="text" required />
+        </span>
+        <span class="ib">
+            Weight: <input name="weight"  size="8" />
+    </span>
+    </p>
+    </div>
+    <div class="ib">Description:<br /><textarea name="description" id="piDesc"></textarea></div>
+    
+    <p><div id="rubricSec">
+        {% for p in perfLevels %}
+            <div class="rubricBlock">
+                <h6>{{ p.description }}</h6>
+                    <p>
+                    Range: 
+                    <input size="2" name="r_{{ p.achievementLevel}}_lower" /> - 
+                    <input size="2" name="r_{{ p.achievementLevel}}_upper" />
+                        <span id="rangeNotNumError_{{ p.achievementLevel}}" style="display:none;" class="error"><br/>Please enter integer values</span>
+                        <span id="rangeDisorderError_{{ p.achievementLevel}}" style="display:none;" class="error"><br/>Enter lower bound first</span></p>
+                    <p>Students in Category: <input name="r_{{ p.achievementLevel}}_num" size="3"  />
+                        <span id="numNotNumError_{{ p.achievementLevel}}" style="display:none;" class="error"><br/>Please enter an integer value</span></p>
+                    <p>Rubric:<br /><textarea name="r_{{ p.achievementLevel}}_desc"></textarea></p>
+            </div>
+        {% endfor %}
+    </div></p>
+</form>

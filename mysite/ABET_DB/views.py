@@ -61,7 +61,6 @@ def professorPage(request):
 
 # this view returns a JSON list that is used for the right two menu bars of the app
 def listJSON(request,what):
-    
     professorNetID = request.session['netid']
     obj = dict()
     
@@ -78,7 +77,7 @@ def listJSON(request,what):
         for s in sectionsThisSem:
             obj['courses'].append(s.course.name)
     elif what == 'outcomes' or what == 'pis':
-        courseName = request.GET['course'];
+        courseName = request.GET['course']
         obj['courseName'] = courseName
         
         section = sectionsThisSem.get(course__name=courseName)
@@ -93,6 +92,7 @@ def listJSON(request,what):
             outcomeLetter = request.GET['outcome']
             outcome = outcomeList.get(studentOutcome__outcomeLetter=outcomeLetter)
             obj['outcome'] = outcomeLetter
+            obj['outcomeDesc'] = outcome.studentOutcome.description;
             piList = performanceIndicators.objects.filter(outcome__pk=outcome.id)
             obj['pis'] = list()
             for p in piList:
@@ -106,6 +106,13 @@ def form(request,what):
     professorNetID = request.session['netid']
     obj = dict()
     
+    # retreive all performance levels
+    perfLevList = performanceLevels.objects.all()
+    
+    if what == 'dummy':
+        template = loader.get_template('ABET_DB/piDummy.html')
+        return HttpResponse(template.render({'perfLevels':perfLevList},request))
+        
     
     # retreive the section
     sectionList = sections.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
@@ -118,8 +125,6 @@ def form(request,what):
                     studentOutcome__outcomeLetter=request.GET['outcome'])
                                 
                                 
-    # retreive all performance levels
-    perfLevList = performanceLevels.objects.all()
     
     # begin context ( more to be added along the way )
     context = {
@@ -219,7 +224,7 @@ def submit(request,what):
         try:
             p.weight = float(request.POST['weight'])
         except ValueError:
-            raise ABET_Error('p.weight not a float')
+            print "not a float"
         
         if p.weight > 1.0 or p.weight <= 0.0:
             raise ABET_Error('p.weight greater than 1 or less than or equal to 0')
@@ -296,12 +301,7 @@ def submit(request,what):
             raise ABET_Error("Atempting to delete non-existant PI")
         
         p = PIList.get(name=request.POST['pi'])
-        rubricList = rubrics.objects.filter(performanceIndicator=p)
-        
-        if len(rubricList) == 0:
-            raise ABET_Error("Atempting to delete non-existant rubrics")
             
-        rubricList.delete()
         p.delete()
       
         
@@ -347,16 +347,16 @@ def populate(request):
     cs102.save()
     
     #add outcomes
-    a = studentOutcomes(outcomeLetter='A', description='outcome A')
-    b = studentOutcomes(outcomeLetter='B', description='outcome B')
-    c = studentOutcomes(outcomeLetter='C', description='outcome C')
-    d = studentOutcomes(outcomeLetter='D', description='outcome D')
-    e = studentOutcomes(outcomeLetter='E', description='outcome E')
-    f = studentOutcomes(outcomeLetter='F', description='outcome F')
-    g = studentOutcomes(outcomeLetter='G', description='outcome G')
-    h = studentOutcomes(outcomeLetter='H', description='outcome H')
-    i = studentOutcomes(outcomeLetter='I', description='outcome I')
-    j = studentOutcomes(outcomeLetter='J', description='outcome J')
+    a = studentOutcomes(outcomeLetter='A', description='description of outcome A')
+    b = studentOutcomes(outcomeLetter='B', description='description of outcome B')
+    c = studentOutcomes(outcomeLetter='C', description='description of outcome C')
+    d = studentOutcomes(outcomeLetter='D', description='description of outcome D')
+    e = studentOutcomes(outcomeLetter='E', description='description of outcome E')
+    f = studentOutcomes(outcomeLetter='F', description='description of outcome F')
+    g = studentOutcomes(outcomeLetter='G', description='description of outcome G')
+    h = studentOutcomes(outcomeLetter='H', description='description of outcome H')
+    i = studentOutcomes(outcomeLetter='I', description='description of outcome I')
+    j = studentOutcomes(outcomeLetter='J', description='description of outcome J')
     a.save()
     b.save()
     c.save()
@@ -477,4 +477,3 @@ def clearDB(request):
     courseOutcomes.objects.all().delete()
     outcomeData.objects.all().delete()
     return HttpResponse("Cleared Database")
-    

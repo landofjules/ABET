@@ -17,16 +17,19 @@
     </div>
         <div id="outcomeNav">
             <b>Outcomes</b>
-            <div class="list-group" style="visibility:hidden;">
+            <div class="list-group">
+                <a class="list-group-item disabled blank">&nbsp;</a>
             </div>
         </div>
         <div id="piNav" >
             <b>Performance Indicators</b>
-            <div class="list-group" style="visibility:hidden;">
-                <a id="addPi" class="list-group-item">+</a>
+            <div class="list-group">
+                <a class="list-group-item disabled blank">&nbsp;</a>
+                <a id="addPi" class="list-group-item" style="display:none;">+</a>
             </div>
         </div>
     <div class="well" id="mainForm">
-        <span id="miniMsg">Select a Course</span>
+        <span id="msg">Select a Course.</span>
+        {% include 'ABET_DB/piDummy.html' %}
     </div>
 {% endblock%}

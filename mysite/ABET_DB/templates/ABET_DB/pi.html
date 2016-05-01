@@ -1,18 +1,24 @@
-<form name="piform" action="" onsubmit="submitForm();return false;" style="visibility:hidden;">{% csrf_token %}
+<form name="piform" action="" onsubmit="return false;"style="visibility:hidden;">{% csrf_token %}
     <input type="hidden" name="semStr" value="{{ semStr }}"/>
     <input type="hidden" name="courseName" value="{{ section.course.name }}"/>
     <input type="hidden" name="outcome" value="{{ outcome.studentOutcome.outcomeLetter }}"/>
     <input type="hidden" name="pi" value="{{ pi.name }}"/>
     <input type="hidden" name="sectionID" value="{{ section.id }}"/>
     
-    <div class="pull-right" ><button type="sumbit" action="" class="btn btn-success" id="updateBtn">Update</button></div>
+    <div class="pull-right" ><button action="" class="btn btn-success" id="updateBtn">Update</button></div>
     
     <div class="ib"><h4>Enter the data for performance indicator </h4>
-    <p><div class="ib">
+    <p>
+        <span class="ib">
             Name: <input name="newName" value="{{pi.name}}" type="text" required />
-        </div><div class="ib">
+        </span>
+        <span class="ib">
             Weight: <input name="weight" value="{{pi.weight}}" size="8" />
-    </div></p>
+    </span>
+        <span id="nameEmptyError" style="display:none;" class="error"><br/>Please enter a name</span>
+        <span id="nameUsedError" style="display:none;" class="error"><br/>Please choose a unique name</span>
+        <span id="badWeightError" style="display:none;" class="error"><br/>Weight should be a decimal number between 0 and 1.0 </span>
+    </p>
     </div>
     <div class="ib">Description:<br /><textarea name="description" id="piDesc">{{pi.description}}</textarea></div>
     
@@ -23,15 +29,26 @@
                 {% if rubrics %} 
                     {% for r in rubrics %} {% if r.performanceLevel.id == p.id %}
     
-                    <p>Range: <input size="2"  name="r_{{ p.achievementLevel}}_lower" {% if r.gradeLowerBound %} value="{{ r.gradeLowerBound }}" {% endif %}/> - 
-                                <input size="3" name="r_{{ p.achievementLevel}}_upper" {% if r.gradeTopBound %} value="{{ r.gradeTopBound }}" {% endif %}/></p>
-                    <p>Students in Category: <input size="3" name="r_{{ p.achievementLevel}}_num" {% if r.numStudents %} value="{{r.numStudents}}" {% endif %}/></p>
+                    <p>Range: 
+                        <input size="2"  name="r_{{ p.achievementLevel}}_lower" {% if r.gradeLowerBound %} value="{{ r.gradeLowerBound }}" {% endif %}/> - 
+                        <input size="3" name="r_{{ p.achievementLevel}}_upper" {% if r.gradeTopBound %} value="{{ r.gradeTopBound }}" {% endif %}/>
+                            <span id="rangeNotNumError_{{ p.achievementLevel}}" style="display:none;" class="error"><br/>Please enter integer values</span>
+                            <span id="rangeDisorderError_{{ p.achievementLevel}}" style="display:none;" class="error"><br/>Enter lower bound first</span>
+                    </p>
+                    <p>Students in Category: <input size="3" name="r_{{ p.achievementLevel}}_num" {% if r.numStudents %} value="{{r.numStudents}}" {% endif %}/>
+                        <span id="numNotNumError_{{ p.achievementLevel}}" style="display:none;" class="error"><br/>Please enter integer value</span></p>
                     
-                    <p>Description:<br /><textarea name="r_{{ p.achievementLevel}}_desc">{{ r.description }}</textarea></p>
+                    <p>Rubric:<br /><textarea name="r_{{ p.achievementLevel}}_desc">{{ r.description }}</textarea></p>
                     {% endif %} {% endfor %}
                 {% else %}
-                    <p>Range: <input size="2" name="r_{{ p.achievementLevel}}_lower" /> - <input size="2" name="r_{{ p.achievementLevel}}_upper" /></p>
-                    <p>Students in Category: <input name="r_{{ p.achievementLevel}}_num" size="3"  /></p>
+                    <p>
+                    Range: 
+                    <input size="2" name="r_{{ p.achievementLevel}}_lower" /> - 
+                    <input size="2" name="r_{{ p.achievementLevel}}_upper" />
+                        <span id="rangeNotNumError_{{ p.achievementLevel}}" style="display:none;" class="error"><br/>Please enter integer values</span>
+                        <span id="rangeDisorderError_{{ p.achievementLevel}}" style="display:none;" class="error"><br/>Enter lower bound first</span></p>
+                    <p>Students in Category: <input name="r_{{ p.achievementLevel}}_num" size="3"  />
+                        <span id="numNotNumError_{{ p.achievementLevel}}" style="display:none;" class="error"><br/>Please enter an integer value</span></p>
                     <p>Rubric:<br /><textarea name="r_{{ p.achievementLevel}}_desc"></textarea></p>
                 {% endif %}
             </div>

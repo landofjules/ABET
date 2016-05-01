@@ -1,8 +1,23 @@
-Make Page not adjust size as much
-When we click on "earlierCourses" disable the outcomes
+-- ADMIN --
 
-STYLE
-Make textbox take up entire width of page
-Make size stay constant
-Apply loading indicator to all 
+ -- CLIENT SIDE -- 
+ 
+
+Add error functions
+Make NarrSum textbox take up entire width of page
+Add tooltips
+Comment the code
+
+
 Organize Semester List
+
+
+
+ -- DONE -- 
+Outcome description at the top of the form
+Make size stay constant (form becomes invisible)
+Apply loading indicator to all
+Make some empty placeholder for outcome and pi list
+Make sure semester switch is not janky
+Make outcome show up before form does
+ 
