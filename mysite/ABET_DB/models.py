@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils import timezone
 
+# returns current semester and year
 def current():
     now = timezone.now()
     semNow = str()
@@ -14,7 +15,7 @@ def current():
    
     return (semNow, now.year)
 
-# ---------- TOP LEVEL [no forign keys] ---------- #
+# ---------- TOP LEVEL MODELS (no forign keys) ---------- #
 
 class professors(models.Model):
     netID = models.CharField(max_length=512, default='', verbose_name='Net ID')
@@ -65,14 +66,14 @@ class performanceLevels(models.Model):
         return self.description
     
 
-# --------- SPLIT VERSIONS OF COURSE AND OUTCOME ---------- #
+# --------- SEMESTER BASED VERSIONS OF COURSE AND OUTCOME ---------- #
     
 class sections(models.Model):
     
     SEMESTERS = (
+        ('spring', 'Spring'),
         ('summer', 'Summer'),
         ('fall', 'Fall'),
-        ('spring', 'Spring'),
     )
     
     sem, yr = current()

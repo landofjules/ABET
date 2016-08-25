@@ -130,7 +130,7 @@ h5 {
 
 #narrSum {
     display:block;
-    max-width:20em; 
+    width:100%;
 }
 
 input.error {
@@ -142,16 +142,31 @@ input.error {
 }
 
 #msg {
-    color:#666;
+    color:#2D6F80;
     position: absolute;
     left: 0;
     top: 8em;
     width: 100%;
     text-align: center;
     font-size:120%;
+    cursor:default;
 }
 
 .outD {
     color:#666;
     margin:0;
+}
+#helpBtn {
+    color:#2D6F80;
+}
+
+#piLoadBox {
+   border-radius: 4px;
+   border: 1px solid #ddd;
+   padding: 10px;
+}
+
+#piLoadBox a {
+    margin-top:.7em;
+    font-weight:bold;
 }

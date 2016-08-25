@@ -9,12 +9,8 @@
     
     <div class="ib"><h4>Enter the data for performance indicator </h4>
     <p>
-        <span class="ib">
             Name: <input name="newName" value="{{pi.name}}" type="text" required />
-        </span>
-        <span class="ib">
             Weight: <input name="weight" value="{{pi.weight}}" size="8" />
-    </span>
         <span id="nameEmptyError" style="display:none;" class="error"><br/>Please enter a name</span>
         <span id="nameUsedError" style="display:none;" class="error"><br/>Please choose a unique name</span>
         <span id="badWeightError" style="display:none;" class="error"><br/>Weight should be a decimal number between 0 and 1.0 </span>
@@ -28,7 +24,7 @@
                 <h6>{{ p.description }}</h6>
                 {% if rubrics %} 
                     {% for r in rubrics %} {% if r.performanceLevel.id == p.id %}
-    
+                    <p>{{r.performanceLevel.achievementLevel}}</p>
                     <p>Range: 
                         <input size="2"  name="r_{{ p.achievementLevel}}_lower" {% if r.gradeLowerBound %} value="{{ r.gradeLowerBound }}" {% endif %}/> - 
                         <input size="3" name="r_{{ p.achievementLevel}}_upper" {% if r.gradeTopBound %} value="{{ r.gradeTopBound }}" {% endif %}/>

@@ -10,6 +10,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 #from django.utils import timezone
 from sets import Set
 from ABET_DB.exceptions import ABET_Error
+from decimal import *
 
 from ABET_DB.models import *
 from django.http import HttpResponse, JsonResponse
@@ -24,95 +25,309 @@ def current():
         semNow = "fall"
     else:
         semNow = "summer"
-   
     return (semNow, now.year)
 '''
 
-
+# this view returns the main page for professors entering data
 def professorPage(request):
     # after HARRY figures out security, this wont be needed
     # this should be passed in upon login
     request.session['netid'] = 'jkohann' 
     professorNetID = request.session['netid']
     
-    sectionList = sections.objects.filter(professor__netID=professorNetID)
+    # return a query of all professor's sections
+    sectionList = sections.objects.filter(professor__netID=professorNetID).order_by("-year","semester")
     
-    # make a list of all semesters
-    semesterSet = Set()
+    # make a list of all semesters for drop down
+    semList = list()
     for s in sectionList:
         syStr = s.semester +' '+ str(s.year)
-        semesterSet.add(syStr)
+        if syStr not in semList:
+            semList.append(syStr)
 
+    # get the current semester and year and select sections for it
     nowSem, nowYear = current()
     sectionsNow = sectionList.filter(semester=nowSem, year=nowYear)
     
+    # retrieve performance indicators
     perfLevList = performanceLevels.objects.all()
 
-    # run the template
+    # load the template and provide it the nessecary information
     template = loader.get_template('ABET_DB/prof.html')
     context = {
         'netid':professorNetID,
-        'semesters':list(semesterSet),
-        'currentSem':nowSem +' '+ str(nowYear),
+        'semesters':semList,
+        'currentSem':nowSem+' '+ str(nowYear),
         'courses':sectionsNow,
         'perfLevels':perfLevList,
     }
     return HttpResponse(template.render(context,request))
 
-# this view returns a JSON list that is used for the right two menu bars of the app
+# this view returns a JSON list that is used for the right two menu bars of the app and the course list
 def listJSON(request,what):
+    
     professorNetID = request.session['netid']
     obj = dict()
     
+    # retreive professors list of courses
     courseList = sections.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
     
+    # retreive client specified semester and year, then filter sections accordingly
     semSem, semYear = tuple(request.GET['semStr'].split('_'))
     sectionsThisSem = courseList.filter(year=semYear).filter(semester=semSem)
     obj['semester'] = semSem
     obj['year'] = semYear
     obj['semStr'] = request.GET['semStr']
     
+    # return specified content based on url
     if what == 'courses':
+        
+        # return a list of course names for specified semester
         obj['courses'] = list()
         for s in sectionsThisSem:
             obj['courses'].append(s.course.name)
+            
     elif what == 'outcomes' or what == 'pis':
+        
+        # retreive the outcomes for the selected course
         courseName = request.GET['course']
         obj['courseName'] = courseName
-        
         section = sectionsThisSem.get(course__name=courseName)
         outcomeList = courseOutcomes.objects.filter(section=section)
         
+        # if client asks for the outcomes, then simply return that list
         if what == 'outcomes':
             obj['outcomes'] = list()
             for o in outcomeList:
                 obj['outcomes'].append(o.studentOutcome.outcomeLetter)
         
+        # if client is asking for performance indicators...
         elif what == 'pis':
+            
+            # retrieve the outcome, and filter pis based on that list
             outcomeLetter = request.GET['outcome']
             outcome = outcomeList.get(studentOutcome__outcomeLetter=outcomeLetter)
             obj['outcome'] = outcomeLetter
+            # data for the outcome description on top of form place
             obj['outcomeDesc'] = outcome.studentOutcome.description;
             piList = performanceIndicators.objects.filter(outcome__pk=outcome.id)
             obj['pis'] = list()
             for p in piList:
                 obj['pis'].append(p.name)
             
+            # append objects semester years for populate
+            outcomesOfSemesters = courseOutcomes.objects.filter(studentOutcome__outcomeLetter=outcomeLetter) \
+                                                        .filter(section__course__name=courseName)
+            
+            obj['piSems'] = list()
+            for oos in outcomesOfSemesters:
+                obj['piSems'].append(oos.section.semester + ' ' + str(oos.section.year) )
+            
     return JsonResponse(obj)
+
+def prevPis(request):
+    return HttpResponse("done")
     
+def graph(request):
+    #get the student outcomes
+    getcontext().prec = 3
+    outcomeList = courseOutcomes.objects.all()
     
+    #get all outcomes
+    rubricList = rubrics.objects.all()
+    
+    outcomeResults = []
+    #go through each outcome and group everything by the outcome
+    for outcome in outcomeList:
+        sectionName = ""
+        sectionName = outcome.section.course.name + " " + str(outcome.section.semester) + ", " + str(outcome.section.year)
+        outcomeObject = {
+            'section': sectionName,
+            'letter': outcome.studentOutcome.outcomeLetter,
+            'rubricList': [],
+            'exceeded': Decimal(0),
+            'met': Decimal(0),
+            'total': Decimal(0)
+        }
+
+        rList = []
+        
+        for rubric in rubricList:
+            #make sure the selection is only comparing similar outcomes
+            if (rubric.performanceIndicator.outcome.id != outcome.id):
+                continue
+            
+            rubricObject = {
+                'perfID': rubric.performanceIndicator.id,
+                'met': 0,
+                'exceeded': 0,
+                'below': 0,
+                'weight': rubric.performanceIndicator.weight,
+                'total': 0
+            }
+            #see if rubric already exists in rubric list
+            for r in rList:
+                if (r['perfID'] == rubric.performanceIndicator.id):
+                    rubricObject = r
+                    break
+            
+            #achievment 1 = met ,0 = exceeded,t 2 = below
+            achievementLevel = rubric.performanceLevel.achievementLevel
+            if (achievementLevel == 1 and rubric.numStudents is not None):
+                rubricObject['met'] += rubric.numStudents
+            elif (achievementLevel == 0 and rubric.numStudents is not None):
+                rubricObject['exceeded'] += rubric.numStudents
+            elif (rubric.numStudents is not None):
+                rubricObject['below'] += rubric.numStudents
+            
+            rubricExists = False
+            for r in rList:
+                if (r['perfID'] == rubric.performanceIndicator.id):
+                    rubricExists = True
+                    r = rubricObject
+                    break
+                
+            if (rubricExists == False):
+                rList.append(rubricObject)
+                
+        outcomeObject['rubricList'] = rList
+        #compute the weighted amount for each rubric
+        for r in rList:
+            numStudents = Decimal(r['met'] + r['exceeded'] + r['below'])
+            weight = Decimal(r['weight'] * 100)
+            exceeded = Decimal(r['exceeded'] * 1.0)
+            met = Decimal(r['met'] * 1.0)
+            exceeded = ( exceeded / numStudents ) * weight
+            met = ( met / numStudents ) * weight
+            
+            outcomeObject['exceeded'] += exceeded
+            outcomeObject['met'] += met
+            outcomeObject['total'] += met + exceeded
+        
+        outcomeResults.append(outcomeObject)
+        
+    context = {
+        'outcomeList': []
+    }
+    #group all the outcomes by outcome letter
+    sList = studentOutcomes.objects.all()
+    objectList = []
+    for letter in sList:
+        letterObj = {
+            'sectionList': [],
+            'letter': letter.outcomeLetter,
+            'descripton': letter.description
+        }
+        
+        for outcome in outcomeResults:
+            if (outcome['letter'] == letterObj['letter']):
+                letterObj['sectionList'].append(outcome)
+        objectList.append(letterObj)
+        
+    context['outcomeList'] = objectList
+    template = loader.get_template('ABET_DB/graph.html')
+    print objectList
+    return HttpResponse(template.render(context,request))
+
+def matrix(request):
+    nowSem, nowYear = current()
+    nowSem = "spring"
+    nowYear = "2016"
+    #get the student outcomes
+    outcomeList = courseOutcomes.objects.all()
+    
+    #get all sections
+    sectionList = sections.objects.all()
+    
+    #get all performance indicators
+    performanceList = performanceIndicators.objects.all()
+    
+    #get all rubrics
+    rubricList = rubrics.objects.all()
+    
+    sectionsThisSem = sectionList.filter(year = nowYear).filter(semester = nowSem)
+    
+    outcomeLetters = []
+    for outcome in outcomeList:
+        outcomeLetters.append(outcome.studentOutcome.outcomeLetter)
+    
+    context = {
+        'sections': [],
+        'outcomes': sorted(set(outcomeLetters)),
+        'year': nowYear,
+        'semester': nowSem
+    }
+    for section in sectionsThisSem:
+        #get all outcomes in this section
+        outSec = outcomeList.filter(section = section)
+        
+        sectionObject = {
+            'proffessor': section.professor.fn + " " + section.professor.ln,
+            'email': section.professor.netID + "@utk.edu",
+            'sectionErrors': [],
+            'courseName': section.course.name,
+            'message': ""
+        }
+        
+        #loop through each outcome in the section to determine if 
+        #outcome is valid
+        for outcome in outSec:
+            outcomeError = {
+                'outcomeLetter': outcome.studentOutcome.outcomeLetter,
+                'errorMessage': []
+            }
+            errorMessage = [] #error message arrary for outcomes
+            messageString = ""
+            
+            perfList = performanceList.filter(outcome = outcome)
+            weightCtr = 0       #keeps track of the weight to make sure it equals 1
+            studentTotal = 0    #keeps track of num students to make sure consistnet
+            if (len(perfList) > 0):
+                for perf in perfList:
+                    #determine if weight of performance indicators totals to 1
+                    weightCtr += perf.weight
+                    
+                    #get all rubrics in performance indicator
+                    rubPerf = rubricList.filter(performanceIndicator = perf)
+                    tmpStudent = 0
+                    for rubric in rubPerf:
+                        if (rubric.numStudents):
+                            tmpStudent += rubric.numStudents
+                        
+                    if (tmpStudent == 0 or tmpStudent < studentTotal):
+                        messageString += "Please complete the number of students in rubric: " + perf.name + "%0A"
+                        outcomeError['errorMessage'].append("Please complete the number of students in performance indicator: " + perf.name)
+                    elif (tmpStudent > studentTotal and studentTotal != 0):
+                        messageString += "Please complete the number of students in rubric: " + perf.name + "%0A"
+                        outcomeError['errorMessage'].append("Please complete the number of students in performance indicator: " + perf.name)
+                    elif (tmpStudent > studentTotal and studentTotal == 0):
+                        studentTotal = tmpStudent
+                        
+                if (weightCtr != 1):
+                    messageString += "Please complete entering your performance indicators. The current weight of performance indicators does not equal 1 %0A"
+                    outcomeError['errorMessage'].append("Please complete entering your performance indicators. The current weight of performance indicators does not equal 1")
+            else: 
+                messageString += "Please enter performance indicators for the outcome: " + outcome.studentOutcome.outcomeLetter + "%0A"
+                outcomeError['errorMessage'].append("Please enter performance indicators for the outcome: " + outcome.studentOutcome.outcomeLetter)
+            
+            if (len(outcomeError['errorMessage']) > 0):
+                sectionObject['message'] += (outcomeError['outcomeLetter'] + "%0A" + messageString).encode('ascii')
+                sectionObject['sectionErrors'].append(outcomeError)
+                
+            
+            
+        
+        context['sections'].append(sectionObject)
+    template = loader.get_template('ABET_DB/matrix.html')
+    return HttpResponse(template.render(context, request))
+    
+# this view returns either an outcome form, or a performance indicator form 
 def form(request,what):
-    
     professorNetID = request.session['netid']
     obj = dict()
     
     # retreive all performance levels
     perfLevList = performanceLevels.objects.all()
-    
-    if what == 'dummy':
-        template = loader.get_template('ABET_DB/piDummy.html')
-        return HttpResponse(template.render({'perfLevels':perfLevList},request))
-        
     
     # retreive the section
     sectionList = sections.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
@@ -123,10 +338,10 @@ def form(request,what):
     # retreive the outcome
     outcome = courseOutcomes.objects.get(section__pk=section.id, \
                     studentOutcome__outcomeLetter=request.GET['outcome'])
-                                
-                                
-    
-    # begin context ( more to be added along the way )
+
+
+
+    # begin context for template ( more will be added along the way )
     context = {
         'semStr':request.GET['semStr'],
         'section':section,
@@ -134,10 +349,11 @@ def form(request,what):
         'perfLevels':perfLevList,
     }
     
+    # if client asks for performance indicator form
     if what == 'pi':
         template = loader.get_template('ABET_DB/pi.html')
         
-        # if the pi is infact given
+        # if we are asking for a previously created form
         if request.GET['pi'] != '~':
             
             # retreive the performance indicator
@@ -145,50 +361,56 @@ def form(request,what):
                                                     name=request.GET['pi'])
             context['pi'] = pi
             
-            # retreive the rubrics
+            # retrieve the rubrics
             rubricList = rubrics.objects.filter(performanceIndicator__pk=pi.id)
             context['rubrics'] = rubricList
     
+    # if client asks for the outcome form
     elif what == 'outcome': 
         template = loader.get_template('ABET_DB/outcome.html')
         
+        # retreive the outcome data
         odList = outcomeData.objects.filter(outcome__pk=outcome.id)
         context['outcomeData'] = odList
     
     else:
+        # url is bad
         raise ABET_Error("form url not 'pi' or 'outcome'")
     
     return HttpResponse(template.render(context,request))
 
-
+# this view handles data submission from both forms
 def submit(request,what):
     
-    try:
-        professorNetID = request.session['netid']
-    except KeyError:
+    # retreive the professors netid
+    try: professorNetID = request.session['netid']
+    except KeyError: 
         raise ABET_Error("Professor's netid not in session data.")
     
-    
+    # retrieve sections of the professor
     sectionList = sections.objects.filter(professor__netID=professorNetID)
 
     if len(sectionList) == 0:
         raise ABET_Error('Section List Empty for Professor')
-        
-    try:
-        sectionID = request.POST['sectionID']
-    except KeyError:
+    
+    # retreive the ID of the section
+    try: sectionID = request.POST['sectionID']
+    except KeyError: 
         raise ABET_Error('sectionID not in POST data')
         
    
+    # retreive the course outcome based on section and post data
     section = sectionList.get(pk=sectionID)
     courseOutcomeList = courseOutcomes.objects.filter(section=section)
     courseOutcome = courseOutcomeList.get(studentOutcome__outcomeLetter=request.POST['outcome'])
     
+    # retreive performance levels
     perfLevels = performanceLevels.objects.all()
     
     if len(perfLevels) == 0:
         raise ABET_Error('no performanceLevels defined in the database')
     
+    # begin data dictionary to return back to client
     data = {
        "professorNetID":professorNetID,
        "course":section.course.name,
@@ -196,24 +418,36 @@ def submit(request,what):
     }
     
     
-    # SUBMIT PI DATA
+    # SUBMITTING PERFORMANCE INDICATOR DATA
     if what == 'pi':
         
+        # get a list of performance indicators
         PIList = performanceIndicators.objects.filter(outcome=courseOutcome)
         
-        if request.POST['pi'] == '': # create a new pi and rubrics
-            # return an error if the name is already taken
+        # if the form was for a new performance indicator
+        if request.POST['pi'] == '':
+            
+            # if the name is already taken, return an error state
+            # client should prevent this from happening
             if PIList.filter(name=request.POST['newName']).count() != 0:
                 return JsonResponse({
                     sucess:False,
                     error:"nameTaken",
                 })
+            
+            # create a new performance indicator
             p = performanceIndicators(name=request.POST['newName'])
             p.outcome = courseOutcome
+        
+        # if the form was for a prexisting performance indicator
         else:
+            # retreive that performance indicator
             p = PIList.get(name=request.POST['pi'])
+            
+            
+            # return an error if the name is already taken
+            # client should prevent
             if request.POST['newName'] != request.POST['pi']:
-                # return an error if the name is already taken
                 if PIList.filter(name=request.POST['newName']).count() != 0:
                     return JsonResponse({
                         "success":False,
@@ -221,20 +455,15 @@ def submit(request,what):
                     })
                 p.name = request.POST['newName']
                 
-        try:
-            p.weight = float(request.POST['weight'])
-        except ValueError:
-            print "not a float"
-        
+        # set all the parameters for the performance indicator and save
+        p.weight = float(request.POST['weight'])
         if p.weight > 1.0 or p.weight <= 0.0:
             raise ABET_Error('p.weight greater than 1 or less than or equal to 0')
-        
         p.description = request.POST['description']
         p.save()
         
         data['pi'] = p.name
             
-        #update PI info
         '''
         # populate rubric list if empty
         rubricList = rubrics.objects.filter(performanceIndicator=p)
@@ -244,11 +473,12 @@ def submit(request,what):
                 r.save()
             rubricList = rubrics.objects.filter(performanceIndicator=p)
         '''
-            
+        # iterate through performance levels, and create corresponding rubrics where nessecary
         for pl in perfLevels:
             a = str(pl.achievementLevel)
             r,cond = rubrics.objects.get_or_create(performanceLevel=pl,performanceIndicator=p)
             
+            # record rubric data
             try:
                 if request.POST['r_'+a+'_upper']: r.gradeTopBound = int(request.POST['r_'+a+'_upper'])
                 if request.POST['r_'+a+'_lower']: r.gradeLowerBound = int(request.POST['r_'+a+'_lower'])
@@ -261,12 +491,12 @@ def submit(request,what):
       
             
     # SUBMIT OUTCOME DATA
-    elif what == 'outcome':         #submitting aggragate outcomeData form
+    elif what == 'outcome':
         
         '''
         perSectionOutcomeData = outcomeData.objects.filter(outcome=courseOutcome)
         
-        if len(perSectionOutcomeData) == 0:         #object doesnt exist, must create object
+        if len(perSectionOutcomeData) == 0:         # object doesnt exist, must create object
             for pl in perfLevels:
                 a = str(pl.achievementLevel)
                 o = outcomeData(outcome=courseOutcome, performanceLevel=pl)
@@ -275,19 +505,20 @@ def submit(request,what):
         
         '''
         
+        # iterate through performance levels, and create corresponding outcome data where nessecary
         for pl in perfLevels:
             a = str(pl.achievementLevel)
             o, cond = outcomeData.objects.get_or_create(performanceLevel=pl,outcome=courseOutcome)
         
             if request.POST['od_'+a+'_num']:
-                
                 try:
                     o.numberAchieved = int(request.POST['od_'+a+'_num'])
                 except ValueError:
                     raise ABET_Error('could not convert value to int')
                 
             o.save()
-                
+        
+        # save the info for the course outcome
         courseOutcome.narrativeSummary = request.POST['narrSum']
         courseOutcome.save()
        
@@ -295,22 +526,21 @@ def submit(request,what):
     # DELETE A PERFORMANCE INDICATOR
     elif what == 'deletePI':        #delete button pushed
         
+        # find the performance indicator
         PIList = performanceIndicators.objects.filter(outcome=courseOutcome)
         
         if len(PIList) == 0:
             raise ABET_Error("Atempting to delete non-existant PI")
         
         p = PIList.get(name=request.POST['pi'])
-            
         p.delete()
       
-        
     else:
         raise ABET_Error("Bad Url in SubmitForm")
     
     return JsonResponse(data)
 
-  
+# this is a debugging view which may be deleted before productions, it populates the database with dummy info 
 def populate(request):
     #add performanceLevels
     excede = performanceLevels(achievementLevel=0, description='Exceded Expectations')

@@ -4,17 +4,31 @@
         <title>ABET UTK</title>
         {% load staticfiles %}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-        
+        <link rel="stylesheet" href="{% static "lib/tooltipster.css" %}" />
         <link rel="stylesheet" href="{% static "style.css" %}" />
     </head>
     <body>
+        <div id="helpMenu" class="modal fade" tabindex="-1" role="dialogue" style="display:none;">
+            <div class="modal-dialog"><div class="modal-content">
+                <div class="modal-body">
+                    <span class="pull-right"><button class="btn btn-default" data-dismiss="modal"><b>X</b></button></span>
+                     {% include 'ABET_DB/help.html' %}
+                </div>
+           </div>
+            </div>
+            </div>
         <div id="wrapper">
         <div id="container">
-            <button type="button" id="logoutButton"class="btn btn-danger pull-right">Log Out</button>
-            <div id="pageNav" style="text-align:left;"><div class="btn-group">
-                <a id="pageNavPi" class="btn btn-default active">Performance Indicators</a>
-                <a id="pageNavOut" class="btn btn-default">Outcomes</a>
-            </div></div>
+            <div class="pull-right">
+                <button type="button" id="logoutBtn"class="btn btn-danger">Log Out</button>
+            </div>
+            <div id="pageNav" style="text-align:left;">
+                <div class="btn-group">
+                    <a id="pageNavPi" class="btn btn-default active">Performance Indicators</a>
+                    <a id="pageNavOut" class="btn btn-default">Outcomes</a>
+                </div>
+                <button type="button" id="helpBtn" class="btn btn-default" data-toggle="modal" data-target="#helpMenu"><b>?</b></button>
+            </div>
             <h5>University of Tennessee - ABET Data Submission</h5>
             <h2>Welcome, {{ netid }}!</h2>
             {% block body %} {% endblock %}
@@ -24,6 +38,8 @@
         </div>
         <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
         <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-        {% block scripts %} <script src="{% static 'main.js' %}"></script> {% endblock %}
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+        <script src="{% static 'lib/jquery.tooltipster.min.js' %}"></script>
+        <script src="{% static 'main.js' %}"></script>
     </body>
 </html>

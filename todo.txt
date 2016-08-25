@@ -1,23 +1,16 @@
--- ADMIN --
-
- -- CLIENT SIDE -- 
- 
-
-Add error functions
-Make NarrSum textbox take up entire width of page
 Add tooltips
-Comment the code
 
+Delete pi outcome description bug
+Outcome data does not show bug
+semester switch load courses bug
+Make sure weight can be not submitted
+Ditch the gradient
 
-Organize Semester List
-
-
-
+populate feature
+    get the course from a previous class
+    make a seperate query = courses and semseter
+    copy pi data into this one
+    
+    
  -- DONE -- 
-Outcome description at the top of the form
-Make size stay constant (form becomes invisible)
-Apply loading indicator to all
-Make some empty placeholder for outcome and pi list
-Make sure semester switch is not janky
-Make outcome show up before form does
- 
+Create a popup help page

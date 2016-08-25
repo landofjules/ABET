@@ -25,11 +25,15 @@
             <b>Performance Indicators</b>
             <div class="list-group">
                 <a class="list-group-item disabled blank">&nbsp;</a>
-                <a id="addPi" class="list-group-item" style="display:none;">+</a>
+            </div>
+            <div id="piLoadBox" style="display:none;">
+                Load Previous<br />
+                <select></select>
+                <a>GO</a>
             </div>
         </div>
     <div class="well" id="mainForm">
-        <span id="msg">Select a Course.</span>
+        <span id="msg">Select a Course</span>
         {% include 'ABET_DB/piDummy.html' %}
     </div>
 {% endblock%}

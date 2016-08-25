@@ -13,6 +13,7 @@
                 {% if outcomeData %}
                     {% for od in outcomeData %} 
                     {% if od.performanceLevel.id == p.id %}
+                    {{p.achievementLevel}}
                     <p>Students in Category: <input name="od_{{ p.achievementLevel}}_num" size="3" value="{{ od.numberAchieved }}"/>
                         <span id="numNotNumError_{{ p.achievementLevel}}" style="display:none;" class="error"><br/>Please enter integer value</span></p>
                     {% endif %} {% endfor %}

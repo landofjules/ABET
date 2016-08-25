@@ -29,5 +29,7 @@ urlpatterns = [
     url(r'populate/', views.populate),
     url(r'clearDB/', views.clearDB),
     url(r'^admin/', admin.site.urls),
-    url(r'^$', views.professorPage),
-] + static(settings.STATIC_URL,docuemnt_root=settings.STATIC_ROOT)
+    url(r'^graph/', views.graph),
+    url(r'^matrix/', views.matrix),
+    url(r'^$', views.professorPage)
+] + static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)
