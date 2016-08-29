@@ -1,16 +1,24 @@
 Add tooltips
 
-Delete pi outcome description bug
-Outcome data does not show bug
+Outcome data does not show at 0 bug
 semester switch load courses bug
 Make sure weight can be not submitted
-Ditch the gradient
+Replace the css gradient with an image form
+Remove the numbers showing up below performance levels
 
 populate feature
     get the course from a previous class
     make a seperate query = courses and semseter
     copy pi data into this one
+
+
+ ~ % PERHAPS % ~
+Make matrix view accessible to all professors
+Make Remember me checkbox work
+
     
-    
- -- DONE -- 
-Create a popup help page
+  ~ # # # ~  DONE  ~ # # # ~
+Delete pi outcome description bug
+Make a login page
+    Test if the professor is in the database
+Find bug which makes courses not show up originally

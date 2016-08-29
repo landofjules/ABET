@@ -90,6 +90,21 @@ DATABASES = {
         #'HOST': 'dbs.eecs.utk.edu'
     }
 }
+'''
+# LDAP Authentication
+# https://pythonhosted.org/django-auth-ldap/install.html
+
+# Baseline configuration.
+AUTH_LDAP_SERVER_URI = "ldap://@ldap.utk.edu"
+AUTH_LDAP_BIND_DN = "dc=tennessee,dc=edu"
+AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=users,",
+    ldap.SCOPE_SUBTREE, "(uid=%s)")
+
+AUTHENTICATION_BACKENDS = (
+	'django_auth_ldap.backend.LDAPBackend',
+	'django.contrib.auth.backends.ModelBackend',
+)
+'''
 
 #manages the ordering of models on the admin page
 ADMIN_REORDER = (

@@ -23,13 +23,16 @@ from ABET_DB import views
 
 
 urlpatterns = [
-    url(r'^dat/(\w+)',views.listJSON),
-    url(r'^form/(\w+)',views.form),
-    url(r'^submit/(\w+)',views.submit),
+    url(r'dat/(\w+)',views.listJSON),
+    url(r'form/(\w+)',views.form),
+    url(r'submit/(\w+)',views.submit),
+    url(r'logout',views.logout),
     url(r'populate/', views.populate),
+    url(r'populatePis',views.prevPis),
     url(r'clearDB/', views.clearDB),
     url(r'^admin/', admin.site.urls),
     url(r'^graph/', views.graph),
     url(r'^matrix/', views.matrix),
-    url(r'^$', views.professorPage)
+    url(r'^prof/', views.professorPage),
+    url(r'^$',views.login),
 ] + static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)

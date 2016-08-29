@@ -24,7 +24,7 @@
                 <h6>{{ p.description }}</h6>
                 {% if rubrics %} 
                     {% for r in rubrics %} {% if r.performanceLevel.id == p.id %}
-                    <p>{{r.performanceLevel.achievementLevel}}</p>
+                    <!--<p>{{r.performanceLevel.achievementLevel}}</p>-->
                     <p>Range: 
                         <input size="2"  name="r_{{ p.achievementLevel}}_lower" {% if r.gradeLowerBound %} value="{{ r.gradeLowerBound }}" {% endif %}/> - 
                         <input size="3" name="r_{{ p.achievementLevel}}_upper" {% if r.gradeTopBound %} value="{{ r.gradeTopBound }}" {% endif %}/>

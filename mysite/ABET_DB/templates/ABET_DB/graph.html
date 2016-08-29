@@ -1,0 +1,211 @@
+<html>
+    <head>
+        <title>ABET submit</title>
+        {% load staticfiles %}
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <link rel="stylesheet" href="{% static "style.css" %}" />
+        <link href="https://www.amcharts.com/lib/3/plugins/export/export.css" media="all" rel="stylesheet" type="text/css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+<script type="text/javascript" src="https://www.amcharts.com/lib/3/exporting/amexport_combined.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+        <style>
+            .chart {
+	width		: 100%;
+	height		: 500px;
+	font-size	: 11px;  
+}										
+
+
+
+.amcharts-export-menu-top-right {
+  top: 10px;
+  right: 0;
+}		
+        </style>
+        <script type="text/javascript">
+            var cfg = {
+            	menuTop		: '0px',
+            	menuLeft	: 'auto',
+            	menuRight	: '0px',
+            	menuBottom	: 'auto',
+            	menuItems	: [{
+            		textAlign : 'center',
+            		icon      : '/static/images/download.png',
+            		iconTitle : 'Save chart as an image',
+            		onclick   : function () {},
+            		items     : [{
+            			title: 'JPG',
+            			format: 'jpg'
+            		}, {
+            			title: 'PNG',
+            			format: 'png'
+            		}, {
+            			title: 'SVG',
+            			format: 'svg'
+            		}, {
+            		    title: "PDF",
+            		    format: "pdf"
+            		}
+            		]
+            	}],
+            	menuItemStyle: {
+            		backgroundColor		: 'transparent',
+            		opacity			: 1,
+            		rollOverBackgroundColor	: '#EFEFEF',
+            		color			: '#000000',
+            		rollOverColor		: '#CC0000',
+            		paddingTop		: '6px',
+            		paddingRight		: '6px',
+            		paddingBottom		: '6px',
+            		paddingLeft		: '6px',
+            		marginTop		: '0px',
+            		marginRight		: '0px',
+            		marginBottom		: '0px',
+            		marginLeft		: '0px',
+            		textAlign		: 'left',
+            		textDecoration		: 'none',
+            		fontFamily		: 'Arial', // Default: charts default
+            		fontSize		: '12px', // Default: charts default
+            	},
+            	menuItemOutput: {
+            		backgroundColor		: '#FFFFFF',
+            		fileName		: 'amCharts',
+            		format			: 'png',
+            		output			: 'dataurlnewwindow',
+            		render			: 'browser',
+            		dpi			: 90,
+            		onclick			: function(instance, config, event) {
+            			event.preventDefault();
+            			instance.output(config);
+            		}
+            	},
+            	legendPosition: "bottom", //top,left,right
+            	removeImagery: true
+            };
+        
+            {% for outcome in outcomeList %}
+                var letter{{outcome.letter}} = '[{% for section in outcome.sectionList %} { "section": "{{ section.section }}", "met": {{ section.met }}, "exceeded": {{ section.exceeded }}, "total": {{ section.total }} } {% if forloop.last == False %} , {% endif %} {% endfor %}]';
+                var chart{{ outcome.letter }} = AmCharts.makeChart("{{ outcome.letter }}-chart", {
+                    "type": "serial",
+                    "theme": "light",
+                    "marginRight": 70,
+                    "dataProvider": JSON.parse(letter{{outcome.letter}}),
+                    "valueAxes": [
+                        {
+                            'stackType': "regular",
+                            "position": "left",
+                            "title": "Student Expectations",
+                            "maximum": 100
+                        }
+                    ],
+                    "guides": [
+                        {
+                          "fillAlpha": 0.50,
+                          "value": 70,
+                          "toValue": 70
+                        }
+                    ],
+                    "titles": [
+                        {
+                            "id": "Title-1",
+                            "size": 15,
+                            "text": "Outcome - {{ outcome.letter }}"
+                        }
+                    ],
+                    "startDuration": 1,
+                    "graphs": [
+                        {
+                            "balloonText": "<b>[[category]]: [[value]]</b>",
+                            "fillColorsField": "color",
+                            "fillAlphas": 0.9,
+                            "lineAlpha": 0.2,
+                            "type": "column",
+                            "valueField": "exceeded",
+                            "title": "Exceeded Expectations"
+                        },
+                        {
+                            "balloonText": "<b>[[category]]: [[value]]</b>",
+                            "fillColorsField": "color",
+                            "fillAlphas": 0.9,
+                            "lineAlpha": 0.2,
+                            "type": "column",
+                            "valueField": "met",
+                            "title": "Met Expectations"
+                        },
+                        {
+                            "valueField": "total",
+                            "labelText": "[[value]]%",
+                            "visibleInLegend": false,
+                            "showBalloon": false,
+                            "lineAlpha": 0,
+                            "fontSize": 15
+                        }
+                    ],
+                    "chartCursor": {
+                        "categoryBalloonEnabled": false,
+                        "cursorAlpha": 0,
+                        "zoomable": false
+                    },
+                    "categoryField": "section",
+                    "categoryAxis": {
+                        "gridPosition": "start",
+                        "labelRotation": 45
+                    },
+                    "legend": {
+                    },
+                    "export": {
+                        "enabled": true
+                    }
+                });
+                
+                chart{{ outcome.letter }}.amExport = {
+                    top: 0,
+                    right: 0,
+                    exportPNG: true,
+                    title: 'Download as PNG'
+                };
+        
+                chart{{ outcome.letter }}.amExport.userCFG = cfg;
+                
+                chart{{ outcome.letter }}.write("{{ outcome.letter }}-chart");
+            {% endfor %}
+
+            $(document).ready(function() {
+                $( 'a[data-toggle="tab"]' ).on('shown.bs.tab', function(e) {
+                    var letter = $(e.target).attr('aria-controls').charAt(0);
+                    var currentChart = window["chart" + letter];
+                    currentChart.invalidateSize();
+                });    
+            });
+            
+        </script>
+    </head>
+    <body>
+        <div class="container" style="background-color: white">
+        <h2>ABET Graphs</h2>
+        <ul class="nav nav-tabs" role="tablist">
+            {% for outcome in outcomeList %}
+                <li role="presentation" 
+                    {% if forloop.first %} 
+                        class="active"
+                    {% endif %}
+                >
+                    <a href="#{{ outcome.letter }}-div" aria-controls="{{ outcome.letter }}-div" role="tab" data-toggle="tab">{{ outcome.letter }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+        
+        <div class="tab-content">
+            {% for outcome in outcomeList %}
+                <div id="{{ outcome.letter }}-div" role="tabpanel" class="tab-pane {% if forloop.first %}active{% endif %}">
+                    <div class="chart" id="{{ outcome.letter }}-chart"></div>    
+                </div>
+            {% endfor %}
+        </div>
+        </div>
+    </body>
+</html>

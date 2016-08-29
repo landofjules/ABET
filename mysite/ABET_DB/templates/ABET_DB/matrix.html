@@ -1,0 +1,78 @@
+<html>
+    <head>
+        <title>ABET Professor Matrix</title>
+        {% load staticfiles %}
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <link rel="stylesheet" href="{% static "style.css" %}" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+        <script src="https://use.fontawesome.com/fc5cafe911.js"></script>
+        
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('[data-toggle="tooltip"]').tooltip();
+                
+                $('.outcome').each(function() {
+                    console.log(this);
+                    if (!$(this).html().replace(/\s/g, '').length) {
+                        $(this).html('<div class="check"><span class="fa fa-check"></span></div>');
+                    }
+                });
+            });
+        </script>
+        
+        <style>
+            .outcome {
+                vertical-align: middle !important;
+                text-align: center;
+            }
+            
+            .outcome .fa-check {
+                color:#2ecc71;
+            }
+            
+            .outcome .fa-times {
+                color: #e74c3c;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container" style="background-color: white;">
+        <h3>{{ year }} | {{ semester }}</h3>
+        
+        <table class="table">
+            <tr>
+                <th>Professor</th>
+                {% for outcome in outcomes %}
+                    <th class="text-center">{{ outcome }}</th>
+                {% endfor %}
+            </tr>
+            
+            {% for section in sections %}
+                <tr>
+                    <td>
+                        {{ section.courseName }} <br />
+                        <a href="mailto:{{ section.email }}?subject=ABET Error Please Complete&body={{ section.message }}">
+                            <span class="fa fa-envelope"></span> {{ section.proffessor }}
+                        </a>
+                    </td>
+                    
+                    {% for outcome in outcomes %}
+                        <td class="outcome">
+                        {% for outSec in section.sectionErrors %}
+                            {% if outcome == outSec.outcomeLetter %}
+                                <button type="button" class="btn btn-default" data-toggle="tooltip"
+                                        data-placement="bottom" title="{{ outSec.errorMessage }}"
+                                        style="height:100%; width:100%;">
+                                    <span class="fa fa-times"></span>    
+                                </button>
+                            {% endif %}
+                        {% endfor %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+        </div>
+    </body>
+</html>

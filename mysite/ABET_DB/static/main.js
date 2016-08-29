@@ -178,6 +178,8 @@ function loadPis(callback) {
     $('#mainForm').addClass('loading');
     $('#piNav .list-group').empty().append(blankListGroupHtml);
     $("#piLoadBox").hide();
+    $('#mainForm p.outD').remove()
+    
   
     // ajax request to load performance indicators
     $.getJSON('dat/pis',{
@@ -211,13 +213,20 @@ function loadPis(callback) {
         for(var i=0;i<data.piSems.length;i++) {
             $("#piLoadBox select").append('<option value="'+data.piSems[i]+'">'+data.piSems[i].capitalize()+'</option>')
         }
-        $("#piLoadBox a").click(populatePis);
         
         if(typeof callback === 'function') callback();
     })   
 };
+
+$("#piLoadBox a").click(populatePis);
+
+// this function populates the previous pis
 function populatePis() {
     
+    var selectedSem = $("#piLoadBox select").val().replace(' ','_');
+    if(selectedSem == '--') return;
+    
+    // loading sequence
     $("#mainForm form").invisible();
     $("#msg").hide();
     $('#mainForm').addClass('loading');
@@ -226,12 +235,15 @@ function populatePis() {
         "semStr":thisSem(),
         "course":thisCourse(),
         "outcome":thisOutcome(),
+        "selectedSemStr":selectedSem
     }, function(data) {
         
         loadPis();
     });
     
 }
+
+
 
 // **************  Performance Indicator Navigation  ************* //
 function pushPi(callback) {

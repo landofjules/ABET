@@ -7,33 +7,59 @@ from django.views.generic import TemplateView
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.http.response import HttpResponseRedirect
 #from django.utils import timezone
 from sets import Set
 from ABET_DB.exceptions import ABET_Error
 from decimal import *
+import pdb
+
 
 from ABET_DB.models import *
 from django.http import HttpResponse, JsonResponse
 
-'''
-def current():
-    now = timezone.now()
-    semNow = str()
-    if now.month <= 5:
-        semNow = "spring"
-    elif now.month >= 7:
-        semNow = "fall"
-    else:
-        semNow = "summer"
-    return (semNow, now.year)
-'''
+
+
+MAIN_PASSWORD = 'hello'
+
+def login(request, context={}):
+    
+    template = loader.get_template('ABET_DB/login.html')
+    
+    if request.method == 'POST':
+        netid = request.POST['netid']
+        password = request.POST['password']
+        
+        try:
+            professors.objects.get(netID=netid)
+            
+            # Eventually, LDAP will be setup here
+            if password != MAIN_PASSWORD:
+                raise ObjectDoesNotExist
+        except ObjectDoesNotExist:
+            context['errors'] = True
+        else:
+            context['errors'] = False
+            request.session['netid'] = netid 
+            return HttpResponseRedirect('prof/')
+    
+    
+    return HttpResponse(template.render(context,request))
+
+def logout(request):
+    del request.session['netid']
+    return HttpResponseRedirect('/')
+    
 
 # this view returns the main page for professors entering data
 def professorPage(request):
-    # after HARRY figures out security, this wont be needed
-    # this should be passed in upon login
-    request.session['netid'] = 'jkohann' 
-    professorNetID = request.session['netid']
+    
+    
+    # # #   Build the page   # # #
+    try:
+        professorNetID = request.session['netid']
+    except KeyError:
+        return HttpResponseRedirect('/')
     
     # return a query of all professor's sections
     sectionList = sections.objects.filter(professor__netID=professorNetID).order_by("-year","semester")
@@ -46,8 +72,13 @@ def professorPage(request):
             semList.append(syStr)
 
     # get the current semester and year and select sections for it
-    nowSem, nowYear = current()
-    sectionsNow = sectionList.filter(semester=nowSem, year=nowYear)
+    #pdb.set_trace()
+    if sectionList:
+        thisYear = sectionList[0].year
+        thisSemester = sectionList[0].semester
+    else:
+        thisSemester, thisYear = current()
+    sectionsThisSem = sectionList.filter(semester=thisSemester, year=thisYear)
     
     # retrieve performance indicators
     perfLevList = performanceLevels.objects.all()
@@ -57,8 +88,8 @@ def professorPage(request):
     context = {
         'netid':professorNetID,
         'semesters':semList,
-        'currentSem':nowSem+' '+ str(nowYear),
-        'courses':sectionsNow,
+        'currentSem':thisSemester+' '+ str(thisYear),
+        'courses':sectionsThisSem,
         'perfLevels':perfLevList,
     }
     return HttpResponse(template.render(context,request))
@@ -104,6 +135,7 @@ def listJSON(request,what):
         # if client is asking for performance indicators...
         elif what == 'pis':
             
+            
             # retrieve the outcome, and filter pis based on that list
             outcomeLetter = request.GET['outcome']
             outcome = outcomeList.get(studentOutcome__outcomeLetter=outcomeLetter)
@@ -126,7 +158,51 @@ def listJSON(request,what):
     return JsonResponse(obj)
 
 def prevPis(request):
-    return HttpResponse("done")
+    print "hello"
+    
+    professorNetID = request.session['netid']
+    courseName = request.GET['course']
+    outcome = request.GET['outcome']
+    courseList = sections.objects.filter(professor__netID=professorNetID)     #find courses associated with loged-in professor
+    
+    perfLevels = performanceLevels.objects.all()
+    
+    thisSem, thisYear = tuple(request.GET['semStr'].split('_'))
+    selectedSem, selectedYear = tuple(request.GET['selectedSemStr'].split('_'))
+    
+    sectionsThisSem = courseList.filter(year=thisYear).filter(semester=thisSem)
+    sectionsSelSem = courseList.filter(year=selectedYear).filter(semester=selectedSem)
+    try:
+        thisSection = sectionsThisSem.get(course__name=courseName)
+        selSection = sectionsSelSem.get(course__name=courseName)
+    
+        thisOutcome = courseOutcomes.objects.filter(section=thisSection).get(studentOutcome__outcomeLetter=outcome)
+        selOutcome = courseOutcomes.objects.filter(section=selSection).get(studentOutcome__outcomeLetter=outcome)
+        
+    except ObjectDoesNotExist:
+        return JsonResponse({'success':False})
+    
+    # get all the pis, from sel outcome and append them to thisOutcome
+    selectedPis = performanceIndicators.objects.filter(outcome=selOutcome)
+    thesePis = performanceIndicators.objects.filter(outcome=thisOutcome)
+    for spi in selectedPis:
+        
+        if thesePis.filter(name=spi.name).exists():
+            tpi = thesePis.get(name=spi.name)
+            rubricsHere = rubrics.objects.filter(performanceIndicator=tpi)
+        else:
+            tpi = selectedPis.get(name=spi.name)
+            tpi.id = None
+            tpi.outcome = thisOutcome
+            tpi.save()
+            rubricsHere = rubrics.objects.filter(performanceIndicator=spi)
+            for r in rubricsHere:
+                r.id = None
+                r.performanceIndicator = tpi
+                r.save()
+        
+    
+    return JsonResponse({'success':True})
     
 def graph(request):
     #get the student outcomes
