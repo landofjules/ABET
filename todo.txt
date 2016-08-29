@@ -1,16 +1,7 @@
 Add tooltips
 
-Outcome data does not show at 0 bug
-semester switch load courses bug
-Make sure weight can be not submitted
-Replace the css gradient with an image form
-Remove the numbers showing up below performance levels
-
-populate feature
-    get the course from a previous class
-    make a seperate query = courses and semseter
-    copy pi data into this one
-
+ASK BVZ
+if the weight is empty, should we put in zero or leave it null?
 
  ~ % PERHAPS % ~
 Make matrix view accessible to all professors
@@ -22,3 +13,13 @@ Delete pi outcome description bug
 Make a login page
     Test if the professor is in the database
 Find bug which makes courses not show up originally
+populate feature
+    get the course from a previous class
+    make a seperate query = courses and semseter
+    copy pi data into this one
+Remove the numbers showing up below performance levels
+Replace the css gradient with an image version
+LoadPrevious does not show current year
+Make sure weight can be not submitted
+Outcome data does not show at 0 bug
+semester switch load courses bug

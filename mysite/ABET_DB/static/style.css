@@ -2,11 +2,11 @@ body {
     /*background-color: #FFE8C2;*/
     margin:0;
     text-align: center;
-    background: #f7c531; /* Old browsers */
-    background: -moz-linear-gradient(center, ellipse cover, #f7b531 0%, #fc6620 50%, #ff7d21 100%); /* FF3.6-15 */
-    background: -webkit-linear-gradient(center, ellipse cover, #f7b531 0%,#fc6620 50%,#ff7d21 100%); /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient( #f7b531 0%,#fc6620 50%,#ff7d21 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7b531', endColorstr='#ff7d21',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+    background-image:url("/static/images/BGgradient.png");
+    background-repeat: repeat-x;
+    background-position: top;
+    background-color: #ee8726;
+   
 }
 html, body {
     height:100%;

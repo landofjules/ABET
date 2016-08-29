@@ -19,7 +19,7 @@ from ABET_DB.models import *
 from django.http import HttpResponse, JsonResponse
 
 
-
+# the single password all professors will enter
 MAIN_PASSWORD = 'hello'
 
 def login(request, context={}):
@@ -150,10 +150,11 @@ def listJSON(request,what):
             # append objects semester years for populate
             outcomesOfSemesters = courseOutcomes.objects.filter(studentOutcome__outcomeLetter=outcomeLetter) \
                                                         .filter(section__course__name=courseName)
-            
+            #pdb.set_trace()
             obj['piSems'] = list()
             for oos in outcomesOfSemesters:
-                obj['piSems'].append(oos.section.semester + ' ' + str(oos.section.year) )
+                if semSem != oos.section.semester or int(semYear) != oos.section.year:
+                    obj['piSems'].append(oos.section.semester + ' ' + str(oos.section.year) )
             
     return JsonResponse(obj)
 
@@ -532,9 +533,13 @@ def submit(request,what):
                 p.name = request.POST['newName']
                 
         # set all the parameters for the performance indicator and save
-        p.weight = float(request.POST['weight'])
-        if p.weight > 1.0 or p.weight <= 0.0:
-            raise ABET_Error('p.weight greater than 1 or less than or equal to 0')
+        if request.POST['weight'] == "": 
+            p.weight = 0.0
+        else:
+            p.weight = float(request.POST['weight'])
+            if p.weight > 1.0 or p.weight < 0.0:
+                raise ABET_Error('p.weight greater than 1 or less than or equal to 0')
+        
         p.description = request.POST['description']
         p.save()
         
